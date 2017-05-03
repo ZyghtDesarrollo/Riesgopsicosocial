@@ -10,15 +10,20 @@ class Answer_model extends Zyght_Model {
 		$this->id = 'id';
 	}
 
-	public function create($travel_id, $question_id, $value) {
+	public function create($questionary_completion_id, $question_option_id, $open_answer = null) {
 		$this->db->insert($this->table, array(
-			'travel_id' => $travel_id,
-			'question_id' => $question_id,
-			'value' => $value
+			'questionary_completion_id' => $questionary_completion_id,
+			'question_option_id' => $question_option_id,
+			'open_answer' => $open_answer
 		));
 
 		$id = $this->db->insert_id();
 
+echo $this->db->last_query();
+echo "<hr>";
+echo $id . "<hr>";
+
 		return ($id > 0) ? $id : FALSE;
 	}
+
 }

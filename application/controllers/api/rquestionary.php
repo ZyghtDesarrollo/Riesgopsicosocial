@@ -11,6 +11,9 @@ class Rquestionary extends API_Controller {
 		$this->resource = 'Rquestionary';
 
 		$this->load->model('questionary_model');
+		$this->load->model('randomuser_model');
+		$this->load->model('answer_model');
+		
 		$this->load->helper('file');
 	}
 
@@ -30,6 +33,40 @@ class Rquestionary extends API_Controller {
 		write_file($file, $data);
 
 		$this->response($questionaries, 200);
+	}
+
+	public function add_post() {
+		$access_token = $this->get_access_token();
+
+		$user = $this->randomuser_model->get_loggedin_user($access_token);
+		if ($user === FALSE) {
+			$this->response_error(404, array(
+				"Error en token"
+			));
+		}
+
+/*
+print_r($user); echo "<hr>";
+print_r($this->post('questionaryId')); echo "<hr>";
+print_r($this->post('jobPositionId')); echo "<hr>";
+print_r($this->post('answers')); echo "<hr>";
+die;
+*/
+
+		$answers = $this->json_decode($this->post('answers'));
+
+		$result = $this->questionary_model->create(
+			$user,
+			$this->post('questionaryId'),
+			$this->post('jobPositionId'),
+			$answers
+		);
+
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+
+		$this->response_ok($result);
 	}
 
 }

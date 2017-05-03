@@ -37,6 +37,7 @@ class Questionary_model extends Zyght_Model {
 				$query2 = $this->db->query($sql);
 				$categories = $query2->result();
 
+				$categories_aux = [];
 				foreach ($categories as $category) {
 					$this->db->select('*');
 					$this->db->from('Question');
@@ -47,6 +48,7 @@ class Questionary_model extends Zyght_Model {
 					$query3 = $this->db->get();
 					$questions = $query3->result();
 
+					$questions_aux = [];
 					foreach ($questions as $question) {
 						if ($question->type == 1) {
 							$this->db->select('*');
@@ -73,6 +75,32 @@ class Questionary_model extends Zyght_Model {
 		}
 
 		return FALSE;
+	}
+
+	public function create($user, $questionary_id, $job_position_id, $answers) {
+		$this->db->trans_start();
+
+		$this->db->insert("QuestionaryCompletion", array(
+			'random_user_id' => $user->id,
+			'questionary_id' => $questionary_id,
+			'job_position_id' => $job_position_id,
+			'created_at' => date('Y-m-d H:i:s')
+		));
+
+		$questionary_completion_id = $this->db->insert_id();
+
+		foreach ($answers as $answer) {
+			$this->answer_model->create($questionary_completion_id, $answer->questionId, $answer->value);
+		}
+
+		$this->db->trans_complete();
+
+		if ($this->db->trans_status() === FALSE) {
+			// generate an error... or use the log_message() function to log your error
+			return FALSE;
+		}
+
+		return $questionary_completion_id;
 	}
 
 }

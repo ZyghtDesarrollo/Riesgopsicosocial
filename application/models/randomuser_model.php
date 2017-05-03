@@ -83,5 +83,20 @@ class randomuser_model extends Zyght_Model {
 		return $token;
 	}
 
+	public function get_loggedin_user($access_token) {
+		$this->db->select($this->table .'.*');
+		$this->db->from($this->table);
+		$this->db->where($this->table .'.access_token', $access_token);
+
+		$query = $this->db->get();
+
+		if ($query->num_rows() > 0) {
+			$list = $query->result();
+			return $list[0];
+		}
+
+		return FALSE;
+	}
+
 }
 
