@@ -1,0 +1,78 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+require_once(APPPATH . 'libraries/Zyght_Model.php');
+
+class Questionary_model extends Zyght_Model {
+	public function __construct(){
+		parent::__construct();
+
+		$this->table = 'Questionary';
+		$this->id = 'id';
+	}
+
+	public function get_questionaries() {
+		$response = [];
+		$questions_aux = [];
+		$categories_aux = [];
+		$questionary_aux = [];
+
+		$this->db->select($this->table .'.*');
+		$this->db->from($this->table);
+		$this->db->where($this->table .'.active', 1);
+
+		$query = $this->db->get();
+
+		if ($query->num_rows() > 0) {
+			$questionaries = $query->result();
+
+			foreach ($questionaries as $questionary) {
+
+				$sql = "
+					SELECT DISTINCT qc.*
+					FROM Question as q
+					INNER JOIN QuestionCategory as qc ON qc.id = q.question_category_id
+					WHERE q.questionary_id = ". $questionary->id ." AND q.active = 1 AND qc.active = 1
+				";
+
+				$query2 = $this->db->query($sql);
+				$categories = $query2->result();
+
+				foreach ($categories as $category) {
+					$this->db->select('*');
+					$this->db->from('Question');
+					$this->db->where('questionary_id', $questionary->id);
+					$this->db->where('question_category_id', $category->id);
+					$this->db->where('active', 1);
+
+					$query3 = $this->db->get();
+					$questions = $query3->result();
+
+					foreach ($questions as $question) {
+						if ($question->type == 1) {
+							$this->db->select('*');
+							$this->db->from('QuestionOptions');
+							$this->db->where('question_id', $question->id);
+
+							$query4 = $this->db->get();
+							$options = $query4->result();
+
+							$question->options = $options;
+							$questions_aux[] = $question;
+						}
+					}
+
+					$category->questions = $questions_aux;	
+					$categories_aux[] = $category;
+				}
+
+				$questionary->categories = $categories_aux;
+				$questionary_aux[] = $questionary;
+			}
+
+			return $questionary_aux;
+		}
+
+		return FALSE;
+	}
+
+}
