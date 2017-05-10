@@ -76,7 +76,21 @@ class Questionary_model extends Zyght_Model {
 
 		return FALSE;
 	}
-
+	
+	public function get_questionary_completions_by_company_id($company_id) {
+		$this->db->select('qc.*, jp.company_id, jp.position, q.name');
+		$this->db->from('QuestionaryCompletion AS qc');
+		$this->db->select('qc.*, jp.company_id, jp.position, q.name');
+		$this->db->from('QuestionaryCompletion AS qc');
+		$this->db->join('JobPosition AS jp', 'qc.job_position_id = jp.Id');
+		$this->db->join('Questionary AS q', 'qc.questionary_id = q.id');
+		$this->db->where('q.active', 1);
+		$this->db->where('jp.company_id', (int) $company_id);
+		$query = $this->db->get();
+		
+		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
+	
 	public function create($user, $questionary_id, $job_position_id, $answers) {
 		$this->db->trans_start();
 

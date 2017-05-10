@@ -44,9 +44,25 @@ class Jobposition_model extends Zyght_Model {
 		$this->db->select('*');
 		$this->db->from($this->table);
 		$this->db->where('company_id', $company_id);
+		$this->db->where('active', 1);
 		$query = $this->db->get();
 
 		return ($query->num_rows() > 0) ? $query->result() : array();
+	}
+	
+	public function activate($id, $activate) {
+		$data = array();
+	
+		if (isset($activate)) {
+			$data['active'] = $activate;
+		}
+	
+		if (!empty($data)) {
+			$this->db->where($this->id, $id);
+			return $this->db->update($this->table, $data);
+		}
+	
+		return FALSE;
 	}
 
 }

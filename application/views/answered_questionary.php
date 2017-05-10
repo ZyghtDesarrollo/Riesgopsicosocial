@@ -1,13 +1,36 @@
+<style>
+	.question{
+		text-align: "justify";
+	}
+	.selected-answere{
+		font-weight: bold;
+	}
+	.answere-box{
+		margin-left: 20px;
+	}
+	
+	.questionary-panel{
+		display: none;
+	}
+</style>
+
+
 <!-- start breadcrumb -->
 <div class="row">
-		<div class="col-sm-12">
-			<ol class="breadcrumb">
-				<li><a href="#">Home</a></li>
-				<li class="active">Usuarios</li>
-			</ol>
-		</div>
+	<div class="col-sm-12">
+		<ol class="breadcrumb">
+			<li><a href="#">Home</a></li>
+			<li class="active">Respuestas</li>
+		</ol>
 	</div>
+</div>
 <!-- end breadcrumb -->
+
+<div class="row" id="questionary-type"></div>
+
+<div class="row">
+	<div class="col-sm-12" id="questionary"></div>
+</div>
 
 <div class="row">
 	<div class="col-sm-12">
@@ -16,7 +39,7 @@
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>Compañía</th>
+					<th>Puesto de trabajo</th>
 					<th>Código de compañía</th>
 					<th>Estado</th>
 					<th>Acciones</th>
@@ -37,7 +60,6 @@
 <div class="modal fade" tabindex="-1" id="form-modal" role="dialog"
 	data-backdrop="static">
 	<div class="modal-dialog">
-
 		<!-- start Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
@@ -50,31 +72,6 @@
 						<input type="text" class="form-control" id="record-name"
 							name="record-name">
 					</div>
-					<div class="form-group">
-						<label for="record-company" class="form-control-label">Compañía</label>
-						<select class="form-control" id="record-company"
-							name="record-company">
-							<option value="-1">Seleccione</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<label class="control-label">Es administrador?</label> <br> <label
-							class="radio-inline"> <input type="radio" name="record-admin"
-							value="1" checked="checked">Si
-						</label> <label class="radio-inline"> <input type="radio"
-							name="record-admin" value="0">No
-						</label>
-					</div>
-					<div class="form-group">
-						<label for="record-password" class="form-control-label">Contraseña</label>
-						<input type="password" class="form-control" id="record-password"
-							name="record-password">
-					</div>
-					<div class="form-group">
-						<label for="record-password-confirm" class="form-control-label">Confirmación
-							de contraseña</label> <input type="password" class="form-control"
-							id="record-password-confirm" name="record-password-confirm">
-					</div>
 					<input type="hidden" id="record-id">
 				</form>
 			</div>
@@ -85,7 +82,6 @@
 			</div>
 		</div>
 		<!-- Modal content-->
-		
 	</div>
 </div>
 <!-- end modal for create / update-->
@@ -94,7 +90,6 @@
 <div class="modal fade" tabindex="-1" id="confirm-modal" role="dialog"
 	data-backdrop="static">
 	<div class="modal-dialog">
-	
 		<!-- start Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
@@ -111,93 +106,115 @@
 			</div>
 		</div>
 		<!-- Modal content-->
-		
 	</div>
 </div>
 <!-- end modal for confirm -->
 
 <!-- start own script-->
 <script>
-	var table = '';
-	var companies = [];
-
+	function showPanel(panelId){
+		$(panelId).closest("div.questionary-panel").addClass("show").siblings().removeClass("show");
+	}
+	
+	var table;
 	$(document).ready(function() {
-		//Load companies
-		$.get("http://trayectoseguro.azurewebsites.net/index.php/api/rcompany/list")
-			.done(function(data) {
-				$.each(data.response, function(index, item){
-					companies.push({"id" : item.id, "name" : item.name});
-					$("#record-company").append('<option value="'+item.id+'">'+item.name+'</option>');
+		var url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rquestionary/initialdata";
+		//Call to API
+		$.get(url)
+			.done(function(response) {
+				var panel = '';
+				var questionary_type = '';
+				var questionaries = null;
+				$.each(response, function(i, obj){
+					questionary_type += '<div class="col-sm-3">'
+											+'<p><i class="glyphicon glyphicon-chevron-right"></i> <a href="#" onclick="showPanel(\'#panel-'+i+'\');">'+obj.name+'</a></p>'
+										+'</div>';
+					$("#questionary-type").html(questionary_type);
 				});
-		  	})
-		  	.fail(function(e) {
-		    	console.log(e);
-		  	})
-		  	.always(function() {
-		  		//console.log(JSON.stringify(companies));
-		    	//alert( "finished" );
+				$.each(response, function(i, obj){
+					panel += '<div id="panel-'+i+'" class="questionary-panel panel panel-default">'
+				  		  	+'<div class="panel-body">';
+					questionaries = response;
+					panel += '<h2 class="text-center">'+obj.name+'</h2>';
+					$.each(obj.categories, function(i, obj_category){
+						panel += '<h3>'+obj_category.title+'</h3>';
+						$.each(obj_category.questions, function(y, obj_question){
+							panel += '<p class="question">'
+			    			+'<ol start='+(y+1)+'>'
+			    				+'<li>'+obj_question.title+'</li>'
+							+'</ol>'
+							
+							+'<div class="answere-box">'
+								+'<ol type="a">';
+									$.each(obj_question.options, function(i, obj_options){
+										panel += '<li>'+obj_options.title+'</li>';
+										//<li class="selected-answere">Algunas veces <i class="glyphicon glyphicon-ok"></i></li>
+									});
+									panel+='</ol>'
+				    	   		+'<p></p>'
+						 		+'<hr>'
+							+'</div>';
+						});
+						
+					});
+					panel += '</div>'
+						+'</div>';	
+				});
+
+				$("#questionary").html(panel);
+			})
+			.fail(function() {
+				//alert( "error" );
+			})
+			.always(function() {
+				//alert( "finished" );
 			});
 
-		endpoint = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/list";
-		if (user.company_id) {
-			endpoint += "?company_id=" + user.company_id;
-		}
-
 		table = $('#example').DataTable({
-    		"select": true,
-		    "language": {
-				"url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
-			},
-
-			"ajax": {
-          			"url": endpoint,
-          			"type": "GET"
-        	},
-        	"showRefresh": true,
-            "sAjaxDataProp" : "response",
-	      	"columns": [
-            	{ 	
-            		"data": "id" 
-            	},
-	            { 	
-	            	"data": "username" 
-	            },
-	            {
-	            	"data": "company"
-	            },
-	            { 
-	            	"data": "company_id"
-	        	},
-	            { 
-	            	"data": "admin"
-	        	},
-	            { 	
-	            	"data": "active",
-	            },
-	            {
-	            	"data": null,
-	                "className": "center",
-	                "defaultContent": ''
-	                	
-	                	//+'&nbsp;&nbsp;<i class="glyphicon glyphicon-trash icon-action" data-action="delete" data-id="2" aria-hidden="true"></i>'
-	            }
+	    		"select": true,
+		    	"language": {
+				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+				},
+			   "ajax": {
+          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/list_by_company_id?company_id=3",
+          			"type": "GET",
+          			"data" : {
+              			"company_id" : company_id
+              		}
+       
+        		},
+        		"showRefresh": true,
+            	"sAjaxDataProp" : "response",
+	            "columns": [
+	            	{ 	
+	            		"data": "id" 
+	            	},
+		            { 	
+		            	"data": "position" 
+		            },
+		            { 
+		            	"data": "company_id"
+		        	},
+		            { 	
+		            	"data": "active",
+		            },
+		            {
+		            	"data": null,
+		                "className": "center",
+		                "defaultContent": ''
+		                	//+'&nbsp;&nbsp;<i class="glyphicon glyphicon-trash icon-action" data-action="delete" data-id="2" aria-hidden="true"></i>'
+		            }
 	            ],
 	            
 	            "columnDefs" : [
-	            	{ 	//param admin column - admin
-        				targets : [4],
-          					render : function (data, type, row) {
-             				return data == '1' ? 'Si' : 'No';
-          				}
-				    },
-        			{ 	//param active - column state
-        				targets : [5],
+        			{ 	//param active
+        				targets : [3],
           					render : function (data, type, row) {
              				return data == '1' ? 'Activo' : 'Inactivo';
           				}
 				    },
 				    { 	//icons options
-        				targets : [6],
+        				targets : [4],
           					render : function (data, type, row) {
           						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
           						if(data.active == 1){
@@ -228,23 +245,14 @@
 		 		var row = $(this).closest('tr');
 				var id = row.find('td:eq(0)').text();
 				var name = row.find('td:eq(1)').text();
-				var company_id = row.find('td:eq(3)').text();
-				var isAdmin = row.find('td:eq(4)').text();
-				var state = row.find('td:eq(5)').text();
+				var code = row.find('td:eq(2)').text();
+				var state = row.find('td:eq(3)').text();
 				
 				switch (action){
 					case "edit":
 						//set value to form
 						$("#record-id").val(id);
 						$("#record-name").val(name);
-						$("#record-company").val(company_id);
-
-						if(isAdmin === "Si"){
-							$("#form-record input:radio[name='record-admin'][value='1']").prop("checked", true);
-						}else{
-							$("#form-record input:radio[name='record-admin'][value='0']").prop("checked", true);
-						}
-
 						$("#title").text(textEdit);
 						btnAction.text(textEdit);
 						btnAction.attr("data-action", action);
@@ -289,10 +297,8 @@
 		    	e.preventDefault();
 		    	var action = $(this).attr("data-action");
 		    	var params = {  
-							"username" :  $("#record-name").val(),
-							"password": $("#record-password-confirm").val(),
-							"admin": $("input[name='record-admin']:checked", '#form-record').val(),
-							"company_id": $("#record-company").val()
+							"position" :  $("#record-name").val(),
+							"company_id" : company_id
 						};
 				if(action == "edit"){
 					params.id = $("#record-id").val();
@@ -315,19 +321,19 @@
 				switch (action){
 
 					case "create":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/add";
+						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/add";
 					break;
 
 					case "edit":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/edit";
+						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/edit";
 					break;
 					
 					case "activate":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/activate";
+						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/activate";
 					break;
 
 					case "deactivate":
-						url="http://trayectoseguro.azurewebsites.net/index.php/api/ruser/deactivate";
+						url="http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/deactivate";
 					break;
 				}
 
@@ -349,5 +355,5 @@
 				    //alert( "finished" );
 				  });
 			}	
-</script>
+		</script>
 <!-- end own script -->

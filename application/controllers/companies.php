@@ -1,9 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Companies extends CI_Controller {
-	public function index()
-	{
-		$this->load->view('companies');
+	
+	public function __construct(){
+		parent::__construct();
+	}
+	
+	public function index(){
+		$view['content'] = $this->load->view('companies', NULL, TRUE);
+		$this->load->view('layout', $view);
 	}
 }
 

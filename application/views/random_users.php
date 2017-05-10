@@ -3,7 +3,7 @@
 	<div class="col-sm-12">
 		<ol class="breadcrumb">
 			<li><a href="#">Home</a></li>
-			<li class="active">Compañías</li>
+			<li class="active">Usuarios aleatorios</li>
 		</ol>
 	</div>
 </div>
@@ -16,10 +16,9 @@
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>Nombre</th>
-					<th>Código</th>
-					<th>Estado</th>
-					<th>Acciones</th>
+					<th>Contraseña</th>
+					<th>Fecha de creación</th>
+					<th>Código de compañía</th>
 				</tr>
 			</thead>
 		</table>
@@ -28,7 +27,7 @@
 
 <div class="row">
 	<div class="col-sm-12 text-center">
-		<button id="btn-create" class="btn btn-success" data-action="create">Crear</button>
+		<button id="btn-create" class="btn btn-success" data-action="create">Generar Usuarios Aleatorios</button>
 	</div>
 </div>
 
@@ -45,16 +44,10 @@
 			<div class="modal-body">
 				<form id="form-record">
 					<div class="form-group">
-						<label for="record-name" class="form-control-label">Nombre</label>
-						<input type="text" class="form-control" id="record-name"
-							name="record-name">
+						<label for="record-quantity" class="form-control-label">Cantidad</label>
+						<input type="number" class="form-control" id="record-quantity"
+							name="record-quantity">
 					</div>
-					<div class="form-group">
-						<label for="record-code" class="form-control-label">Código</label>
-						<input type="text" class="form-control" id="record-code"
-							name="record-code">
-					</div>
-					<input type="hidden" id="record-id">
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -94,61 +87,38 @@
 
 <!-- start own script-->
 <script>
-			var table;
-			$(document).ready(function() {
-				table = $('#example').DataTable({
-		    		"select": true,
-			    	"language": {
-					    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
-					},
-				   "ajax": {
-	          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/list",
-	          			"type": "GET"
-	        		},
-	        		"showRefresh": true,
-	            	"sAjaxDataProp" : "response",
-		            "columns": [
-		            	{ 	
-		            		"data": "id" 
-		            	},
-			            { 	
-			            	"data": "name" 
-			            },
-			            { 
-			            	"data": "code"
-			        	},
-			            { 	
-			            	"data": "active",
-			            },
-			            {
-			            	"data": null,
-			                "className": "center",
-			                "defaultContent": ''
-			                	
-			                	//+'&nbsp;&nbsp;<i class="glyphicon glyphicon-trash icon-action" data-action="delete" data-id="2" aria-hidden="true"></i>'
-			            }
-		            ],
-		            
-		            "columnDefs" : [
-	        			{ 	//param active
-	        				targets : [3],
-	          					render : function (data, type, row) {
-	             				return data == '1' ? 'Activo' : 'Inactivo';
-	          				}
-					    },
-					    { 	//icons options
-	        				targets : [4],
-	          					render : function (data, type, row) {
-	          						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
-	          						if(data.active == 1){
-	          							iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action" data-action="deactivate" aria-hidden="true" style="color : green"></i>';
-	          						}
-	          					return '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>'+iconSwitch;
-	          				}
-					    }
-					]
-			    });
-			} );
+	var table;
+	$(document).ready(function() {
+		table = $('#example').DataTable({
+	    		"select": true,
+		    	"language": {
+				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+				},
+			   "ajax": {
+          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrandomuser/list_by_company_id",
+          			"type": "GET",
+          			"data" : {
+              			"company_id" : company_id
+              		}
+        		},
+        		"showRefresh": true,
+            	"sAjaxDataProp" : "response",
+	            "columns": [
+	            	{ 	
+	            		"data": "id" 
+	            	},
+		            { 	
+		            	"data": "password" 
+		            },
+		            { 	
+		            	"data": "date" 
+		            },
+		            { 
+		            	"data": "company_id"
+		        	},
+	            ]
+		    });
+		} );
 
 		//$('#example').find('.dataTables_filter').append('<button class="btn btn-success mr-xs pull-right" type="button">Crear</button>');
 
@@ -158,7 +128,7 @@
 			var textDelete = "Eliminar";
 			var textActivate = "Activar";
 			var textDeActivate = "Desactivar";
-			var textCreate = "Crear";
+			var textCreate = "Generar";
 
 			//To prepare and display modal (edit, activate, deactivate)
 			$('#example').on('click', 'i.icon-action', function (e) {
@@ -168,15 +138,18 @@
 		 		var row = $(this).closest('tr');
 				var id = row.find('td:eq(0)').text();
 				var name = row.find('td:eq(1)').text();
-				var code = row.find('td:eq(2)').text();
-				var state = row.find('td:eq(3)').text();
+				var rut = row.find('td:eq(2)').text();
+				var phone = row.find('td:eq(3)').text();
+				var email = row.find('td:eq(4)').text();
 				
 				switch (action){
 					case "edit":
 						//set value to form
 						$("#record-id").val(id);
 						$("#record-name").val(name);
-						$("#record-code").val(code);
+						$("#record-rut").val(rut);
+						$("#record-phone").val(phone);
+						$("#record-email").val(email);
 						$("#title").text(textEdit);
 						btnAction.text(textEdit);
 						btnAction.attr("data-action", action);
@@ -220,9 +193,9 @@
 		    btnAction.click(function(e){
 		    	e.preventDefault();
 		    	var action = $(this).attr("data-action");
-		    	var params = {  
-							"name" :  $("#record-name").val(),
-							"code" : $("#record-code").val()
+		    	var params = {
+				    		"amount": $("#record-quantity").val(),
+							"company_id" : company_id
 						};
 				if(action == "edit"){
 					params.id = $("#record-id").val();
@@ -245,19 +218,19 @@
 				switch (action){
 
 					case "create":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/add";
+						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrandomuser/generate";
 					break;
 
 					case "edit":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/edit";
+						url = "#";
 					break;
 					
 					case "activate":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/activate";
+						url = "#";
 					break;
 
 					case "deactivate":
-						url="http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/deactivate";
+						url="#";
 					break;
 				}
 
@@ -278,6 +251,6 @@
 				  .always(function() {
 				    //alert( "finished" );
 				  });
-			}	
+			}
 		</script>
 <!-- end own script -->

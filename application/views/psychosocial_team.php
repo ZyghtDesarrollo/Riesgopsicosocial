@@ -1,12 +1,12 @@
 <!-- start breadcrumb -->
 <div class="row">
-		<div class="col-sm-12">
-			<ol class="breadcrumb">
-				<li><a href="#">Home</a></li>
-				<li class="active">Usuarios</li>
-			</ol>
-		</div>
+	<div class="col-sm-12">
+		<ol class="breadcrumb">
+			<li><a href="#">Home</a></li>
+			<li class="active">Equipo psicosocial</li>
+		</ol>
 	</div>
+</div>
 <!-- end breadcrumb -->
 
 <div class="row">
@@ -16,9 +16,11 @@
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>Compañía</th>
+					<th>Nombre</th>
+					<th>RUT</th>
+					<th>Teléfono</th>
+					<th>Email</th>
 					<th>Código de compañía</th>
-					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -37,7 +39,6 @@
 <div class="modal fade" tabindex="-1" id="form-modal" role="dialog"
 	data-backdrop="static">
 	<div class="modal-dialog">
-
 		<!-- start Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
@@ -51,29 +52,19 @@
 							name="record-name">
 					</div>
 					<div class="form-group">
-						<label for="record-company" class="form-control-label">Compañía</label>
-						<select class="form-control" id="record-company"
-							name="record-company">
-							<option value="-1">Seleccione</option>
-						</select>
+						<label for="record-rut" class="form-control-label">RUT</label>
+						<input type="text" class="form-control" id="record-rut"
+							name="record-rut" maxlength="10">
 					</div>
 					<div class="form-group">
-						<label class="control-label">Es administrador?</label> <br> <label
-							class="radio-inline"> <input type="radio" name="record-admin"
-							value="1" checked="checked">Si
-						</label> <label class="radio-inline"> <input type="radio"
-							name="record-admin" value="0">No
-						</label>
+						<label for="record-phone" class="form-control-label">Teléfono</label>
+						<input type="text" class="form-control" id="record-phone"
+							name="record-phone">
 					</div>
 					<div class="form-group">
-						<label for="record-password" class="form-control-label">Contraseña</label>
-						<input type="password" class="form-control" id="record-password"
-							name="record-password">
-					</div>
-					<div class="form-group">
-						<label for="record-password-confirm" class="form-control-label">Confirmación
-							de contraseña</label> <input type="password" class="form-control"
-							id="record-password-confirm" name="record-password-confirm">
+						<label for="record-email" class="form-control-label">Email</label>
+						<input type="text" class="form-control" id="record-email"
+							name="record-email">
 					</div>
 					<input type="hidden" id="record-id">
 				</form>
@@ -85,7 +76,6 @@
 			</div>
 		</div>
 		<!-- Modal content-->
-		
 	</div>
 </div>
 <!-- end modal for create / update-->
@@ -94,7 +84,6 @@
 <div class="modal fade" tabindex="-1" id="confirm-modal" role="dialog"
 	data-backdrop="static">
 	<div class="modal-dialog">
-	
 		<!-- start Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
@@ -111,99 +100,60 @@
 			</div>
 		</div>
 		<!-- Modal content-->
-		
 	</div>
 </div>
 <!-- end modal for confirm -->
 
 <!-- start own script-->
 <script>
-	var table = '';
-	var companies = [];
-
+	var table;
 	$(document).ready(function() {
-		//Load companies
-		$.get("http://trayectoseguro.azurewebsites.net/index.php/api/rcompany/list")
-			.done(function(data) {
-				$.each(data.response, function(index, item){
-					companies.push({"id" : item.id, "name" : item.name});
-					$("#record-company").append('<option value="'+item.id+'">'+item.name+'</option>');
-				});
-		  	})
-		  	.fail(function(e) {
-		    	console.log(e);
-		  	})
-		  	.always(function() {
-		  		//console.log(JSON.stringify(companies));
-		    	//alert( "finished" );
-			});
-
-		endpoint = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/list";
-		if (user.company_id) {
-			endpoint += "?company_id=" + user.company_id;
-		}
-
 		table = $('#example').DataTable({
-    		"select": true,
-		    "language": {
-				"url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
-			},
-
-			"ajax": {
-          			"url": endpoint,
-          			"type": "GET"
-        	},
-        	"showRefresh": true,
-            "sAjaxDataProp" : "response",
-	      	"columns": [
-            	{ 	
-            		"data": "id" 
-            	},
-	            { 	
-	            	"data": "username" 
-	            },
-	            {
-	            	"data": "company"
-	            },
-	            { 
-	            	"data": "company_id"
-	        	},
-	            { 
-	            	"data": "admin"
-	        	},
-	            { 	
-	            	"data": "active",
-	            },
-	            {
-	            	"data": null,
-	                "className": "center",
-	                "defaultContent": ''
-	                	
-	                	//+'&nbsp;&nbsp;<i class="glyphicon glyphicon-trash icon-action" data-action="delete" data-id="2" aria-hidden="true"></i>'
-	            }
+	    		"select": true,
+		    	"language": {
+				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+				},
+			   "ajax": {
+          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rpsicomember/list_by_company_id",
+          			"type": "GET",
+          			"data" : {
+              			"company_id" : company_id
+              		}
+        		},
+        		"showRefresh": true,
+            	"sAjaxDataProp" : "response",
+	            "columns": [
+	            	{ 	
+	            		"data": "id" 
+	            	},
+		            { 	
+		            	"data": "name" 
+		            },
+		            { 	
+		            	"data": "rut" 
+		            },
+		            { 	
+		            	"data": "phone" 
+		            },
+		            { 	
+		            	"data": "email" 
+		            },
+		            { 
+		            	"data": "company_id"
+		        	},
+		            {
+		            	"data": null,
+		                "className": "center",
+		                "defaultContent": ''
+		                	//+'&nbsp;&nbsp;<i class="glyphicon glyphicon-trash icon-action" data-action="delete" data-id="2" aria-hidden="true"></i>'
+		            }
 	            ],
 	            
 	            "columnDefs" : [
-	            	{ 	//param admin column - admin
-        				targets : [4],
-          					render : function (data, type, row) {
-             				return data == '1' ? 'Si' : 'No';
-          				}
-				    },
-        			{ 	//param active - column state
-        				targets : [5],
-          					render : function (data, type, row) {
-             				return data == '1' ? 'Activo' : 'Inactivo';
-          				}
-				    },
 				    { 	//icons options
         				targets : [6],
           					render : function (data, type, row) {
-          						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
-          						if(data.active == 1){
-          							iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action" data-action="deactivate" aria-hidden="true" style="color : green"></i>';
-          						}
-          					return '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>'+iconSwitch;
+          					return '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>';
           				}
 				    }
 				]
@@ -228,23 +178,18 @@
 		 		var row = $(this).closest('tr');
 				var id = row.find('td:eq(0)').text();
 				var name = row.find('td:eq(1)').text();
-				var company_id = row.find('td:eq(3)').text();
-				var isAdmin = row.find('td:eq(4)').text();
-				var state = row.find('td:eq(5)').text();
+				var rut = row.find('td:eq(2)').text();
+				var phone = row.find('td:eq(3)').text();
+				var email = row.find('td:eq(4)').text();
 				
 				switch (action){
 					case "edit":
 						//set value to form
 						$("#record-id").val(id);
 						$("#record-name").val(name);
-						$("#record-company").val(company_id);
-
-						if(isAdmin === "Si"){
-							$("#form-record input:radio[name='record-admin'][value='1']").prop("checked", true);
-						}else{
-							$("#form-record input:radio[name='record-admin'][value='0']").prop("checked", true);
-						}
-
+						$("#record-rut").val(rut);
+						$("#record-phone").val(phone);
+						$("#record-email").val(email);
 						$("#title").text(textEdit);
 						btnAction.text(textEdit);
 						btnAction.attr("data-action", action);
@@ -288,11 +233,13 @@
 		    btnAction.click(function(e){
 		    	e.preventDefault();
 		    	var action = $(this).attr("data-action");
-		    	var params = {  
-							"username" :  $("#record-name").val(),
-							"password": $("#record-password-confirm").val(),
-							"admin": $("input[name='record-admin']:checked", '#form-record').val(),
-							"company_id": $("#record-company").val()
+		    	var params = {
+				    		"id": $("#record-id").val(),
+							"name": $("#record-name").val(),
+							"rut": $("#record-rut").val(),
+							"phone": $("#record-phone").val(),
+							"email": $("#record-email").val(),
+							"company_id" : company_id
 						};
 				if(action == "edit"){
 					params.id = $("#record-id").val();
@@ -315,19 +262,19 @@
 				switch (action){
 
 					case "create":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/add";
+						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rpsicomember/add";
 					break;
 
 					case "edit":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/edit";
+						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rpsicomember/edit";
 					break;
 					
 					case "activate":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/activate";
+						url = "#";
 					break;
 
 					case "deactivate":
-						url="http://trayectoseguro.azurewebsites.net/index.php/api/ruser/deactivate";
+						url="#";
 					break;
 				}
 
@@ -348,6 +295,6 @@
 				  .always(function() {
 				    //alert( "finished" );
 				  });
-			}	
-</script>
+			}
+		</script>
 <!-- end own script -->

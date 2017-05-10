@@ -16,7 +16,7 @@
 				overflow-x: hidden;
 			}
 		</style>
-		<title>Trayecto Seguro</title>
+		<title>Riesgo Psicosocial</title>
 	</head>
 	<body>
 
@@ -69,7 +69,7 @@
 				e.preventDefault();
 
 				var params = $("#form-login").serialize();
-				var url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/login";
+				var url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/login";
 				//Call to API
 				$.post(url, params)
 					.done(function(data) {

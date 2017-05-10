@@ -69,5 +69,17 @@ die;
 		$this->response_ok($result);
 	}
 
+	public function list_completions_by_company_id_get() {
+		if (!$this->get('company_id')) {
+			$this->response_error(400);
+		}
+		$result = $this->questionary_model->get_questionary_completions_by_company_id(3);
+	
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+	
+		$this->response_ok($result);
+	}
 }
 
