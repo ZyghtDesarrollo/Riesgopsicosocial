@@ -78,7 +78,7 @@
 						if (data.user.username == 'superadmin') {
 							window.location.href = "<?php echo base_url('companies/'); ?>";
 						} else if (data.user.admin) {
-							window.location.href = "<?php echo base_url('users/'); ?>";
+							window.location.href = "<?php echo base_url('job_positions/'); ?>";
 						}
 					})
 					.fail(function() {

@@ -18,6 +18,8 @@
 					<th>ID</th>
 					<th>Nombre</th>
 					<th>Código</th>
+					<th>RUT</th>
+					<th>Correo electrónico</th>
 					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>
@@ -53,6 +55,21 @@
 						<label for="record-code" class="form-control-label">Código</label>
 						<input type="text" class="form-control" id="record-code"
 							name="record-code">
+					</div>
+					<div class="form-group">
+						<label for="record-rut" class="form-control-label">RUT</label>
+						<input type="text" class="form-control" id="record-rut"
+							name="record-rut">
+					</div>
+					<div class="form-group">
+						<label for="record-email" class="form-control-label">Correo electrónico</label>
+						<input type="text" class="form-control" id="record-email"
+							name="record-email">
+					</div>
+					<div class="form-group">
+						<label for="record-password" class="form-control-label">Contraseña</label>
+						<input type="password" class="form-control" id="record-password"
+							name="record-password">
 					</div>
 					<input type="hidden" id="record-id">
 				</form>
@@ -117,6 +134,12 @@
 			            { 
 			            	"data": "code"
 			        	},
+			        	{
+							"data": "rut"
+				        },
+				        {
+							"data": "email"
+						},
 			            { 	
 			            	"data": "active",
 			            },
@@ -131,13 +154,13 @@
 		            
 		            "columnDefs" : [
 	        			{ 	//param active
-	        				targets : [3],
+	        				targets : [5],
 	          					render : function (data, type, row) {
 	             				return data == '1' ? 'Activo' : 'Inactivo';
 	          				}
 					    },
 					    { 	//icons options
-	        				targets : [4],
+	        				targets : [6],
 	          					render : function (data, type, row) {
 	          						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
 	          						if(data.active == 1){
@@ -169,7 +192,8 @@
 				var id = row.find('td:eq(0)').text();
 				var name = row.find('td:eq(1)').text();
 				var code = row.find('td:eq(2)').text();
-				var state = row.find('td:eq(3)').text();
+				var rut = row.find('td:eq(3)').text();
+				var email = row.find('td:eq(4)').text();
 				
 				switch (action){
 					case "edit":
@@ -177,6 +201,9 @@
 						$("#record-id").val(id);
 						$("#record-name").val(name);
 						$("#record-code").val(code);
+						$("#record-rut").val(rut);
+						$("#record-email").val(email);
+						$("#record-password").val('');
 						$("#title").text(textEdit);
 						btnAction.text(textEdit);
 						btnAction.attr("data-action", action);
@@ -222,7 +249,10 @@
 		    	var action = $(this).attr("data-action");
 		    	var params = {  
 							"name" :  $("#record-name").val(),
-							"code" : $("#record-code").val()
+							"code" : $("#record-code").val(),
+							"rut" : $("#record-rut").val(),
+							"email" : $("#record-email").val(),
+							"password" : $("#record-password").val()
 						};
 				if(action == "edit"){
 					params.id = $("#record-id").val();

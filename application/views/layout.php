@@ -19,6 +19,31 @@
 			src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		
 		<!-- start general custom style -->
+		<script>
+		//User Roles & Menu
+		var company_id = 3; //Replace after use session storage
+// 		var user = JSON.parse(sessionStorage.getItem("user"));
+// 		if(user){
+// 			if (user.username == 'superadmin') {
+// 				$("#companies").show();
+// 				$("#jobPositions").hide();
+// 				$("#randomUsers").hide();
+// 				$("#psychosocialTeam").hide();
+// 				$("#recomendations").hide();
+// 				$("#resultsAnalysis").hide();
+// 			} else if (user.admin) {
+// 				company_id = user.id;
+// 				$("#companies").show();
+// 				$("#jobPositions").show();
+// 				$("#randomUsers").show();
+// 				$("#psychosocialTeam").show();
+// 				$("#recomendations").show();
+// 				$("#resultsAnalysis").show();
+// 			}
+// 		}else{
+//			window.location.href = '<?php echo base_url('login/'); ?>';
+// 			}
+		</script>
 		<style>
 			#app {
 				width: 100vw;
@@ -63,27 +88,6 @@
 	
 	<!--  start general custom script -->
 	<script>
- 	var company_id = 3;
-// 	$(document).ready(function() {
-// 		//User Roles & Menu
-// 		var user = JSON.parse(sessionStorage.getItem("user"));
-// 		if (user.username == 'superadmin') {
-// 			$("#companies").show();
-// 			$("#jobPositions").hide();
-// 			$("#randomUsers").hide();
-// 			$("#psychosocialTeam").hide();
-// 			$("#recomendations").hide();
-// 			$("#resultsAnalysis").hide();
-// 		} else if (user.admin) {
-// 			$("#companies").show();
-// 			$("#jobPositions").show();
-// 			$("#randomUsers").show();
-// 			$("#psychosocialTeam").show();
-// 			$("#recomendations").show();
-// 			$("#resultsAnalysis").show();
-// 		}
-// 	});
-
 		function logout() {
 			sessionStorage.removeItem("user");
 			window.location.href = '<?php echo base_url('login/'); ?>';

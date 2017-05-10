@@ -19,7 +19,7 @@
 					<th>Nombre</th>
 					<th>RUT</th>
 					<th>Teléfono</th>
-					<th>Email</th>
+					<th>Correo electrónico</th>
 					<th>Código de compañía</th>
 					<th>Acciones</th>
 				</tr>
