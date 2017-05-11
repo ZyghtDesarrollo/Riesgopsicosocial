@@ -73,12 +73,30 @@ die;
 		if (!$this->get('company_id')) {
 			$this->response_error(400);
 		}
-		$result = $this->questionary_model->get_questionary_completions_by_company_id(3);
+		
+ 		$result = $this->questionary_model->get_questionary_completions_by_company_id($this->get('company_id'));
 	
 		if ($result === FALSE) {
 			$this->response_error(404);
 		}
 	
+		$this->response_ok($result);
+	}
+	
+	public function add_recommendations_post(){
+		$questionaryc_id = $this->post('id');
+		$recommendations = $this->post('recommendations');
+		
+		if (!$questionaryc_id) {
+			$this->response_error(400);
+		}
+		
+		$result = $this->questionary_model->set_recommendations($questionaryc_id, $recommendations);
+		
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+		
 		$this->response_ok($result);
 	}
 }

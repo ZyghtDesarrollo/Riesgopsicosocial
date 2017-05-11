@@ -69,6 +69,15 @@ class Recommendation_model extends Zyght_Model {
 
 		return ($query->num_rows() > 0) ? $query->result() : array();
 	}
-
+	
+	public function get_by_questionary_completion_id($qc_id){
+		$this->db->select('r.*');
+		$this->db->from($this->table.' AS r');
+		$this->db->join('QuestionaryRecommendations AS qr','qr.recommendation_id = r.id');
+		$this->db->where('qr.questionary_completion_id', (int) $qc_id);
+		$this->db->order_by('r.id', 'ASC');
+		$query = $this->db->get();
+		
+		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
 }
-

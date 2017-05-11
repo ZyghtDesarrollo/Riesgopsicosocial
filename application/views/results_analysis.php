@@ -2,13 +2,23 @@
 	.questionary-panel{
 		display: none;
 	}
+	
+	.video-iframe{
+		width: 100%;
+		height: 345px;
+	}
+	
+	td > i.glyphicon:hover{
+		opacity: 0.5;
+		color: red;
+	}
 </style>
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
 		<ol class="breadcrumb">
 			<li><a href="#">Home</a></li>
-			<li class="active">Categoría del cuestionario</li>
+			<li class="active">Revisión de cuestionarios</li>
 		</ol>
 	</div>
 </div>
@@ -24,6 +34,7 @@
 					<th>Tipo de cuestionario</th>
 					<th>Puesto de trabajo</th>
 					<th>Código de compañía</th>
+					<th>Estado</th>
 					<th>Fecha de creación</th>
 					<th>Acciones</th>
 				</tr>
@@ -33,7 +44,7 @@
 </div>
 
 <div class="row">
-	<div class="col-sm-12 text-center">
+	<div class="col-sm-12 text-center" style="display:none;">
 		<button id="btn-create" class="btn btn-success" data-action="create">Crear</button>
 	</div>
 </div>
@@ -46,22 +57,27 @@
 		<!-- start Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title" id="title">default</h4>
 			</div>
 			<div class="modal-body">
 				<div id="questionary" style="padding:0px;"></div>
 				<form id="form-record">
 					<div class="form-group">
-						<label for="record-recommendation" class="form-control-label">Recomendación</label>
-						<input type="text" class="form-control" id="record-recommendation"
-							name="record-recommendation">
+						<label for="record-recommendation" class="form-control-label">Recomendación (Video sugerido)</label>
+						<select id="record-recommendation"
+							name="record-recommendation" multiple="multiple" class="form-control-label" style="width: 100%;">
+							<option value="-1">Seleccione</option>
+						</select>
 					</div>
 					<input type="hidden" id="record-id">
 				</form>
 			</div>
 			<div class="modal-footer">
 				<button type="button" id="btn-action" class="btn btn-success"
-					data-action="create">Crear</button>
+					data-action="create"
+					data-loading-text="&lt;span&gt;&lt;i class='fa fa-refresh 
+					fa-spin'&gt;&lt;/i&gt;&nbsp;&nbsp; Procesando...&lt;span&gt;">Crear</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 			</div>
 		</div>
@@ -69,6 +85,29 @@
 	</div>
 </div>
 <!-- end modal for create / update-->
+
+<!-- start modal for confirm -->
+<div class="modal fade" tabindex="-1" id="video-modal" role="dialog"
+	data-backdrop="static">
+	<div class="modal-dialog">
+		<!-- start Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Videos recomendados</h4>
+			</div>
+			<!-- This section (div id="modal-body") will be loaded dynamically -->
+			<div id="loading" class="text-center" style="display:none;">
+					<img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
+			</div>
+			<div class="modal-body" id="modal-body"></div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+		<!-- Modal content-->
+	</div>
+</div>
+<!-- end modal for confirm -->
 
 <!-- start modal for confirm -->
 <div class="modal fade" tabindex="-1" id="confirm-modal" role="dialog"
@@ -96,6 +135,12 @@
 
 <!-- start own script-->
 <script>
+	$('#record-recommendation').select2({
+	  placeholder: {
+		    id: '-1', // the value of the option
+		    text: 'Seleccione'
+		}
+	});
 	var table;
 	$(document).ready(function() {
 		table = $('#example').DataTable({
@@ -104,7 +149,7 @@
 				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
 				},
 			   "ajax": {
-          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rquestionary/list_completions_by_company_id",
+          			"url": "<?php echo base_url('api/rquestionary/list_completions_by_company_id');?>",
           			"type": "GET",
           			"data" : {
               			"company_id" : company_id
@@ -126,6 +171,11 @@
 		            { 
 		            	"data": "company_id"
 		        	},
+		        	{
+						"data": null,
+						"className": "center",
+		                "defaultContent": ''
+				    },
 		            { 	
 		            	"data": "created_at",
 		            },
@@ -137,17 +187,32 @@
 		            }
 	            ],
 	            "columnDefs" : [
-				    { 	//icons options
-        				targets : [5],
+	            	{ 	//icons action options
+        				targets : [4],
           					render : function (data, type, row) {
-          					return '<i class="glyphicon glyphicon-zoom-in icon-action" data-id="'+data.id
-          						+'" data-action="detail" data-questionary="#panel-'+data.questionary_id
-          						+'" aria-hidden="true" title="Ver detalle"></i>';
+              							var state = 'No revisado';
+              							if(data.has_recommendation){
+											state = 'Revisado';
+                      					}
+          						return state;
+          				}
+				    },
+				    { 	//icons action options
+        				targets : [6],
+          					render : function (data, type, row) {
+              							var icons = '<i class="glyphicon glyphicon-zoom-in icon-action"'
+              										+' data-action="detail" data-questionary="#panel-'+data.questionary_id+'"' 
+              										+' aria-hidden="true" title="Revisar"></i>&nbsp;&nbsp';
+		          						var videoIcon = '<i class="glyphicon glyphicon-film icon-action"'
+		          										+' data-action="showVideo" aria-hidden="true" title="Ver video"></i>';
+              							if(data.has_recommendation){
+											icons += videoIcon;
+                      					}
+          						return icons;
           				}
 				    }
 				]
 		    });
-
 
 	    	//Start load questionaries
 	    	var url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rquestionary/initialdata";
@@ -192,9 +257,21 @@
 			});
     		//End load quesrionaries
 
-//     		$.get("http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives", {"company_id" : company_id})
-// 				.done(function(response) {});
-    		
+    		//Start load recommendations
+			$.get("http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives", {"company_id" : company_id})
+			.done(function(data) {
+				$.each(data.response, function(index, obj){
+					$("#record-recommendation").append('<option value="'+obj.id+'">'+obj.title+'</option>');
+				});
+		  	})
+		  	.fail(function(e) {
+		    	console.log(e);
+		  	})
+		  	.always(function() {
+		  		//console.log(JSON.stringify(companies));
+		    	//alert( "finished" );
+			});
+			//End load recommendations
 		} );
 
 		//$('#example').find('.dataTables_filter').append('<button class="btn btn-success mr-xs pull-right" type="button">Crear</button>');
@@ -254,12 +331,37 @@
 					case "detail":
 						$("#record-id").val(id);
 						$("#record-name").val(name);
-						$("#title").text(textEdit);
+						$("#title").text('Revisión de cuestionario ID: '+id);
 						$($(this).attr("data-questionary")).closest("div.questionary-panel").addClass("show").siblings().removeClass("show");
-						btnAction.text(textEdit);
-						btnAction.attr("data-action", action);
+						btnAction.text('Agregar recomendación');
+						btnAction.attr("data-action", 'edit');
 						btnAction.attr("class", "btn btn-warning");
 						$('#form-modal').modal('show');
+					break;
+
+					case "showVideo":
+						$("#loading").show();
+						$("#modal-body").empty();
+						$.get( "<?php echo base_url('api/rrecommendation/list_by_questionary_completion_id');?>", {"qc_id": id})
+							.done(function(data) {
+								$("#loading").hide();
+								var iframes = '';
+								$(data.response).each(function(i, element){
+									console.log(JSON.stringify(element));
+										iframes  +='<h4>'+element.title+'</h4>';//Title
+										iframes += '<iframe class="video-iframe" src="'+ element.link +'" frameborder="0" allowfullscreen></iframe>';
+										iframes  +='<h5>'+element.description+'</h5>'
+								});
+								$("#modal-body").html(iframes);
+								
+						  	})
+						  	.fail(function() {
+						    //alert( "error" );
+						  	})
+						  	.always(function() {
+						    //alert( "finished" );
+						  	});
+						$('#video-modal').modal('show');
 					break;
 				}
 		    } );
@@ -279,8 +381,7 @@
 		    	e.preventDefault();
 		    	var action = $(this).attr("data-action");
 		    	var params = {  
-							"position" :  $("#record-name").val(),
-							"company_id" : company_id
+							"recommendations" :  $("#record-recommendation").val()
 						};
 				if(action == "edit"){
 					params.id = $("#record-id").val();
@@ -299,24 +400,27 @@
 
 			//Process actions
 			function processAction(action, params){
+				var ajaxPost = true;
 				var url = "";
 				switch (action){
 
 					case "create":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/add";
+						url = "#";
 					break;
 
 					case "edit":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/edit";
+						url = "<?php echo base_url('api/rquestionary/add_recommendations');?>";
 					break;
 					
 					case "activate":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/activate";
+						url = "#";
 					break;
 
 					case "deactivate":
-						url="http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/deactivate";
+						url="#";
 					break;
+
+					
 				}
 
 				//Call to API

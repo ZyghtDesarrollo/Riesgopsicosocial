@@ -96,6 +96,20 @@ class Rrecommendation extends API_Controller {
 
 		$this->response_ok($result);
 	}
+	
+	public function list_by_questionary_completion_id_get() {
+		if (!$this->get('qc_id')) {
+			$this->response_error(400);
+		}
+	
+		$result = $this->recommendation_model->get_by_questionary_completion_id($this->get('qc_id'));
+	
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+	
+		$this->response_ok($result);
+	}
 
 }
 
