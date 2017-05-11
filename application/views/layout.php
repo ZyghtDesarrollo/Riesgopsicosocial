@@ -5,6 +5,17 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Riesgo Psicosocial</title>
+
+		<script>
+			//User Roles & Menu
+			var user = JSON.parse(sessionStorage.getItem("user"));
+
+			if (!user) {
+				window.location.href = '<?php echo base_url('login/'); ?>';
+			}
+
+			var company_id = user.id;
+		</script>
 		
 		<!--css-->
 		<link rel="stylesheet" type="text/css"
@@ -20,32 +31,6 @@
 		
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-		
-		<script>
-		//User Roles & Menu
-		var company_id = 3; //Replace after use session storage
-// 		var user = JSON.parse(sessionStorage.getItem("user"));
-// 		if(user){
-// 			if (user.username == 'superadmin') {
-// 				$("#companies").show();
-// 				$("#jobPositions").hide();
-// 				$("#randomUsers").hide();
-// 				$("#psychosocialTeam").hide();
-// 				$("#recomendations").hide();
-// 				$("#resultsAnalysis").hide();
-// 			} else if (user.admin) {
-// 				company_id = user.id;
-// 				$("#companies").show();
-// 				$("#jobPositions").show();
-// 				$("#randomUsers").show();
-// 				$("#psychosocialTeam").show();
-// 				$("#recomendations").show();
-// 				$("#resultsAnalysis").show();
-// 			}
-// 		}else{
-//			window.location.href = '<?php echo base_url('login/'); ?>';
-// 			}
-		</script>
 		
 		<!-- start general custom style -->
 		<style>
@@ -104,9 +89,27 @@
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<!-- start scripts data tables-->
 	<script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
-	<script
-		src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+	<script src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
 
 	<!-- end scripts data tables-->
+
+	<script>
+		//User Roles & Menu
+		if (user.name == 'superadmin') {
+			$("#companies").show();
+			$("#jobPositions").hide();
+			$("#randomUsers").hide();
+			$("#psychosocialTeam").hide();
+			$("#recomendations").hide();
+			$("#resultsAnalysis").hide();
+		} else {
+			$("#companies").show();
+			$("#jobPositions").show();
+			$("#randomUsers").show();
+			$("#psychosocialTeam").show();
+			$("#recomendations").show();
+			$("#resultsAnalysis").show();
+		}
+	</script>
 </body>
 </html>
