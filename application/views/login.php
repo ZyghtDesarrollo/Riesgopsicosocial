@@ -38,10 +38,6 @@
 						  	</div>
 						  	<form id="form-login">
 							  	<div class="panel-body">
-						         	<div class="form-group">
-							            <label for="username" class="form-control-label">Usuario</label>
-							            <input type="text" class="form-control" id="username" name="username">
-						          	</div>
 						          	<div class="form-group">
 							            <label for="password" class="form-control-label">Contraseña</label>
 							            <input type="password" class="form-control" id="password" name="password">
@@ -63,6 +59,7 @@
 			</div>	
 		</div>
 		
+
 		<!-- start own script-->
 		<script>
 			$("#btn-login").click(function(e){
@@ -75,9 +72,9 @@
 					.done(function(data) {
 						sessionStorage.setItem("user", JSON.stringify(data.user));
 
-						if (data.user.username == 'superadmin') {
+						if (data.user.name == 'superadmin') {
 							window.location.href = "<?php echo base_url('companies/'); ?>";
-						} else if (data.user.admin) {
+						} else {
 							window.location.href = "<?php echo base_url('job_positions/'); ?>";
 						}
 					})

