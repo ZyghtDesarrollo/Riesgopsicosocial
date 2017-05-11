@@ -79,7 +79,7 @@
 						}
 					})
 					.fail(function() {
-						//alert( "error" );
+						alert("Por favor verifique los datos ingresados");
 					})
 					.always(function() {
 						//alert( "finished" );
