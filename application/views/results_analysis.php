@@ -123,6 +123,11 @@
 				<h4 class="modal-title" id="title">default</h4>
 			</div>
 			<div class="modal-body">
+
+				<div id="loading" class="text-center" style="display:none;">
+					<img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
+				</div>
+
 				<div id="questionary" style="padding:0px;"></div>
 				<form id="form-record">
 					<div class="form-group">
