@@ -153,7 +153,7 @@
 </div>
 <!-- end modal for create / update-->
 
-<!-- start modal for confirm -->
+<!-- start modal for display video -->
 <div class="modal fade" tabindex="-1" id="video-modal" role="dialog"
 	data-backdrop="static">
 	<div class="modal-dialog">
@@ -174,7 +174,7 @@
 		<!-- Modal content-->
 	</div>
 </div>
-<!-- end modal for confirm -->
+<!-- end modal for display video -->
 
 <!-- start modal for confirm -->
 <div class="modal fade" tabindex="-1" id="confirm-modal" role="dialog"

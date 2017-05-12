@@ -3,6 +3,23 @@
 	user = JSON.parse(user);
 </script>
 
+<style>
+	.video-iframe{
+		width: 100%;
+		height: 345px;
+	}
+	
+	td > i.glyphicon:hover{
+		opacity: 0.5;
+		color: red;
+	}
+	
+	blockquote{
+  		margin: 20px 0;
+  		padding-left: 1.5rem;
+  		border-left: 5px solid #64b5f6; /* Just change the color value and that's it*/
+	}
+</style>
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
@@ -23,7 +40,7 @@
 					<th>ID</th>
 					<th>Título</th>
 					<th>Descripción</th>
-					<th>Video</th>
+					<th>URL</th>
 					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>
@@ -62,6 +79,10 @@
 					</div>
 					<div class="form-group">
 						<label for="record-url" class="form-control-label">URL (Video)</label>
+						<blockquote>
+  							<h5>Agregue sólo URL de videos embebidos.<br>
+  							 Si desea agregar un video de Youtube, presione compartir - insertar, copie sólo el enlace que está en "src"</h5>
+						</blockquote>
 						<input type="text" class="form-control" id="record-url"
 							name="record-url">
 					</div>
@@ -102,6 +123,33 @@
 	</div>
 </div>
 <!-- end modal for confirm -->
+
+<!-- start modal for display video -->
+<div class="modal fade" tabindex="-1" id="video-modal" role="dialog"
+	data-backdrop="static">
+	<div class="modal-dialog">
+		<!-- start Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Videos recomendado</h4>
+			</div>
+			<!-- This section (div id="modal-body") will be loaded dynamically -->
+			<div id="loading" class="text-center" style="display:none;">
+					<img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
+			</div>
+			<div class="modal-body" id="modal-body">
+				<h4 id="rTitle"></h4>
+				<iframe id="rVideo" class="video-iframe" src="" frameborder="0" allowfullscreen></iframe>
+				<h4 id="rDescription"></h4>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+		<!-- Modal content-->
+	</div>
+</div>
+<!-- end modal for display video -->
 
 <!-- start own script-->
 <script>
@@ -157,12 +205,6 @@
 	            ],
 	            
 	            "columnDefs" : [
-	            	{ 	//param active
-        				targets : [3],
-          					render : function (data, type, row) {
-             				return '<a href="'+data+'" target="_blank">Ver Video<a>';
-          				}
-				    },
         			{ 	//param active
         				targets : [4],
           					render : function (data, type, row) {
@@ -182,8 +224,12 @@
 
 							if (user.name == 'superadmin') {
 								var iconSwitch ='&nbsp;&nbsp;<i class="glyphicon glyphicon glyphicon-trash icon-action icon-deactivated" data-action="deactivate" aria-hidden="true""></i>';
-
-								response = '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>' + iconSwitch
+								if(data.link){
+									response = '<i class="glyphicon glyphicon-film icon-action"'
+										+' data-action="showVideo" aria-hidden="true" title="Ver video"></i>&nbsp;&nbsp;';
+								}
+								
+								response += '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>' + iconSwitch
 							}
 
           					return response;
@@ -212,7 +258,7 @@
 				var id = row.find('td:eq(0)').text();
 				var title = row.find('td:eq(1)').text();
 				var description = row.find('td:eq(2)').text();
-				var url = row.find('td:eq(3)').find("a").attr('href');
+				var url = row.find('td:eq(3)').text();;
 				
 				switch (action){
 					case "edit":
@@ -246,6 +292,15 @@
 						btn.attr("data-action", action);
 						btn.attr("class", "btn btn-danger");
 						$('#confirm-modal').modal('show');
+					break;
+
+					case "showVideo":
+						$("#rVideo").attr("src", url);
+						$("#rTitle").text("");
+						$("#rDescription").text("");
+						$("#rTitle").text(title);
+						$("#rDescription").text(description);
+						$('#video-modal').modal('show');
 					break;
 				}
 		    } );

@@ -39,12 +39,12 @@
 						  	<form id="form-login">
 							  	<div class="panel-body">
 						          	<div class="form-group">
-							            <label for="password" class="form-control-label">Contraseña</label>
-							            <input type="password" class="form-control" id="password" name="password">
-						          	</div>
-						          	<div class="form-group">
 							            <label for="code" class="form-control-label">Código</label>
 							            <input type="text" class="form-control" id="code" name="code">
+						          	</div>
+						          	<div class="form-group">
+							            <label for="password" class="form-control-label">Contraseña</label>
+							            <input type="password" class="form-control" id="password" name="password">
 						          	</div>
 						          	<input type="hidden" id="record-id">
 							  	</div>
