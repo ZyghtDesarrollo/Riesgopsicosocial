@@ -36,8 +36,8 @@ class randomuser_model extends Zyght_Model {
 		return TRUE;
 	}
 
-	private function _random_password($chars = 16) {
-		$letters = 'abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+	private function _random_password($chars = 6) {
+		$letters = 'abcefghijklmnopqrstuvwxyz1234567890';
 		return substr(str_shuffle($letters), 0, $chars);
 	}
 
