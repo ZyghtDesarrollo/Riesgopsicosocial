@@ -40,11 +40,15 @@ class Jobposition_model extends Zyght_Model {
 		return FALSE;
 	}
 
-	public function get_by_company_id($company_id) {
+	public function get_by_company_id($company_id, $list_inactives = 0) {
 		$this->db->select('*');
 		$this->db->from($this->table);
 		$this->db->where('company_id', $company_id);
-		$this->db->where('active', 1);
+
+		if (!$list_inactives) {
+			$this->db->where('active', 1);
+		}
+
 		$query = $this->db->get();
 
 		return ($query->num_rows() > 0) ? $query->result() : array();

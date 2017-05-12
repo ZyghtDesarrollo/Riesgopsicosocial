@@ -45,14 +45,6 @@ class Rquestionary extends API_Controller {
 			));
 		}
 
-/*
-print_r($user); echo "<hr>";
-print_r($this->post('questionaryId')); echo "<hr>";
-print_r($this->post('jobPositionId')); echo "<hr>";
-print_r($this->post('answers')); echo "<hr>";
-die;
-*/
-
 		$answers = $this->json_decode($this->post('answers'));
 
 		$result = $this->questionary_model->create(
@@ -99,5 +91,18 @@ die;
 		
 		$this->response_ok($result);
 	}
-}
 
+	public function list_answers_by_id_get() {
+		if (!$this->get('questionary_completion_id')) {
+			$this->response_error(400);
+		}
+		
+ 		$result = $this->answer_model->get_by_questionary_completion_id($this->get('questionary_completion_id'));
+	
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+	
+		$this->response_ok($result);
+	}
+}

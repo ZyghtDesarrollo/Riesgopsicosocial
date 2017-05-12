@@ -61,7 +61,7 @@ class Rjobposition extends API_Controller {
 	}
 	
 	public function list_by_company_id_get() {
-		$result = $this->jobposition_model->get_by_company_id($this->get('company_id'));
+		$result = $this->jobposition_model->get_by_company_id($this->get('company_id'), $this->get('list_inactives'));
 
 		if ($result === FALSE) {
 			$this->response_error(404);

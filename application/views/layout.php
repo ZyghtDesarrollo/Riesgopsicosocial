@@ -100,10 +100,10 @@
 			$("#jobPositions").hide();
 			$("#randomUsers").hide();
 			$("#psychosocialTeam").hide();
-			$("#recomendations").hide();
+			$("#recomendations").show();
 			$("#resultsAnalysis").hide();
 		} else {
-			$("#companies").show();
+			$("#companies").hide();
 			$("#jobPositions").show();
 			$("#randomUsers").show();
 			$("#psychosocialTeam").show();

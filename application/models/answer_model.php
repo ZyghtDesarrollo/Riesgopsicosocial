@@ -19,11 +19,17 @@ class Answer_model extends Zyght_Model {
 
 		$id = $this->db->insert_id();
 
-echo $this->db->last_query();
-echo "<hr>";
-echo $id . "<hr>";
-
 		return ($id > 0) ? $id : FALSE;
+	}
+	
+	
+	public function get_by_questionary_completion_id($id) {
+		$this->db->select('*');
+		$this->db->from($this->table);
+		$this->db->where('questionary_completion_id', $id);
+		$query = $this->db->get();
+
+		return ($query->num_rows() > 0) ? $query->result() : array();
 	}
 
 }

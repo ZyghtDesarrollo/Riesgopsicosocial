@@ -97,10 +97,11 @@
 				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
 				},
 			   "ajax": {
-          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/list_by_company_id?company_id=3",
+          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/list_by_company_id",
           			"type": "GET",
           			"data" : {
-              			"company_id" : company_id
+              			"company_id" : company_id,
+              			"list_inactives" : 1
               		}
        
         		},

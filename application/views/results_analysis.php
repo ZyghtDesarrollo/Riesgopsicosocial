@@ -1,7 +1,63 @@
-<style>
-	.questionary-panel{
-		display: none;
+<script>
+	var questionaries = null;
+
+	function findAnswer(id, answers) {
+		response = false;
+
+		$.each(answers, function(i, obj){
+			if (id == obj.question_option_id) {
+				response = true;
+			}
+		});
+
+		return response;	
 	}
+
+	function getQuestionary(questionaryType, questionaries, answers) {
+		questionary = (questionaryType == "Cuestionario Breve") ? questionaries[0] : questionaries[1];
+
+		var panel = '';
+
+		panel += '<div id="panel-'+ questionary.id +'" class="questionary-panel panel panel-default">'
+	  		  	+'<div class="panel-body">';
+
+		panel += '<h2 class="text-center">'+ questionary.name +'</h2>';
+
+		$.each(questionary.categories, function(i, obj_category){
+			panel += '<h4>'+obj_category.title+'</h4>';
+
+			$.each(obj_category.questions, function(y, obj_question){
+				panel += '<p class="question">'
+	    			+ '<ol start='+(y+1)+'>' + '<li>'+obj_question.title+'</li>' + '</ol>'
+					+ '<div class="answere-box">'
+						+'<ol type="a">';
+
+				$.each(obj_question.options, function(i, obj_options){
+					if (findAnswer(obj_options.id, answers) == false) {
+						panel += '<li>' + obj_options.title + '</li>';
+					} else {
+						panel += '<li class="selected-answere">' + obj_options.title + ' <i class="glyphicon glyphicon-ok"></i></li>';
+					}
+				});
+
+				panel += '</ol>'
+	    	   		+ '<p></p>'
+			 		+ '<hr>'
+					+ '</div>';
+			});						
+		});
+
+		panel += '</div>'
+			+'</div>';	
+
+		return panel;
+	}
+</script>
+
+<style>
+	.selected-answere{
+        font-weight: bold;
+    }	
 	
 	.video-iframe{
 		width: 100%;
@@ -12,7 +68,13 @@
 		opacity: 0.5;
 		color: red;
 	}
+
+	.modal-body{
+		height: 500px;
+		overflow-y: auto;
+	}
 </style>
+
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
@@ -219,41 +281,7 @@
 			//Call to API
 			$.get(url)
 				.done(function(response) {
-					var panel = '';
-					var questionary_type = '';
-					var questionaries = null;
-
-					$.each(response, function(i, obj){
-						panel += '<div id="panel-'+obj.id+'" class="questionary-panel panel panel-default">'
-					  		  	+'<div class="panel-body">';
-						questionaries = response;
-						panel += '<h2 class="text-center">'+obj.name+'</h2>';
-						$.each(obj.categories, function(i, obj_category){
-							panel += '<h4>'+obj_category.title+'</h4>';
-							$.each(obj_category.questions, function(y, obj_question){
-								panel += '<p class="question">'
-				    			+'<ol start='+(y+1)+'>'
-				    				+'<li>'+obj_question.title+'</li>'
-								+'</ol>'
-								
-								+'<div class="answere-box">'
-									+'<ol type="a">';
-										$.each(obj_question.options, function(i, obj_options){
-											panel += '<li>'+obj_options.title+'</li>';
-											//<li class="selected-answere">Algunas veces <i class="glyphicon glyphicon-ok"></i></li>
-										});
-										panel+='</ol>'
-					    	   		+'<p></p>'
-							 		+'<hr>'
-								+'</div>';
-							});
-							
-						});
-						panel += '</div>'
-							+'</div>';	
-				});
-
-				$("#questionary").html(panel);
+					questionaries = response;
 			});
     		//End load quesrionaries
 
@@ -295,8 +323,8 @@
 				var jobPosition = row.find('td:eq(2)').text();
 				var code = row.find('td:eq(3)').text();
 				var createdAt = row.find('td:eq(4)').text();
-				
-				switch (action){
+
+				switch (action) {
 					case "edit":
 						//set value to form
 						$("#record-id").val(id);
@@ -332,10 +360,29 @@
 						$("#record-id").val(id);
 						$("#record-name").val(name);
 						$("#title").text('Revisión de cuestionario ID: '+id);
-						$($(this).attr("data-questionary")).closest("div.questionary-panel").addClass("show").siblings().removeClass("show");
+
 						btnAction.text('Agregar recomendación');
 						btnAction.attr("data-action", 'edit');
 						btnAction.attr("class", "btn btn-warning");
+
+						$("#loading").show();
+						$.get( "<?php echo base_url('api/rquestionary/list_answers_by_id');?>", {"questionary_completion_id": id})
+							.done(function(data) {
+								$("#loading").hide();
+
+								result = getQuestionary(questionaryType, questionaries, data.response);
+
+								$("#questionary").html(result);
+
+//								$("#modal-body").html(iframes);								
+							})
+							.fail(function() {
+								//alert( "error" );
+							})
+							.always(function() {
+								//alert( "finished" );
+							});
+
 						$('#form-modal').modal('show');
 					break;
 

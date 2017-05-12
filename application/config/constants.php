@@ -46,7 +46,7 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 */
 
 define('SUPER_ADMIN_PASS', 'demo1234');
-define('SUPER_ADMIN_CODE', '666');
+define('SUPER_ADMIN_CODE', '666666');
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

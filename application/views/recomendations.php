@@ -1,3 +1,8 @@
+<script>
+	var user = sessionStorage.getItem('user');
+	user = JSON.parse(user);
+</script>
+
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
@@ -27,7 +32,7 @@
 	</div>
 </div>
 
-<div class="row">
+<div class="row" id="row_btn_create">
 	<div class="col-sm-12 text-center">
 		<button id="btn-create" class="btn btn-success" data-action="create">Crear</button>
 	</div>
@@ -172,8 +177,16 @@
 //           						if(data.active == 1){
 //           							iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action" data-action="deactivate" aria-hidden="true" style="color : green"></i>';
 //           						}
-							var iconSwitch ='&nbsp;&nbsp;<i class="glyphicon glyphicon glyphicon-trash icon-action icon-deactivated" data-action="deactivate" aria-hidden="true""></i>';
-          					return '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>'+iconSwitch;
+
+							var response = '';
+
+							if (user.name == 'superadmin') {
+								var iconSwitch ='&nbsp;&nbsp;<i class="glyphicon glyphicon glyphicon-trash icon-action icon-deactivated" data-action="deactivate" aria-hidden="true""></i>';
+
+								response = '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>' + iconSwitch
+							}
+
+          					return response;
           				}
 				    }
 				]
@@ -311,5 +324,10 @@
 				    //alert( "finished" );
 				  });
 			}
+
+		if (user.name != 'superadmin') {
+			$("#row_btn_create").hide();
+		}
+
 		</script>
 <!-- end own script -->
