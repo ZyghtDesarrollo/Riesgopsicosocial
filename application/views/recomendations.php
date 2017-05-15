@@ -9,11 +9,6 @@
 		height: 345px;
 	}
 	
-	td > i.glyphicon:hover{
-		opacity: 0.5;
-		color: red;
-	}
-	
 	blockquote{
   		margin: 20px 0;
   		padding-left: 1.5rem;

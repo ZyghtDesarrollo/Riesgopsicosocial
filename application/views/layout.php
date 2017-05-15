@@ -55,6 +55,11 @@
 			.icon-deactivated {
 				color: #D9534F;
 			}
+			
+			td > i.glyphicon:hover{
+				opacity: 0.5;
+				color: red;
+			}
 		</style>
 		<!-- end general custom style -->
 	</head>

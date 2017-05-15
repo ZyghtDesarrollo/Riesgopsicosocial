@@ -64,11 +64,6 @@
 		height: 345px;
 	}
 	
-	td > i.glyphicon:hover{
-		opacity: 0.5;
-		color: red;
-	}
-
 	.modal-body{
 		height: 500px;
 		overflow-y: auto;
