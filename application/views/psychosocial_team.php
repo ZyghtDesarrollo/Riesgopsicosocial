@@ -20,7 +20,6 @@
 					<th>RUT</th>
 					<th>Teléfono</th>
 					<th>Correo electrónico</th>
-					<th>Código de compañía</th>
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -138,9 +137,6 @@
 		            { 	
 		            	"data": "email" 
 		            },
-		            { 
-		            	"data": "company_id"
-		        	},
 		            {
 		            	"data": null,
 		                "className": "center",
@@ -151,7 +147,7 @@
 	            
 	            "columnDefs" : [
 				    { 	//icons options
-        				targets : [6],
+        				targets : [5],
           					render : function (data, type, row) {
           					return '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>';
           				}

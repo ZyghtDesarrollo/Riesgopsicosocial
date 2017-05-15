@@ -17,7 +17,6 @@
 				<tr>
 					<th>ID</th>
 					<th>Puesto de trabajo</th>
-					<th>Código de compañía</th>
 					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>
@@ -114,9 +113,6 @@
 		            { 	
 		            	"data": "position" 
 		            },
-		            { 
-		            	"data": "company_id"
-		        	},
 		            { 	
 		            	"data": "active",
 		            },
@@ -130,13 +126,13 @@
 	            
 	            "columnDefs" : [
         			{ 	//param active
-        				targets : [3],
+        				targets : [2],
           					render : function (data, type, row) {
              				return data == '1' ? 'Activo' : 'Inactivo';
           				}
 				    },
 				    { 	//icons options
-        				targets : [4],
+        				targets : [3],
           					render : function (data, type, row) {
           						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
           						if(data.active == 1){

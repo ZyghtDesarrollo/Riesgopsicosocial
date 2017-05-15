@@ -17,7 +17,6 @@
 				<tr>
 					<th>ID</th>
 					<th>Contraseña</th>
-					<th>Código de compañía</th>
 					<th>Fecha de creación</th>
 				</tr>
 			</thead>
@@ -110,9 +109,6 @@
 		            { 	
 		            	"data": "password" 
 		            },
-		            { 
-		            	"data": "company_id"
-		        	},
 		            { 	
 		            	"data": "date" 
 		            }

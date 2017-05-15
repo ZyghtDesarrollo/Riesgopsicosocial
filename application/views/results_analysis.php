@@ -90,7 +90,6 @@
 					<th>ID</th>
 					<th>Tipo de cuestionario</th>
 					<th>Puesto de trabajo</th>
-					<th>Código de compañía</th>
 					<th>Estado</th>
 					<th>Fecha de creación</th>
 					<th>Acciones</th>
@@ -230,9 +229,6 @@
 		            { 
 		            	"data": "position"
 		        	},
-		            { 
-		            	"data": "company_id"
-		        	},
 		        	{
 						"data": null,
 						"className": "center",
@@ -250,7 +246,7 @@
 	            ],
 	            "columnDefs" : [
 	            	{ 	//icons action options
-        				targets : [4],
+        				targets : [3],
           					render : function (data, type, row) {
               							var state = 'No revisado';
               							if(data.has_recommendation){
@@ -260,7 +256,7 @@
           				}
 				    },
 				    { 	//icons action options
-        				targets : [6],
+        				targets : [5],
           					render : function (data, type, row) {
               							var icons = '<i class="glyphicon glyphicon-zoom-in icon-action"'
               										+' data-action="detail" data-questionary="#panel-'+data.questionary_id+'"' 
