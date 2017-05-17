@@ -33,6 +33,7 @@
 			<thead>
 				<tr>
 					<th>ID</th>
+					<th>Categoría</th>
 					<th>Título</th>
 					<th>Descripción</th>
 					<th>URL</th>
@@ -62,6 +63,12 @@
 			</div>
 			<div class="modal-body">
 				<form id="form-record">
+					<div class="form-group">
+						<label for="record-question-category" class="form-control-label">Categoría</label>
+						<select id="record-question-category" name="record-question-category" class="form-control">
+							<option value="-1">Seleccione...</opstion>
+						</select>
+					</div>
 					<div class="form-group">
 						<label for="record-title" class="form-control-label">Título</label>
 						<input type="text" class="form-control" id="record-title"
@@ -133,6 +140,7 @@
 					<img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
 			</div>
 			<div class="modal-body" id="modal-body">
+				<h3 id="rHeadTitle"></h3>
 				<h4 id="rTitle"></h4>
 				<iframe id="rVideo" class="video-iframe" src="" frameborder="0" allowfullscreen></iframe>
 				<h4 id="rDescription"></h4>
@@ -179,6 +187,9 @@
 	            	{ 	
 	            		"data": "id" 
 	            	},
+	            	{ 	
+	            		"data": "question_category_title" 
+	            	},
 		            { 	
 		            	"data": "title" 
 		            },
@@ -201,13 +212,13 @@
 	            
 	            "columnDefs" : [
         			{ 	//param active
-        				targets : [4],
+        				targets : [5],
           					render : function (data, type, row) {
              				return data == '1' ? 'Activo' : 'Inactivo';
           				}
 				    },
 				    { 	//icons options
-        				targets : [5],
+        				targets : [6],
           					render : function (data, type, row) {
               					//For logic elimination
 //           						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
@@ -251,14 +262,18 @@
 		        var action = $(this).attr("data-action");
 		 		var row = $(this).closest('tr');
 				var id = row.find('td:eq(0)').text();
-				var title = row.find('td:eq(1)').text();
-				var description = row.find('td:eq(2)').text();
-				var url = row.find('td:eq(3)').text();;
+				var qc_title = row.find('td:eq(1)').text();
+				var title = row.find('td:eq(2)').text();
+				var description = row.find('td:eq(3)').text();
+				var url = row.find('td:eq(4)').text();;
 				
 				switch (action){
 					case "edit":
 						//set value to form
 						$("#record-id").val(id);
+						$("#record-question-category option").filter(function () {
+						    return $(this).text() === qc_title;
+						}).prop("selected", true);
 						$("#record-title").val(title);
 						$("#record-description").val(description);
 						$("#record-url").val(url);
@@ -291,8 +306,10 @@
 
 					case "showVideo":
 						$("#rVideo").attr("src", url);
+						$("#rHeadTitle").text("");
 						$("#rTitle").text("");
 						$("#rDescription").text("");
+						$("#rHeadTitle").text(qc_title);
 						$("#rTitle").text(title);
 						$("#rDescription").text(description);
 						$('#video-modal').modal('show');
@@ -314,7 +331,8 @@
 		    btnAction.click(function(e){
 		    	e.preventDefault();
 		    	var action = $(this).attr("data-action");
-		    	var params = {  
+		    	var params = {
+				    		"questionCategoryId": $("#record-question-category").val(),
 							"title" :  $("#record-title").val(),
 							"description" :  $("#record-description").val(),
 							"link" :  $("#record-url").val()
@@ -374,6 +392,22 @@
 				    //alert( "finished" );
 				  });
 			}
+
+			//Start load recommendations
+			$.get("http://riesgopsicosocial.azurewebsites.net/index.php/api/rquestioncategory/list_actives")
+			.done(function(data) {
+				$.each(data.response, function(index, obj){
+					$("#record-question-category").append('<option value="'+obj.id+'">'+obj.title+'</option>');
+				});
+		  	})
+		  	.fail(function(e) {
+		    	console.log(e);
+		  	})
+		  	.always(function() {
+		  		//console.log(JSON.stringify(companies));
+		    	//alert( "finished" );
+			});
+			//End load recommendations
 
 		if (user.name != 'superadmin') {
 			$("#row_btn_create").hide();

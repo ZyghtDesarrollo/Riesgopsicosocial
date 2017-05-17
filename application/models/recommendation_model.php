@@ -10,11 +10,12 @@ class Recommendation_model extends Zyght_Model {
 		$this->id = 'id';
 	}
 
-	public function create($title, $link, $description) {
+	public function create($title, $link, $description, $question_category_id) {
 		$this->db->insert($this->table, array(
 			'title' => $title,
 			'link' => $link,
 			'description' => $description,
+			'question_category_id' => (int) $question_category_id,
 			'active' => 1
 		));
 
@@ -23,19 +24,24 @@ class Recommendation_model extends Zyght_Model {
 		return ($id > 0) ? $id : FALSE;
 	}
 
-	public function update($id, $title = NULL, $link = NULL, $description = NULL) {
+	public function update($id, $title = NULL, $link = NULL, $description = NULL,
+			$question_category_id = NULL) {
 		$data = array();
 
-		if (isset($title) && !empty($title)) {
+		if (!empty($title)) {
 			$data['title'] = $title;
 		}
 		
-		if (isset($link) && !empty($link)) {
+		if (!empty($link)) {
 			$data['link'] = $link;
 		}
 		
-		if (isset($description) && !empty($description)) {
+		if (!empty($description)) {
 			$data['description'] = $description;
+		}
+		
+		if(!empty($question_category_id)){
+			$data['question_category_id'] = (int) $question_category_id;
 		}
 		
 		if (!empty($data)) {
@@ -62,9 +68,10 @@ class Recommendation_model extends Zyght_Model {
 	}
 	
 	public function get_actives() {
-		$this->db->select('*');
-		$this->db->from($this->table);
-		$this->db->where('active', 1);
+		$this->db->select('r.*, qc.title AS question_category_title');
+		$this->db->from($this->table.' AS r');
+		$this->db->join('QuestionCategory AS qc', 'qc.id = r.question_category_id');
+		$this->db->where('r.active', 1);
 		$query = $this->db->get();
 
 		return ($query->num_rows() > 0) ? $query->result() : array();

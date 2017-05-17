@@ -360,7 +360,8 @@
 						btnAction.text('Agregar recomendación');
 						btnAction.attr("data-action", 'edit');
 						btnAction.attr("class", "btn btn-warning");
-
+						
+						$("#questionary").empty();
 						$("#loading").show();
 						$.get( "<?php echo base_url('api/rquestionary/list_answers_by_id');?>", {"questionary_completion_id": id})
 							.done(function(data) {

@@ -18,7 +18,7 @@ class Rrecommendation extends API_Controller {
 			$this->post('title'),
 			$this->post('link'),
 			$this->post('description'),
-			1
+			$this->post('questionCategoryId')
 		);
 
 		if ($result === FALSE) {
@@ -33,7 +33,9 @@ class Rrecommendation extends API_Controller {
 			$this->post('id'), 
 			$this->post('title'),
 			$this->post('link'),
-			$this->post('description')
+			$this->post('description'),
+			$this->post('questionCategoryId')
+			
 		);
 
 		if ($result === FALSE) {
