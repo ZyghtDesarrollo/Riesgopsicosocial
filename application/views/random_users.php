@@ -100,6 +100,19 @@
               			"company_id" : company_id
               		}
         		},
+        		"initComplete": function( settings, json ) {
+        			$("#example_filter").append("&nbsp;&nbsp;<button id='refresh' "
+                			+"class='btn btn-button' "
+                			+"data-loading-text='Actualizando...'><span class='glyphicon glyphicon-refresh'></span></button>");
+        			$("#refresh").click(function(){
+        				table.ajax.reload( null, false );
+        				var $this = $(this);
+        				  $this.button('loading');
+        				    setTimeout(function() {
+        				       $this.button('reset');
+        				   }, 3000);
+            		});
+        		  },
         		"showRefresh": true,
             	"sAjaxDataProp" : "response",
 	            "columns": [

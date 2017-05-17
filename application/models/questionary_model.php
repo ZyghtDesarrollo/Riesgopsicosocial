@@ -60,6 +60,8 @@ class Questionary_model extends Zyght_Model {
 
 							$question->options = $options;
 							$questions_aux[] = $question;
+						}else{
+							$questions_aux[] = $question;
 						}
 					}
 

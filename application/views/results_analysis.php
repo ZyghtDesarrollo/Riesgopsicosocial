@@ -29,9 +29,10 @@
 			$.each(obj_category.questions, function(y, obj_question){
 				panel += '<p class="question">'
 	    			+ '<ol start='+(y+1)+'>' + '<li>'+obj_question.title+'</li>' + '</ol>'
-					+ '<div class="answere-box">'
-						+'<ol type="a">';
-
+					+ '<div class="answere-box">';
+					panel += '<ul><li class="open-answer"></li></ul>';
+					panel +='<ol type="a">';
+						
 				$.each(obj_question.options, function(i, obj_options){
 					if (findAnswer(obj_options.id, answers) == false) {
 						panel += '<li>' + obj_options.title + '</li>';
@@ -67,6 +68,11 @@
 	.modal-body{
 		height: 500px;
 		overflow-y: auto;
+	}
+	
+	.open-answer{
+		list-style-type: none; 
+		text-align: justify;
 	}
 </style>
 
@@ -217,6 +223,19 @@
               		}
        
         		},
+        		"initComplete": function( settings, json ) {
+        			$("#example_filter").append("&nbsp;&nbsp;<button id='refresh' "
+                			+"class='btn btn-button' "
+                			+"data-loading-text='Actualizando...'><span class='glyphicon glyphicon-refresh'></span></button>");
+        			$("#refresh").click(function(){
+        				table.ajax.reload( null, false );
+        				var $this = $(this);
+        				  $this.button('loading');
+        				    setTimeout(function() {
+        				       $this.button('reset');
+        				   }, 3000);
+            		});
+        		  },
         		"showRefresh": true,
             	"sAjaxDataProp" : "response",
 	            "columns": [
