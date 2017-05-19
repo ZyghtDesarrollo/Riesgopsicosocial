@@ -35,12 +35,11 @@
 			item = 0;
 			total_ponderation = 0;
 			
-			panel += '<h4>'+obj_category.title+'</h4>';
+			panel += '<div class="alert alert-info category">'+obj_category.title+'</div>';
 			
 			$.each(obj_category.questions, function(y, obj_question){
 				item++;
-				panel += '<p class="question">'
-	    			+ '<ol start='+(y+1)+'>' + '<li>'+obj_question.title+'</li>' + '</ol>'
+				panel += '<ol start='+(y+1)+'>' + '<li class="question">'+obj_question.title+'</li>' + '</ol>'
 					+ '<div class="answere-box">';
 					//panel += '<ul><li class="open-answer"></li></ul>';
 					
@@ -63,7 +62,6 @@
 				cont++;
 
 				panel += '</ol>'
-	    	   		+ '<p></p>'
 			 		+ '<hr>'
 					+ '</div>';
 			});
@@ -111,6 +109,14 @@
 	
 	.my-label{
     	font-weight: normal !important;
+	}
+	
+	.category{
+		font-size: 20px;
+	}
+	
+	.question{
+		font-size: 18px;
 	}
 </style>
 
