@@ -63,6 +63,16 @@ class Psicomember_model extends Zyght_Model {
 
 		return ($query->num_rows() > 0) ? $query->result() : array();
 	}
+	
+	public function get_by_company_code($company_code) {
+		$this->db->select('pm.*');
+		$this->db->from($this->table.' AS pm');
+		$this->db->join('Company AS c', 'c.id = pm.company_id');
+		$this->db->where('c.code', $company_code);
+		$query = $this->db->get();
+	
+		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
 
 }
 

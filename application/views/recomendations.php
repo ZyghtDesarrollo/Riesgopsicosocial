@@ -83,7 +83,7 @@
 						<label for="record-url" class="form-control-label">URL (Video)</label>
 						<blockquote>
   							<h5>Agregue sólo URL de videos embebidos.<br>
-  							 Si desea agregar un video de Youtube, presione compartir - insertar, copie sólo el enlace que está en "src"</h5>
+  							 Si desea agregar un video de <strong>Youtube</strong>, presione "compartir", luego seleccione la pestaña "insertar", copie sólo el enlace que está en "src"</h5>
 						</blockquote>
 						<input type="text" class="form-control" id="record-url"
 							name="record-url">
@@ -239,21 +239,24 @@
 //           							iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action" data-action="deactivate" aria-hidden="true" style="color : green"></i>';
 //           						}
 
-							var response = '';
+							var iconVideo = '';
+							var iconEdit = '';
+							var iconTrash = '';
 							var hideOption = '';
-							if (user.name == 'superadmin') {
-								var iconSwitch ='&nbsp;&nbsp;<i class="glyphicon glyphicon glyphicon-trash icon-action icon-deactivated" data-action="deactivate" aria-hidden="true""></i>';
-								if(!data.link){
-									hideOption = 'style="visibility:hidden;"';
-								}
 
-								response = '<i class="glyphicon glyphicon-film icon-action"'
-									+' data-action="showVideo" aria-hidden="true" title="Ver video" ' + hideOption + '></i>&nbsp;&nbsp;';
-								
-								response += '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>' + iconSwitch
+							if(!data.link){
+								hideOption = 'style="visibility:hidden;"';
 							}
 
-          					return response;
+							iconVideo = '<i class="glyphicon glyphicon-film icon-action"'
+								+' data-action="showVideo" aria-hidden="true" title="Ver video" ' + hideOption + '></i>&nbsp;&nbsp;';
+								
+							if (user.name == 'superadmin') {
+								iconEdit = '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>';
+								iconTrash ='&nbsp;&nbsp;<i class="glyphicon glyphicon glyphicon-trash icon-action icon-deactivated" data-action="deactivate" aria-hidden="true""></i>';
+							}
+
+          					return iconVideo + iconEdit + iconTrash;
           				}
 				    }
 				]

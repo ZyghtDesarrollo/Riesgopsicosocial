@@ -62,11 +62,12 @@ class Rquestionary extends API_Controller {
 	}
 
 	public function list_completions_by_company_id_get() {
-		if (!$this->get('company_id')) {
+		$company_id = $this->get('company_id');
+		if (!isset($company_id) || $company_id=='') {
 			$this->response_error(400);
 		}
 		
- 		$result = $this->questionary_model->get_questionary_completions_by_company_id($this->get('company_id'));
+ 		$result = $this->questionary_model->get_questionary_completions_by_company_id($company_id);
 	
 		if ($result === FALSE) {
 			$this->response_error(404);

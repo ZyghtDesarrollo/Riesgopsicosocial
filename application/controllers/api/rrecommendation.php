@@ -99,6 +99,23 @@ class Rrecommendation extends API_Controller {
 		$this->response_ok($result);
 	}
 	
+	public function list_by_params_get() {
+		$company_id = $this->get('company_id');
+		$job_position_id = $this->get('job_position_id');
+
+		if ( empty($company_id) || empty($job_position_id)) {
+			$this->response_error(400); 
+		}
+	
+		$result = $this->recommendation_model->get_by_params($company_id, $job_position_id);
+	
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+	
+		$this->response_ok($result);
+	}
+	
 	public function list_by_questionary_completion_id_get() {
 		if (!$this->get('qc_id')) {
 			$this->response_error(400);

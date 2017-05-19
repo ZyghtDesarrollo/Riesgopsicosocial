@@ -89,4 +89,18 @@ class Recommendation_model extends Zyght_Model {
 		
 		return ($query->num_rows() > 0) ? $query->result() : FALSE;
 	}
+	
+	public function get_by_params($company_id, $job_position_id){
+		$query = $this->db->query(
+				'SELECT * FROM Recommendation WHERE id IN(
+						SELECT
+							DISTINCT(qr.recommendation_id)
+						FROM
+							QuestionaryCompletion AS qc
+						INNER JOIN JobPosition AS jp ON jp.id = qc.job_position_id
+						INNER JOIN QuestionaryRecommendations AS qr ON qr.questionary_completion_id = qc.id
+						WHERE
+							jp.company_id = '.(int) $company_id.' AND jp.id = '.(int) $job_position_id.')');
+		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
 }

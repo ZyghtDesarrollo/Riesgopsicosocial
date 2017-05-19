@@ -83,6 +83,20 @@ class Rpsicomember extends API_Controller {
 
 		$this->response_ok($result);
 	}
+	
+	public function list_by_company_code_get() {
+		if (!$this->get('code')) {
+			$this->response_error(400);
+		}
+	
+		$result = $this->psicomember_model->get_by_company_code($this->get('code'));
+	
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+	
+		$this->response_ok($result);
+	}
 
 }
 

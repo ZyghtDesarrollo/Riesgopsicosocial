@@ -114,7 +114,9 @@ class Questionary_model extends Zyght_Model {
 		$this->db->join('(SELECT DISTINCT(questionary_completion_id) FROM [dbo].[QuestionaryRecommendations]) AS qr', 
 				'qr.questionary_completion_id = qc.id', 'left');
 		$this->db->where('q.active', 1);
-		$this->db->where('jp.company_id', (int) $company_id);
+		if($company_id != 0){
+			$this->db->where('jp.company_id', (int) $company_id);
+		}
 		$query = $this->db->get();
 	
 		return ($query->num_rows() > 0) ? $query->result() : FALSE;

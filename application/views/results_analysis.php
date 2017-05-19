@@ -7,6 +7,7 @@
 		$.each(answers, function(i, obj){
 			if (id == obj.question_option_id) {
 				response = true;
+				return false;
 			}
 		});
 
@@ -22,6 +23,7 @@
 		var factor = 0;
 		var total_ponderation = 0;
 		var points = 0;
+		var cont = 0;
 
 		panel += '<div id="panel-'+ questionary.id +'" class="questionary-panel panel panel-default">'
 	  		  	+'<div class="panel-body">';
@@ -40,18 +42,25 @@
 				panel += '<p class="question">'
 	    			+ '<ol start='+(y+1)+'>' + '<li>'+obj_question.title+'</li>' + '</ol>'
 					+ '<div class="answere-box">';
-					panel += '<ul><li class="open-answer"></li></ul>';
+					//panel += '<ul><li class="open-answer"></li></ul>';
+					
 					panel +='<ol type="a">';
-						
-				$.each(obj_question.options, function(i, obj_options){
-					console.log(JSON.stringify(obj_options));
-					if (findAnswer(obj_options.id, answers) == false) {
-						panel += '<li>' + obj_options.title + '</li>';
-					} else {
-						total_ponderation += obj_options.ponderation;
-						panel += '<li class="selected-answere">' + obj_options.title + ' <i class="glyphicon glyphicon-ok"></i></li>';
+					
+					if(!obj_question.hasOwnProperty('options') && answers[cont] != undefined){
+						panel += '<li>' + answers[cont].open_answer + '</li>';
+					}else{
+						$.each(obj_question.options, function(i, obj_options){
+							//console.log(JSON.stringify(obj_options));
+		
+							if (findAnswer(obj_options.id, answers) == false) {
+								panel += '<li>' + obj_options.title + '</li>';
+							} else {
+								total_ponderation += obj_options.ponderation;
+								panel += '<li class="selected-answere">' + obj_options.title + ' <i class="glyphicon glyphicon-ok"></i></li>';
+							}
+						});
 					}
-				});
+				cont++;
 
 				panel += '</ol>'
 	    	   		+ '<p></p>'
