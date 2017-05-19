@@ -88,11 +88,11 @@ class Company_model extends Zyght_Model {
 		$this->db->where($this->table .'.active', 1);
 
 		if (!empty($company_code)) {
-			$this->db->where($this->table .'.password', $password);
-			$this->db->where($this->table .'.code', $company_code);
+			$this->db->where('password', $password);
+			$this->db->where('code', $company_code);
 		} else {
-			$this->db->where($this->table .'.password', SUPER_ADMIN_PASS);
-			$this->db->where($this->table .'.code', SUPER_ADMIN_CODE);			
+			$this->db->where('password', SUPER_ADMIN_PASS);
+			$this->db->where('code', SUPER_ADMIN_CODE);			
 		}
 
 		$query = $this->db->get();

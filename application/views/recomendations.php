@@ -240,13 +240,15 @@
 //           						}
 
 							var response = '';
-
+							var hideOption = '';
 							if (user.name == 'superadmin') {
 								var iconSwitch ='&nbsp;&nbsp;<i class="glyphicon glyphicon glyphicon-trash icon-action icon-deactivated" data-action="deactivate" aria-hidden="true""></i>';
-								if(data.link){
-									response = '<i class="glyphicon glyphicon-film icon-action"'
-										+' data-action="showVideo" aria-hidden="true" title="Ver video"></i>&nbsp;&nbsp;';
+								if(!data.link){
+									hideOption = 'style="visibility:hidden;"';
 								}
+
+								response = '<i class="glyphicon glyphicon-film icon-action"'
+									+' data-action="showVideo" aria-hidden="true" title="Ver video" ' + hideOption + '></i>&nbsp;&nbsp;';
 								
 								response += '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>' + iconSwitch
 							}

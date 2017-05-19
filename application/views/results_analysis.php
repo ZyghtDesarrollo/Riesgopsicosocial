@@ -17,6 +17,11 @@
 		questionary = (questionaryType == "Cuestionario Breve") ? questionaries[0] : questionaries[1];
 
 		var panel = '';
+		var finalBox = '';
+		var item = 0;
+		var factor = 0;
+		var total_ponderation = 0;
+		var points = 0;
 
 		panel += '<div id="panel-'+ questionary.id +'" class="questionary-panel panel panel-default">'
 	  		  	+'<div class="panel-body">';
@@ -24,9 +29,14 @@
 		panel += '<h2 class="text-center">'+ questionary.name +'</h2>';
 
 		$.each(questionary.categories, function(i, obj_category){
+			factor = 4;
+			item = 0;
+			total_ponderation = 0;
+			
 			panel += '<h4>'+obj_category.title+'</h4>';
-
+			
 			$.each(obj_category.questions, function(y, obj_question){
+				item++;
 				panel += '<p class="question">'
 	    			+ '<ol start='+(y+1)+'>' + '<li>'+obj_question.title+'</li>' + '</ol>'
 					+ '<div class="answere-box">';
@@ -34,9 +44,11 @@
 					panel +='<ol type="a">';
 						
 				$.each(obj_question.options, function(i, obj_options){
+					console.log(JSON.stringify(obj_options));
 					if (findAnswer(obj_options.id, answers) == false) {
 						panel += '<li>' + obj_options.title + '</li>';
 					} else {
+						total_ponderation += obj_options.ponderation;
 						panel += '<li class="selected-answere">' + obj_options.title + ' <i class="glyphicon glyphicon-ok"></i></li>';
 					}
 				});
@@ -45,13 +57,22 @@
 	    	   		+ '<p></p>'
 			 		+ '<hr>'
 					+ '</div>';
-			});						
+			});
+
+			factor *= item;
+			points = (total_ponderation / factor)*100;
+			finalBox += '<div class="panel panel-default">';
+			finalBox +='<div class="panel-heading"><strong>'+obj_category.title+'</strong></div>';
+			finalBox += '<div class="panel-body">';
+			finalBox += '<div class="alert alert-info">Puntaje '+obj_category.title+': <strong>('+total_ponderation+'/ '+factor+')*100 = '
+			+points.toFixed(2)+'</strong></div>';
+			finalBox +='</div></div>';
 		});
 
 		panel += '</div>'
 			+'</div>';	
 
-		return panel;
+		return panel+finalBox;
 	}
 </script>
 
@@ -73,6 +94,14 @@
 	.open-answer{
 		list-style-type: none; 
 		text-align: justify;
+	}
+	
+	.my-select{
+		width: 100%;
+	}
+	
+	.my-label{
+    	font-weight: normal !important;
 	}
 </style>
 
@@ -113,7 +142,7 @@
 
 
 <!-- start modal for create / update-->
-<div class="modal fade" tabindex="-1" id="form-modal" role="dialog"
+<div class="modal fade" tabindex="-1"  id="form-modal" role="dialog"
 	data-backdrop="static">
 	<div class="modal-dialog modal-lg">
 		<!-- start Modal content-->
@@ -132,7 +161,7 @@
 				<form id="form-record">
 					<div class="form-group">
 						<label for="record-recommendation" class="form-control-label">Recomendación (Video sugerido)</label>
-						<select id="record-recommendation"
+						<select id="record-recommendation" 
 							name="record-recommendation" multiple="multiple" class="form-control-label" style="width: 100%;">
 							<option value="-1">Seleccione</option>
 						</select>
@@ -160,10 +189,10 @@
 		<!-- start Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title">Videos recomendados</h4>
+				<h4 class="modal-title">Videos recomendados - Cuestionario ID: <span id="vQuestionaryId"></span></h4>
 			</div>
 			<!-- This section (div id="modal-body") will be loaded dynamically -->
-			<div id="loading" class="text-center" style="display:none;">
+			<div id="loading-video" class="text-center" style="display:none;">
 					<img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
 			</div>
 			<div class="modal-body" id="modal-body"></div>
@@ -202,14 +231,29 @@
 
 <!-- start own script-->
 <script>
-	$('#record-recommendation').select2({
-	  placeholder: {
-		    id: '-1', // the value of the option
-		    text: 'Seleccione'
-		}
-	});
 	var table;
 	$(document).ready(function() {
+
+
+// 		$('#form-modal').on('shown', function() {
+// 			alert("hola");
+// 			$('.my-select').select2({
+// 				language: "es",
+// 				 placeholder: {
+// 					    id: '-1', // the value of the option
+// 					    text: 'Seleccione2'
+// 					}
+// 			});
+// 		});
+
+		$('#record-recommendation').select2({
+			language: "es",
+			placeholder: {
+				    id: '-1', // the value of the option
+				    text: 'Seleccione'
+				}
+		});
+		
 		table = $('#example').DataTable({
 	    		"select": true,
 		    	"language": {
@@ -303,8 +347,17 @@
     		//Start load recommendations
 			$.get("http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives", {"company_id" : company_id})
 			.done(function(data) {
+				var temp = '';
 				$.each(data.response, function(index, obj){
+					if(temp !== obj.question_category_title){
+						temp = obj.question_category_title;
+						if(index > 0)
+							$("#record-recommendation").append('</optgroup>');
+						$("#record-recommendation").append('<optgroup label="'+ obj.question_category_title +'">');
+					}
 					$("#record-recommendation").append('<option value="'+obj.id+'">'+obj.title+'</option>');
+					if(index === data.response.length - 1)
+						$("#record-recommendation").append('</optgroup>');
 				});
 		  	})
 		  	.fail(function(e) {
@@ -385,11 +438,8 @@
 						$.get( "<?php echo base_url('api/rquestionary/list_answers_by_id');?>", {"questionary_completion_id": id})
 							.done(function(data) {
 								$("#loading").hide();
-
 								result = getQuestionary(questionaryType, questionaries, data.response);
-
 								$("#questionary").html(result);
-
 //								$("#modal-body").html(iframes);								
 							})
 							.fail(function() {
@@ -399,21 +449,42 @@
 								//alert( "finished" );
 							});
 
+						$("#record-recommendation").val('').trigger('change');
+						$.get( "<?php echo base_url('api/rrecommendation/list_by_questionary_completion_id');?>", {"qc_id": id})
+						.done(function(data) {
+							var selected = [];
+							$(data.response).each(function(i, element){
+								selected.push(element.id);
+							});
+							$("#record-recommendation").val(selected).trigger('change');
+					  	})
+					  	.fail(function() {
+					    //alert( "error" );
+					  	})
+					  	.always(function() {
+					    //alert( "finished" );
+					  	});
+						
 						$('#form-modal').modal('show');
 					break;
 
 					case "showVideo":
-						$("#loading").show();
+						$("#vQuestionaryId").text(id);
+						$("#loading-video").show();
 						$("#modal-body").empty();
 						$.get( "<?php echo base_url('api/rrecommendation/list_by_questionary_completion_id');?>", {"qc_id": id})
 							.done(function(data) {
-								$("#loading").hide();
+								$("#loading-video").hide();
 								var iframes = '';
+								var temp = '';
 								$(data.response).each(function(i, element){
-									console.log(JSON.stringify(element));
+									if(temp !== element.qc_title){
+										iframes  +='<div class="alert alert-info"><span style="font-size:18px;">'+element.qc_title+'</span></div>';//Category
+										temp = element.qc_title;
+									}
 										iframes  +='<h4>'+element.title+'</h4>';//Title
 										iframes += '<iframe class="video-iframe" src="'+ element.link +'" frameborder="0" allowfullscreen></iframe>';
-										iframes  +='<h5>'+element.description+'</h5>'
+										iframes  +='<h5>'+element.description+'</h5><hr>';
 								});
 								$("#modal-body").html(iframes);
 								
