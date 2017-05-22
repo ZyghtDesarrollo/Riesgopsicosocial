@@ -67,7 +67,5 @@ class Rrandomuser extends API_Controller {
 			'user' => $user
 		), 200);
 	}
-
-
 }
 

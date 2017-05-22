@@ -106,4 +106,14 @@ class Rquestionary extends API_Controller {
 	
 		$this->response_ok($result);
 	}
+	
+	public function has_random_user_a_questionary_get(){
+		if (!$this->get('random_user_id')) {
+			$this->response_error(400);
+		}
+	
+		$result = $this->questionary_model->has_random_user_a_questionary($this->get('random_user_id'));
+	
+		$this->response_ok($result);
+	}
 }

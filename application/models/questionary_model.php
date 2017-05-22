@@ -150,4 +150,13 @@ class Questionary_model extends Zyght_Model {
 		$this->db->delete('QuestionaryRecommendations');
 		return TRUE;
 	}
+	
+	public function has_random_user_a_questionary($random_user_id){
+		$this->db->select('TOP 1 id');
+		$this->db->from('QuestionaryCompletion');
+		$this->db->where('random_user_id', $random_user_id);
+		$query = $this->db->get();
+		
+		return ($query->num_rows() > 0) ? TRUE : FALSE;
+	}
 }

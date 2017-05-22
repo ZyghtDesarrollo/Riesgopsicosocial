@@ -97,6 +97,5 @@ class randomuser_model extends Zyght_Model {
 
 		return FALSE;
 	}
-
 }
 
