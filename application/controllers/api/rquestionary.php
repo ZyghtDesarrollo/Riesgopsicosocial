@@ -69,9 +69,9 @@ class Rquestionary extends API_Controller {
 		
  		$result = $this->questionary_model->get_questionary_completions_by_company_id($company_id);
 	
-		if ($result === FALSE) {
-			$this->response_error(404);
-		}
+// 		if ($result === FALSE) {
+// 			$this->response_error(404);
+// 		}
 	
 		$this->response_ok($result);
 	}

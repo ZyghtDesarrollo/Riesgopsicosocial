@@ -10,8 +10,9 @@ class Answer_model extends Zyght_Model {
 		$this->id = 'id';
 	}
 
-	public function create($questionary_completion_id, $question_option_id, $open_answer = null) {
+	public function create($questionary_completion_id, $question_id, $question_option_id = NULL, $open_answer = NULL) {
 		$this->db->insert($this->table, array(
+			'question_id' => $question_id,
 			'questionary_completion_id' => $questionary_completion_id,
 			'question_option_id' => $question_option_id,
 			'open_answer' => $open_answer

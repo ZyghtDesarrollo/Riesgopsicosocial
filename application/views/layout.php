@@ -105,7 +105,7 @@
 			$("#jobPositions").hide();
 			$("#randomUsers").hide();
 			$("#psychosocialTeam").hide();
-			$("#recomendations").show();
+			$("#recomendations").hide();
 			$("#resultsAnalysis").hide();
 		} else {
 			$("#companies").hide();

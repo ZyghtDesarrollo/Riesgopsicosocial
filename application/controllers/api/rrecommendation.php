@@ -18,7 +18,8 @@ class Rrecommendation extends API_Controller {
 			$this->post('title'),
 			$this->post('link'),
 			$this->post('description'),
-			$this->post('questionCategoryId')
+			$this->post('questionCategoryId'),
+			$this->post('company_id')
 		);
 
 		if ($result === FALSE) {
@@ -35,7 +36,6 @@ class Rrecommendation extends API_Controller {
 			$this->post('link'),
 			$this->post('description'),
 			$this->post('questionCategoryId')
-			
 		);
 
 		if ($result === FALSE) {
@@ -67,10 +67,6 @@ class Rrecommendation extends API_Controller {
 
 	public function list_actives_get() {
 		$result = $this->recommendation_model->get_actives();
-		
-		if ($result === FALSE) {
-			$this->response_error(404);
-		}
 
 		$this->response_ok($result);
 	}

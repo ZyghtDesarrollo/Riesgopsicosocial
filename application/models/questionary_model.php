@@ -92,7 +92,7 @@ class Questionary_model extends Zyght_Model {
 		$questionary_completion_id = $this->db->insert_id();
 
 		foreach ($answers as $answer) {
-			$this->answer_model->create($questionary_completion_id, $answer->questionOptionId, $answer->value);
+			$this->answer_model->create($questionary_completion_id,$answer->questionId,  $answer->questionOptionId, $answer->value);
 		}
 
 		$this->db->trans_complete();

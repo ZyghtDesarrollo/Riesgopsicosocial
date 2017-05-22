@@ -248,10 +248,9 @@
 								hideOption = 'style="visibility:hidden;"';
 							}
 
-							iconVideo = '<i class="glyphicon glyphicon-film icon-action"'
-								+' data-action="showVideo" aria-hidden="true" title="Ver video" ' + hideOption + '></i>&nbsp;&nbsp;';
-								
-							if (user.name == 'superadmin') {
+							if (user.name !== 'superadmin') {
+								iconVideo = '<i class="glyphicon glyphicon-film icon-action"'
+									+' data-action="showVideo" aria-hidden="true" title="Ver video" ' + hideOption + '></i>&nbsp;&nbsp;';
 								iconEdit = '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>';
 								iconTrash ='&nbsp;&nbsp;<i class="glyphicon glyphicon glyphicon-trash icon-action icon-deactivated" data-action="deactivate" aria-hidden="true""></i>';
 							}
@@ -351,6 +350,7 @@
 		    	e.preventDefault();
 		    	var action = $(this).attr("data-action");
 		    	var params = {
+				    		"company_id" : company_id,
 				    		"questionCategoryId": $("#record-question-category").val(),
 							"title" :  $("#record-title").val(),
 							"description" :  $("#record-description").val(),
@@ -427,10 +427,5 @@
 		    	//alert( "finished" );
 			});
 			//End load recommendations
-
-		if (user.name != 'superadmin') {
-			$("#row_btn_create").hide();
-		}
-
 		</script>
 <!-- end own script -->

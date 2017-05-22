@@ -10,12 +10,13 @@ class Recommendation_model extends Zyght_Model {
 		$this->id = 'id';
 	}
 
-	public function create($title, $link, $description, $question_category_id) {
+	public function create($title, $link, $description, $question_category_id, $company_id) {
 		$this->db->insert($this->table, array(
 			'title' => $title,
 			'link' => $link,
 			'description' => $description,
 			'question_category_id' => (int) $question_category_id,
+			'company_id' => $company_id,
 			'active' => 1
 		));
 
