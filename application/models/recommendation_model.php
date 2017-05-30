@@ -111,7 +111,7 @@ class Recommendation_model extends Zyght_Model {
 	public function get_by_company_id($company_id){
 		$this->db->select('r.*, qc.title AS question_category_title');
 		$this->db->from($this->table.' AS r');
-		$this->db->join('QuestionCategory AS qc', 'qc.id = r.question_category_id');
+		$this->db->join('QuestionCategory AS qc', 'qc.id = r.question_category_id', 'right');
 		$this->db->where('r.active', 1);
 		$this->db->where('r.company_id', (int) $company_id);
 		$this->db->order_by('qc.title', 'ASC');

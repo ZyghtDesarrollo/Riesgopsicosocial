@@ -16,7 +16,17 @@
         	</li>
 			<li id="recomendations"><a href="<?php echo base_url('recomendations'); ?>">Recomendaciones</a></li>
 		</ul>
-		<span class="pull-right logout"><a href="javascript:logout();"
-			style="text-decoration: none; cursor: pointer;">Cerrar Sesión</a></span>
+		<div class="pull-right">
+			<div class="col-sm-12"><span><strong>Código de compañía: </strong></span>
+				<script>if(user.code){ document.write(user.code)}else{document.write('SA')};</script>&nbsp;&nbsp;
+			</div>
+			<div class="col-sm-12">
+			<span class="logout"><a href="javascript:logout();"
+					style="text-decoration: none; cursor: pointer;">Cerrar Sesión</a></span>
+			</div>
+				
+			
+		</div>
+		
 	</div>
 </nav>

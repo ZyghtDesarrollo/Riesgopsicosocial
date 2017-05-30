@@ -171,7 +171,7 @@
 				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
 				},
 			   "ajax": {
-          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives",
+          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives_by_company_id",
           			"type": "GET",
           			"data" : {
               			"company_id" : company_id
@@ -327,7 +327,7 @@
 						$("#rHeadTitle").text("");
 						$("#rTitle").text("");
 						$("#rDescription").text("");
-						$("#rHeadTitle").text(qc_title);
+						$("#rHeadTitle").html('<div class="alert alert-info"><span style="font-size:18px;">'+qc_title+'</span></div>');
 						$("#rTitle").text(title);
 						$("#rDescription").text(description);
 						$('#video-modal').modal('show');
