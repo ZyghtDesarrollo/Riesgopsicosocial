@@ -44,6 +44,19 @@ class Rrecommendation extends API_Controller {
 
 		$this->response_ok($result);
 	}
+	
+	public function associate_by_job_position_post(){
+		$result = $this->recommendation_model->associate_recommendations(
+					$this->post('recommendations_id'),
+					$this->post('job_position_id')
+				);
+		
+				if ($result === FALSE) {
+					$this->response_error(404);
+				}
+				
+		$this->response_ok($result);
+	}
 
 	public function activate_post() {
 		$result = $this->recommendation_model->activate($this->post('id'), 1);
@@ -68,6 +81,26 @@ class Rrecommendation extends API_Controller {
 	public function list_actives_get() {
 		$result = $this->recommendation_model->get_actives();
 
+		$this->response_ok($result);
+	}
+	
+	public function list_actives_by_company_id_get() {
+		if (!$this->get('company_id')) {
+			$this->response_error(400);
+		}
+	
+		$result = $this->recommendation_model->get_by_company_id($this->get('company_id'));
+	
+		$this->response_ok($result);
+	}
+	
+	public function list_by_job_position_id_get() {
+		if (!$this->get('job_position_id')) {
+			$this->response_error(400);
+		}
+
+		$result = $this->recommendation_model->get_by_job_position_id($this->get('job_position_id'));
+		
 		$this->response_ok($result);
 	}
 

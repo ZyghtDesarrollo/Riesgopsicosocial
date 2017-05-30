@@ -105,6 +105,20 @@ class Questionary_model extends Zyght_Model {
 		return $questionary_completion_id;
 	}
 	
+	public function get_job_position_questionary_by_company_id($company_id){
+		$this->db->select('jp.id AS position_id, jp.position, count(jp.position) AS quantity');
+		$this->db->select('CASE WHEN pr.job_position_id IS NULL THEN 0 ELSE 1 END AS has_recommendation');
+		$this->db->from('QuestionaryCompletion AS qc');
+		$this->db->join('JobPosition AS jp', 'jp.id = qc.job_position_id');
+		$this->db->join('(SELECT DISTINCT(job_position_id) FROM PositionRecommendations) AS pr', 'pr.job_position_id = jp.id', 'left');
+		$this->db->where('company_id', (int) $company_id);
+		$this->db->group_by('position, jp.id, pr.job_position_id');
+		$this->db->order_by('jp.position');
+		
+		$query = $this->db->get();
+		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
+	
 	public function get_questionary_completions_by_company_id($company_id) {
 		$this->db->select('qc.*, jp.company_id, jp.position, q.name');
 		$this->db->select('CASE WHEN qr.questionary_completion_id IS NULL THEN 0 ELSE 1 END AS has_recommendation');
@@ -120,6 +134,31 @@ class Questionary_model extends Zyght_Model {
 		$query = $this->db->get();
 	
 		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
+	
+	public function get_category_results_by_job_position_id($job_position_id){
+		$this->db->select('qcat.title, COUNT (qcat.id) AS question_qty,
+							SUM (qo.ponderation) AS ponderation');
+		$this->db->from('QuestionaryCompletion AS qc');
+		$this->db->join('Question AS q', 'q.questionary_id = qc.questionary_id');
+		$this->db->join('QuestionCategory AS qcat', 'qcat.id = q.question_category_id');
+		$this->db->join('Answer AS a', 'a.question_id = q.id AND a.questionary_completion_id = qc.id');
+		$this->db->join('QuestionOptions AS qo', 'qo.id = a.question_option_id', 'left');
+		$this->db->where('qc.job_position_id', (int) $job_position_id);
+		$this->db->group_by('qcat.title');
+		$this->db->order_by('qcat.title','ASC');
+		
+		$query = $this->db->get();
+		
+		if($query->num_rows() > 0){
+			$resp = $query->result();
+			foreach ($resp as $row){
+				$row->result = round(($row->ponderation / ($row->question_qty * LIKERT_FACTOR))*100, 2);
+			}
+			return $resp;
+		}
+		
+		return FALSE;
 	}
 
 	public function set_recommendations($questionary_completion_id, $recommendation_ids){

@@ -19,6 +19,11 @@ class Results_analysis extends CI_Controller {
 		$view['content'] = $this->load->view('answered_questionary',NULL, TRUE);
 		$this->load->view('layout', $view);
 	}
+	
+	public function get_results(){
+		$view['content'] = $this->load->view('global_results_analysis',NULL, TRUE);
+		$this->load->view('layout', $view);
+	}
 }
 
 /* End of file welcome.php */

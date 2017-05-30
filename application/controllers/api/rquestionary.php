@@ -76,6 +76,17 @@ class Rquestionary extends API_Controller {
 		$this->response_ok($result);
 	}
 	
+	public function list_job_position_completions_by_company_id_get(){
+		$company_id = $this->get('company_id');
+		if (!isset($company_id) || $company_id=='') {
+			$this->response_error(400);
+		}
+		
+		$result = $this->questionary_model->get_job_position_questionary_by_company_id($company_id);
+		
+		$this->response_ok($result);
+	}
+	
 	public function add_recommendations_post(){
 		$questionaryc_id = $this->post('id');
 		$recommendations = $this->post('recommendations');
@@ -104,6 +115,16 @@ class Rquestionary extends API_Controller {
 			$this->response_error(404);
 		}
 	
+		$this->response_ok($result);
+	}
+	
+	public function list_category_results_by_job_position_id_get(){
+		if (!$this->get('job_position_id')) {
+			$this->response_error(400);
+		}
+		
+		$result = $this->questionary_model->get_category_results_by_job_position_id($this->get('job_position_id'));
+		
 		$this->response_ok($result);
 	}
 	

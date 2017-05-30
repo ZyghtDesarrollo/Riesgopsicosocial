@@ -24,6 +24,35 @@ class Recommendation_model extends Zyght_Model {
 
 		return ($id > 0) ? $id : FALSE;
 	}
+	
+	public function associate_recommendations($recommendations_id, $job_position_id){
+		$this->db->trans_start();
+		$this->disassociate_recomendations($job_position_id);
+		if(is_array($recommendations_id)){
+			foreach ($recommendations_id as $r_id){
+				$this->db->insert('PositionRecommendations',
+						array(
+								'job_position_id' => (int) $job_position_id,
+								'recommendation_id' => (int) $r_id
+							)
+						);
+			}
+		}
+		$this->db->trans_complete();
+		
+		if ($this->db->trans_status() === FALSE) {
+			// generate an error... or use the log_message() function to log your error
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	public function disassociate_recomendations($job_position_id){
+		$this->db->where('job_position_id', (int) $job_position_id);
+		$this->db->delete('PositionRecommendations');
+		return TRUE;
+	}
 
 	public function update($id, $title = NULL, $link = NULL, $description = NULL,
 			$question_category_id = NULL) {
@@ -79,6 +108,30 @@ class Recommendation_model extends Zyght_Model {
 		return ($query->num_rows() > 0) ? $query->result() : array();
 	}
 	
+	public function get_by_company_id($company_id){
+		$this->db->select('r.*, qc.title AS question_category_title');
+		$this->db->from($this->table.' AS r');
+		$this->db->join('QuestionCategory AS qc', 'qc.id = r.question_category_id');
+		$this->db->where('r.active', 1);
+		$this->db->where('r.company_id', (int) $company_id);
+		$this->db->order_by('qc.title', 'ASC');
+		$query = $this->db->get();
+		
+		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
+	
+	public function get_by_job_position_id($job_position_id){
+		$this->db->select('r.*, qc.title AS question_category_title');
+		$this->db->from($this->table.' AS r');
+		$this->db->join('QuestionCategory AS qc', 'qc.id = r.question_category_id');
+		$this->db->join('PositionRecommendations AS pr', 'pr.recommendation_id = r.id');
+		$this->db->where('pr.job_position_id', (int) $job_position_id);
+		$query = $this->db->get();
+	
+		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
+	
+	
 	public function get_by_questionary_completion_id($qc_id){
 		$this->db->select('r.*, qc.id AS qc_id, qc.title AS qc_title');
 		$this->db->from($this->table.' AS r');
@@ -92,16 +145,15 @@ class Recommendation_model extends Zyght_Model {
 	}
 	
 	public function get_by_params($company_id, $job_position_id){
-		$query = $this->db->query(
-				'SELECT * FROM Recommendation WHERE id IN(
-						SELECT
-							DISTINCT(qr.recommendation_id)
-						FROM
-							QuestionaryCompletion AS qc
-						INNER JOIN JobPosition AS jp ON jp.id = qc.job_position_id
-						INNER JOIN QuestionaryRecommendations AS qr ON qr.questionary_completion_id = qc.id
-						WHERE
-							jp.company_id = '.(int) $company_id.' AND jp.id = '.(int) $job_position_id.')');
+		$this->db->select('r.*, qc.title AS category');
+		$this->db->from($this->table.' AS r');
+		$this->db->join('QuestionCategory AS qc','qc.id = r.question_category_id');
+		$this->db->join('PositionRecommendationCategory AS prc ','prc.recommendation_id = r.id');
+		$this->db->join('JobPosition AS jp','jp.id = prc.job_position_id');
+		$this->db->where('jp.company_id', (int) $company_id);
+		$this->db->where('prc.job_position_id', (int) $job_position_id);		
+		$query = $this->db->get();
+
 		return ($query->num_rows() > 0) ? $query->result() : FALSE;
 	}
 }
