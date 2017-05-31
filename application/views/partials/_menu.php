@@ -24,9 +24,6 @@
 			<span class="logout"><a href="javascript:logout();"
 					style="text-decoration: none; cursor: pointer;">Cerrar Sesión</a></span>
 			</div>
-				
-			
 		</div>
-		
 	</div>
 </nav>
