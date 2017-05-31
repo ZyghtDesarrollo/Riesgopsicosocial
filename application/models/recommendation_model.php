@@ -148,10 +148,10 @@ class Recommendation_model extends Zyght_Model {
 		$this->db->select('r.*, qc.title AS category');
 		$this->db->from($this->table.' AS r');
 		$this->db->join('QuestionCategory AS qc','qc.id = r.question_category_id');
-		$this->db->join('PositionRecommendationCategory AS prc ','prc.recommendation_id = r.id');
-		$this->db->join('JobPosition AS jp','jp.id = prc.job_position_id');
+		$this->db->join('PositionRecommendations AS pr ','pr.recommendation_id = r.id');
+		$this->db->join('JobPosition AS jp','jp.id = pr.job_position_id');
 		$this->db->where('jp.company_id', (int) $company_id);
-		$this->db->where('prc.job_position_id', (int) $job_position_id);		
+		$this->db->where('pr.job_position_id', (int) $job_position_id);		
 		$query = $this->db->get();
 
 		return ($query->num_rows() > 0) ? $query->result() : FALSE;
