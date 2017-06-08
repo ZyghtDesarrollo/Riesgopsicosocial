@@ -3,7 +3,7 @@
 	<div class="col-sm-12">
 		<ol class="breadcrumb">
 			<li><a href="#">Home</a></li>
-			<li class="active">Equipo psicosocial</li>
+			<li class="active">Comité de aplicación</li>
 		</ol>
 	</div>
 </div>

@@ -4,7 +4,7 @@
 			<li id="companies"><a href="<?php echo base_url('companies'); ?>">Compañías</a></li>
 			<li id="jobPositions"><a href="<?php echo base_url('job_positions'); ?>">Puestos de trabajo</a></li>
 			<li id="randomUsers"><a href="<?php echo base_url('random_users'); ?>">Usuarios aleatorios</a></li>
-			<li id="psychosocialTeam"><a href="<?php echo base_url('psychosocial_team'); ?>">Equipo psicosocial</a></li>
+			<li id="psychosocialTeam"><a href="<?php echo base_url('psychosocial_team'); ?>">Comité de aplicación</a></li>
 			<li id=""><a href="<?php echo base_url('results_analysis/get_results'); ?>">Análisis de Resultados</a></li>
 			
 			<li class="dropdown" style="display:none;">

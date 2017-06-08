@@ -137,28 +137,100 @@ class Questionary_model extends Zyght_Model {
 	}
 	
 	public function get_category_results_by_job_position_id($job_position_id){
-		$this->db->select('qcat.title, COUNT (qcat.id) AS question_qty,
-							SUM (qo.ponderation) AS ponderation');
+		$this->load->model('Question_category_model', 'category');
+		
+		$categories = $this->category->get_by_questionary_id(1);
+		
+		$this->db->select('qc.id, qcat.id AS question_category_id, qcat.title AS category, 
+				COUNT (qcat.id) AS question_qty, SUM (qo.ponderation) AS ponderation');
 		$this->db->from('QuestionaryCompletion AS qc');
 		$this->db->join('Question AS q', 'q.questionary_id = qc.questionary_id');
 		$this->db->join('QuestionCategory AS qcat', 'qcat.id = q.question_category_id');
 		$this->db->join('Answer AS a', 'a.question_id = q.id AND a.questionary_completion_id = qc.id');
 		$this->db->join('QuestionOptions AS qo', 'qo.id = a.question_option_id', 'left');
 		$this->db->where('qc.job_position_id', (int) $job_position_id);
-		$this->db->group_by('qcat.title');
-		$this->db->order_by('qcat.title','ASC');
+		$this->db->group_by('qc.id, qcat.id, qcat.title');
+		$this->db->order_by('qc.id','ASC');
 		
 		$query = $this->db->get();
 		
 		if($query->num_rows() > 0){
-			$resp = $query->result();
-			foreach ($resp as $row){
-				$row->result = round(($row->ponderation / ($row->question_qty * LIKERT_FACTOR))*100, 2);
+			$rows=[];
+			$risk_level = [];
+			$categories_map = [];
+			
+			if($categories !== FALSE){
+				foreach ($categories as $cat) {
+					$categories_map[$cat->question_category_id] = array('category' => $cat->title, 
+							'risk_high' => 0, 'risk_medium' => 0, 'risk_low' => 0);
+				}
 			}
+			
+			foreach ($query->result() as $r){
+				if(array_key_exists($r->id, $rows)){
+					array_push($rows[$r->id], $r->ponderation);
+				}else{
+					$rows[$r->id] = array($r->ponderation);
+				}
+				
+				$risk_level = $this->_check_risk_level($r->question_category_id, $r->ponderation);
+				array_push($rows[$r->id], $risk_level);
+				
+				if(array_key_exists($r->question_category_id, $categories_map)){
+					switch($risk_level){
+						case 'A':
+							$categories_map[$r->question_category_id]['risk_high']++;
+							break;
+						case 'M':
+							$categories_map[$r->question_category_id]['risk_medium']++;
+							break;
+						default:
+							$categories_map[$r->question_category_id]['risk_low']++;
+							break;
+					}
+				}
+			}
+			
+			$total_questionary = count($rows);
+			
+			foreach($categories_map as $key => $per_cat){
+				$categories_map[$key]['risk_high'] = ($categories_map[$key]['risk_high'] >  0) ? ($categories_map[$key]['risk_high'] * 100) / $total_questionary : 0;
+				$categories_map[$key]['risk_medium'] = ($categories_map[$key]['risk_medium'] >  0) ? ($categories_map[$key]['risk_medium'] * 100) / $total_questionary : 0;
+				$categories_map[$key]['risk_low'] = ($categories_map[$key]['risk_low'] >  0) ? ($categories_map[$key]['risk_low'] * 100) / $total_questionary : 0;
+			}
+			
+			$resp = array('head' => $categories, 'rows' => $rows, 'percent' => $categories_map);
+			#echo '<pre>';print_r($resp); exit;
 			return $resp;
 		}
 		
 		return FALSE;
+	}
+	
+	private function _check_risk_level($question_category_id, $ponderarion){
+		$this->load->model('Ratings_model', 'ratings');
+		$ratings = $this->ratings->get_all();
+		$risk_level = '-';
+		if($ratings !== FALSE){
+			if(array_key_exists($question_category_id, $ratings)){
+				switch (TRUE) {
+					case ($ponderarion >= $ratings[$question_category_id]['high']['min']) &&
+					($ponderarion <= $ratings[$question_category_id]['high']['max']):
+					$risk_level = 'A';
+					break;
+		
+					case ($ponderarion >= $ratings[$question_category_id]['medium']['min']) &&
+					($ponderarion <= $ratings[$question_category_id]['medium']['max']):
+					$risk_level = 'M';
+					break;
+					
+					default:
+						$risk_level = 'B';
+					break;
+				}
+			}
+		}
+		return $risk_level;
 	}
 
 	public function set_recommendations($questionary_completion_id, $recommendation_ids){
