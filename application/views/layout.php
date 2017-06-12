@@ -19,11 +19,15 @@
 		
 		<!--css-->
 		<link rel="stylesheet" type="text/css"
-			href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+			href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		
 		<!--css datatable-->
 		<link rel="stylesheet" type="text/css"
-			href="//cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+			href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+		
+		<!--css buttons-->
+		<link rel="stylesheet" type="text/css"
+			href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.bootstrap.min.css">
 			
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script
@@ -90,11 +94,22 @@
 	<!-- end general custom script -->
 
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- 	<script -->
+<!-- 		src="//code.jquery.com/jquery-1.12.4.js"></script> -->
 	<!-- start scripts data tables-->
-	<script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
-	<script src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+	<script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+	<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+	<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+	<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js"></script>
+	<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
 
 	<!-- end scripts data tables-->
 

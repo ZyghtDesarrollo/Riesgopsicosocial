@@ -335,6 +335,10 @@
 				}
 		    } );
 
+			$('#video-modal').on('hidden.bs.modal', function () {
+				$("#rVideo").attr("src", "");
+			});
+
 			//To prepare and display modal (create)
 		    $("#btn-create").click(function(){
 				$('#form-record')[0].reset();

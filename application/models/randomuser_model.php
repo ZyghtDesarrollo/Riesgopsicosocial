@@ -26,17 +26,31 @@ class randomuser_model extends Zyght_Model {
 		}
 
 		for ($pos = 0; $pos < $amount; $pos++) {
+			$pass = $this->_random_password();
+			while($this->_is_user_exists($company_id, $pass)){
+				$pass = $this->_random_password();
+			}
 			$this->db->insert($this->table, array(
 				'company_id' => $company_id,
-				'password' => $this->_random_password(),
+				'password' => $pass,
 				'date' => $date
 			));
 		}
 
 		return TRUE;
 	}
+	
+	private function _is_user_exists($company_id, $password){
+		$this->db->select('1');
+		$this->db->from($this->table);
+		$this->db->where('company_id', $company_id);
+		$this->db->where('password', $password);
+		$query = $this->db->get();
+		
+		return ($query->num_rows() > 0) ? TRUE : FALSE;
+	}
 
-	private function _random_password($chars = 6) {
+	private function _random_password($chars = 5) {
 		$letters = 'abcefghijklmnopqrstuvwxyz1234567890';
 		return substr(str_shuffle($letters), 0, $chars);
 	}

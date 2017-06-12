@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
@@ -89,9 +90,56 @@
 	var table;
 	$(document).ready(function() {
 		table = $('#example').DataTable({
+			pagingType: "full_numbers",
+			lengthChange: true,
+        	buttons: [{
+                	   	extend: 'print',
+                		exportOptions: {
+                    		columns: ':visible'
+                		},
+                		text:      '<i class="fa fa-print" aria-hidden="true"></i>',
+                        titleAttr: 'Imprimir'
+            		  },
+            		  {
+                    	extend: 'copy',
+                    	exportOptions: {
+                        	columns: ':visible'
+                    	},
+                    	text:      '<i class="fa fa-files-o" aria-hidden="true"></i>',
+                        titleAttr: 'Copiar'
+                	  },
+            		  {
+                  		extend: 'excel',
+                  		exportOptions: {
+                      		columns: ':visible'
+                  		},
+                  		text:      '<i class="fa fa-file-excel-o" aria-hidden="true"></i>',
+                        titleAttr: 'Excel'
+              		  },
+              		 {
+                    	extend: 'pdf',
+                    	exportOptions: {
+                        	columns: ':visible'
+                    	},
+                    	text:      '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>',
+                        titleAttr: 'PDF'
+                	 },
+                	 {
+                     	extend: 'colvis',
+                     	text:      '<i class="fa fa-eye-slash" aria-hidden="true"></i>',
+                         titleAttr: 'Mostrar / Ocultar columnas'
+                 	 }],
 	    		"select": true,
 		    	"language": {
-				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json",
+				    buttons: {
+				    	copyTitle: 'Copiando en el portapapeles',
+				    	copySuccess: {
+		                    _: '%d Líneas copiadas',
+		                    1: '1 Línea copiada'
+		                }
+		                //colvis: 'Mostrar / Ocultar columnas' 
+		            }
 				},
 			   "ajax": {
           			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrandomuser/list_by_company_id",
@@ -101,13 +149,15 @@
               		}
         		},
         		"initComplete": function( settings, json ) {
+        			table.buttons().container()
+        	           .appendTo( $('#example_wrapper .col-sm-6:eq(0)'));
         			$("#example_filter").append("&nbsp;&nbsp;<button id='refresh' "
                 			+"class='btn btn-button' "
                 			+"data-loading-text='Actualizando...'><span class='glyphicon glyphicon-refresh'></span></button>");
         			$("#refresh").click(function(){
         				table.ajax.reload( null, false );
-        				var $this = $(this);
-        				  $this.button('loading');
+        				var $this= $(this);
+        				$this.button('loading');
         				    setTimeout(function() {
         				       $this.button('reset');
         				   }, 3000);
