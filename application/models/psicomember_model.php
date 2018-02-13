@@ -55,24 +55,45 @@ class Psicomember_model extends Zyght_Model {
 		return FALSE;
 	}
 
-	public function get_by_company_id($company_id) {
+	public function get_by_company_id($company_id, $active = NULL) {
 		$this->db->select('*');
 		$this->db->from($this->table);
 		$this->db->where($this->table . '.company_id', $company_id);
+		if(!empty($active)){
+		    $this->db->where('active', 1);
+        }
+
 		$query = $this->db->get();
 
 		return ($query->num_rows() > 0) ? $query->result() : array();
 	}
 	
-	public function get_by_company_code($company_code) {
+	public function get_by_company_code($company_code, $active = NULL) {
 		$this->db->select('pm.*');
 		$this->db->from($this->table.' AS pm');
 		$this->db->join('Company AS c', 'c.id = pm.company_id');
 		$this->db->where('c.code', $company_code);
 		$query = $this->db->get();
+        if(!empty($active)){
+            $this->db->where('active', 1);
+        }
 	
 		return ($query->num_rows() > 0) ? $query->result() : FALSE;
 	}
 
+    public function activate($id, $activate) {
+        $data = array();
+
+        if (isset($activate)) {
+            $data['active'] = $activate;
+        }
+
+        if (!empty($data)) {
+            $this->db->where($this->id, $id);
+            return $this->db->update($this->table, $data);
+        }
+
+        return FALSE;
+    }
 }
 

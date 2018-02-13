@@ -24,7 +24,17 @@ class Recommendation_model extends Zyght_Model {
 
 		return ($id > 0) ? $id : FALSE;
 	}
-	
+
+    public function recommendation_exists_at_company($recommendation_id, $company_id){
+        $this->db->select('1');
+        $this->db->from($this->table);
+        $this->db->where($this->id, $recommendation_id);
+        $this->db->where('company_id', $company_id);
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? TRUE : FALSE;
+    }
+
 	public function associate_recommendations($recommendations_id, $job_position_id){
 		$this->db->trans_start();
 		$this->disassociate_recomendations($job_position_id);
@@ -129,6 +139,16 @@ class Recommendation_model extends Zyght_Model {
 		$this->db->where('pr.job_position_id', (int) $job_position_id);
 		$query = $this->db->get();
 	
+		return ($query->num_rows() > 0) ? $query->result() : FALSE;
+	}
+
+	public function get_all(){
+		$this->db->select('r.*, qc.title AS question_category_title');
+		$this->db->from($this->table.' AS r');
+		$this->db->join('QuestionCategory AS qc', 'qc.id = r.question_category_id');
+		$this->db->join('PositionRecommendations AS pr', 'pr.recommendation_id = r.id');
+		$query = $this->db->get();
+		
 		return ($query->num_rows() > 0) ? $query->result() : FALSE;
 	}
 	

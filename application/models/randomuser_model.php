@@ -39,7 +39,17 @@ class randomuser_model extends Zyght_Model {
 
 		return TRUE;
 	}
-	
+
+    public function random_user_exists_at_company($random_user_id, $company_id){
+        $this->db->select('1');
+        $this->db->from($this->table);
+        $this->db->where($this->id, $random_user_id);
+        $this->db->where('company_id', $company_id);
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? TRUE : FALSE;
+    }
+
 	private function _is_user_exists($company_id, $password){
 		$this->db->select('1');
 		$this->db->from($this->table);
@@ -64,9 +74,20 @@ class randomuser_model extends Zyght_Model {
 		return ($query->num_rows() > 0) ? $query->result() : array();
 	}
 
+	public function get_devices_token_by_company_code($code){
+	    $this->db->select('ru.device_token');
+	    $this->db->from($this->table.' AS ru');
+	    $this->db->join('Company AS c', 'c.id = ru.company_id');
+        $this->db->where('c.code', (int) $code);
+	    $this->db->where('ru.device_token !=', '');
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? $query->result() : FALSE;
+    }
+
 	// USER -------------------------------------------------------------------------------
 
-	public function login($password, $company_code) {
+	public function login($password, $company_code, $device_token = NULL) {
 		$this->db->select($this->table . '.*');
 		$this->db->from($this->table);
 		$this->db->join("Company as c", "c.id = " . $this->table . ".company_id");
@@ -80,6 +101,7 @@ class randomuser_model extends Zyght_Model {
 		}
 
 		$user = $query->row();
+		$this->_register_device_token($device_token, $user->id);
 		$user->access_token = $this->_generate_token($user->id);
 
 		return $user;
@@ -96,6 +118,11 @@ class randomuser_model extends Zyght_Model {
 
 		return $token;
 	}
+
+	private function _register_device_token($device_token, $user_id){
+	    $this->db->where('id', $user_id);
+        return $this->db->update($this->table, ['device_token' => $device_token]);
+    }
 
 	public function get_loggedin_user($access_token) {
 		$this->db->select($this->table .'.*');

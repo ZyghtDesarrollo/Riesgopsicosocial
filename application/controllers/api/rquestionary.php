@@ -61,22 +61,56 @@ class Rquestionary extends API_Controller {
 		$this->response_ok($result);
 	}
 
-	public function list_completions_by_company_id_get() {
-		$company_id = $this->get('company_id');
-		if (!isset($company_id) || $company_id=='') {
-			$this->response_error(400);
-		}
-		
- 		$result = $this->questionary_model->get_questionary_completions_by_company_id($company_id);
-	
+    public function list_completions_by_company_id_get() {
+        $company_id = $this->get('company_id');
+        if (!isset($company_id) || $company_id=='') {
+            $this->response_error(400);
+        }
+
+        $result = $this->questionary_model->get_questionary_completions_by_company_id($company_id);
+
 // 		if ($result === FALSE) {
 // 			$this->response_error(404);
 // 		}
-	
-		$this->response_ok($result);
-	}
-	
-	public function list_job_position_completions_by_company_id_get(){
+
+        $this->response_ok($result);
+    }
+
+    public function list_questionary_completions_summary_by_company_id_get()
+    {
+        $company_id = $this->get('company_id');
+        if (!isset($company_id) || $company_id=='')
+        {
+            $this->response_error(400);
+        }
+
+        $result = $this->questionary_model->get_questionary_completions_summary_by_company_id($company_id);
+
+// 		if ($result === FALSE) {
+// 			$this->response_error(404);
+// 		}
+
+        $this->response_ok($result);
+    }
+
+    public function list_activity_log_by_company_id_get()
+    {
+        $company_id = $this->get('company_id');
+        if (!isset($company_id) || $company_id=='')
+        {
+            $this->response_error(400);
+        }
+
+        $result = $this->questionary_model->get_activity_log_by_company_id($company_id);
+
+// 		if ($result === FALSE) {
+// 			$this->response_error(404);
+// 		}
+
+        $this->response_ok($result);
+    }
+
+    public function list_job_position_completions_by_company_id_get(){
 		$company_id = $this->get('company_id');
 		if (!isset($company_id) || $company_id=='') {
 			$this->response_error(400);
@@ -122,8 +156,12 @@ class Rquestionary extends API_Controller {
 		if (!$this->get('job_position_id')) {
 			$this->response_error(400);
 		}
+        $company_id = $this->get('company_id');
+        if (!isset($company_id) || $company_id=='') {
+            $this->response_error(400);
+        }
 		
-		$result = $this->questionary_model->get_category_results_by_job_position_id($this->get('job_position_id'));
+		$result = $this->questionary_model->get_category_results_by_job_position_id($this->get('job_position_id'), $company_id);
 		
 		$this->response_ok($result);
 	}

@@ -66,7 +66,7 @@
 					<div class="form-group">
 						<label for="record-question-category" class="form-control-label">Categoría</label>
 						<select id="record-question-category" name="record-question-category" class="form-control">
-							<option value="-1">Seleccione...</opstion>
+							<option value="-1">Seleccione...</option>
 						</select>
 					</div>
 					<div class="form-group">

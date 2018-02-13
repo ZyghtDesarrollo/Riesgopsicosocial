@@ -1,5 +1,88 @@
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script>
+	var questionaries = null;
+
+	function findAnswer(id, answers) {
+		response = false;
+
+		$.each(answers, function(i, obj){
+			if (id == obj.question_option_id) {
+				response = true;
+				return false;
+			}
+		});
+
+		return response;	
+	}
+
+	function getQuestionary(questionaryType, questionaries, answers) {
+		questionary = (questionaryType == "Cuestionario Breve") ? questionaries[0] : questionaries[1];
+
+		var panel = '';
+		var finalBox = '';
+		var item = 0;
+		var factor = 0;
+		var total_ponderation = 0;
+		var points = 0;
+		var cont = 0;
+
+		panel += '<div id="panel-'+ questionary.id +'" class="questionary-panel panel panel-default">'
+	  		  	+'<div class="panel-body">';
+
+		panel += '<h2 class="text-center">'+ questionary.name +'</h2>';
+
+		$.each(questionary.categories, function(i, obj_category){
+			factor = 4;
+			item = 0;
+			total_ponderation = 0;
+			
+			panel += '<div class="alert alert-info category">'+obj_category.title+'</div>';
+			
+			$.each(obj_category.questions, function(y, obj_question){
+				item++;
+				panel += '<ol start='+(y+1)+'>' + '<li class="question">'+obj_question.title+'</li>' + '</ol>'
+					+ '<div class="answere-box">';
+					//panel += '<ul><li class="open-answer"></li></ul>';
+					
+					panel +='<ol type="a">';
+					
+					if(!obj_question.hasOwnProperty('options') && answers[cont] != undefined){
+						panel += '<li>' + answers[cont].open_answer + '</li>';
+					}else{
+						$.each(obj_question.options, function(i, obj_options){
+							//console.log(JSON.stringify(obj_options));
+		
+							if (findAnswer(obj_options.id, answers) == false) {
+								panel += '<li>' + obj_options.title + '</li>';
+							} else {
+								total_ponderation += obj_options.ponderation;
+								panel += '<li class="selected-answere">' + obj_options.title + ' <i class="glyphicon glyphicon-ok"></i></li>';
+							}
+						});
+					}
+				cont++;
+
+				panel += '</ol>'
+			 		+ '<hr>'
+					+ '</div>';
+			});
+
+			factor *= item;
+			points = (total_ponderation / factor)*100;
+			finalBox += '<div class="panel panel-default">';
+			finalBox +='<div class="panel-heading"><strong>'+obj_category.title+'</strong></div>';
+			finalBox += '<div class="panel-body">';
+			finalBox += '<div class="alert alert-info">Puntaje '+obj_category.title+': <strong>('+total_ponderation+'/ '+factor+')*100 = '
+			+points.toFixed(2)+'</strong></div>';
+			finalBox +='</div></div>';
+		});
+
+		panel += '</div>'
+			+'</div>';	
+
+		return panel+finalBox;
+	}
+</script>
+
 <style>
 	.selected-answere{
         font-weight: bold;
@@ -35,24 +118,6 @@
 	.question{
 		font-size: 18px;
 	}
-	.modal-body {
-    	max-height: calc(100vh - 200px);
-    	overflow-y: auto;
-	}
-	
-	tables.table-result {
-	    table-layout: fixed;
-	}
-	
-	table.table-result th, table.table-result td{
-		text-align: center;
-		font-size: 12px;
-	}
-	
-	table.table-result tfoot > tr{
-		background-color: #cee1ff;
-		font-weight: bold;
-	}
 </style>
 
 <!-- start breadcrumb -->
@@ -60,7 +125,7 @@
 	<div class="col-sm-12">
 		<ol class="breadcrumb">
 			<li><a href="#">Home</a></li>
-			<li class="active">Resultados por puestos de trabajo</li>
+			<li class="active">Análisis de resultados</li>
 		</ol>
 	</div>
 </div>
@@ -72,10 +137,8 @@
 			cellspacing="0" width="100%">
 			<thead>
 				<tr>
-					<th>ID Puesto</th>
 					<th>Puesto</th>
 					<th># Encuestas</th>
-					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -90,8 +153,8 @@
 </div>
 
 
-<!-- start modal for detail -->
-<div class="modal fade" tabindex="-1"  id="detail-modal" role="dialog"
+<!-- start modal for create / update-->
+<div class="modal fade" tabindex="-1"  id="form-modal" role="dialog"
 	data-backdrop="static">
 	<div class="modal-dialog modal-lg">
 		<!-- start Modal content-->
@@ -102,55 +165,11 @@
 			</div>
 			<div class="modal-body">
 
-				<div id="loading-detail" class="text-center" style="display:none;">
-					<img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
-				</div>
-				<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-				<div id="box-detail" style="padding:0px;"></div>
-			</div>
-			<div class="panel-body">
-				<form id="form-record">
-						<div class="form-group">
-							<label for="record-recommendation" class="form-control-label">Recomendación (Video sugerido)</label>
-							<select id="record-recommendation" 
-								name="record-recommendation" multiple="multiple" class="form-control-label" style="width: 100%;">
-								<option value="-1">Seleccione</option>
-							</select>
-						</div>
-						<input type="hidden" id="record-job-position">
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" id="btn-action" class="btn btn-success"
-					data-action="edit"
-					data-loading-text="&lt;span&gt;&lt;i class='fa fa-refresh 
-					fa-spin'&gt;&lt;/i&gt;&nbsp;&nbsp; Procesando...&lt;span&gt;">Agregar recomendación</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-			</div>
-		</div>
-		<!-- Modal content-->
-	</div>
-</div>
-<!-- end modal for detail -->
-
-<!-- start modal for recommendation-->
-<div class="modal fade" tabindex="-1"  id="recommendation-modal" role="dialog"
-	data-backdrop="static">
-	<div class="modal-dialog modal-lg">
-		<!-- start Modal content-->
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title" id="rTitle">default</h4>
-			</div>
-			<div class="modal-body">
-
 				<div id="loading" class="text-center" style="display:none;">
 					<img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
 				</div>
-				<div id="questionary" style="padding:0px;">
-					
-				</div>
+
+				<div id="questionary" style="padding:0px;"></div>
 				<form id="form-record">
 					<div class="form-group">
 						<label for="record-recommendation" class="form-control-label">Recomendación (Video sugerido)</label>
@@ -164,16 +183,16 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" id="btn-action" class="btn btn-success"
-					data-action="edit"
+					data-action="create"
 					data-loading-text="&lt;span&gt;&lt;i class='fa fa-refresh 
-					fa-spin'&gt;&lt;/i&gt;&nbsp;&nbsp; Procesando...&lt;span&gt;">Agregar recomendación</button>
+					fa-spin'&gt;&lt;/i&gt;&nbsp;&nbsp; Procesando...&lt;span&gt;">Crear</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 			</div>
 		</div>
 		<!-- Modal content-->
 	</div>
 </div>
-<!-- end modal for recommendation -->
+<!-- end modal for create / update-->
 
 <!-- start modal for display video -->
 <div class="modal fade" tabindex="-1" id="video-modal" role="dialog"
@@ -182,7 +201,7 @@
 		<!-- start Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title">Videos recomendados - Puesto de Trabajo: <span id="vJobPosition"></span></h4>
+				<h4 class="modal-title">Videos recomendados - Cuestionario ID: <span id="vQuestionaryId"></span></h4>
 			</div>
 			<!-- This section (div id="modal-body") will be loaded dynamically -->
 			<div id="loading-video" class="text-center" style="display:none;">
@@ -198,10 +217,47 @@
 </div>
 <!-- end modal for display video -->
 
+<!-- start modal for confirm -->
+<div class="modal fade" tabindex="-1" id="confirm-modal" role="dialog"
+	data-backdrop="static">
+	<div class="modal-dialog">
+		<!-- start Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Confirmación</h4>
+			</div>
+			<!-- This section (div id="modal-body") will be loaded dynamically -->
+			<div class="modal-body">
+				<p>Por favor, presione para efectuar el cambio de estado</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="btn-action-confirm"
+					class="btn btn-warning" data-action="">Aceptar</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+		<!-- Modal content-->
+	</div>
+</div>
+<!-- end modal for confirm -->
+
 <!-- start own script-->
 <script>
 	var table;
 	$(document).ready(function() {
+
+
+// 		$('#form-modal').on('shown', function() {
+// 			alert("hola");
+// 			$('.my-select').select2({
+// 				language: "es",
+// 				 placeholder: {
+// 					    id: '-1', // the value of the option
+// 					    text: 'Seleccione2'
+// 					}
+// 			});
+// 		});
+
 		$('#record-recommendation').select2({
 			language: "es",
 			placeholder: {
@@ -216,7 +272,7 @@
 				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
 				},
 			   "ajax": {
-          			"url": "<?php echo base_url('api/rquestionary/list_job_position_completions_by_company_id');?>",
+          			"url": "<?php echo base_url('api/rquestionary/list_completions_by_company_id');?>",
           			"type": "GET",
           			"data" : {
               			"company_id" : company_id
@@ -240,18 +296,21 @@
             	"sAjaxDataProp" : "response",
 	            "columns": [
 	            	{ 	
-	            		"data": "position_id" 
-	            	},
-	            	{ 	
-	            		"data": "position" 
+	            		"data": "id" 
 	            	},
 		            { 	
-		            	"data": "quantity" 
+		            	"data": "name" 
 		            },
-		            {
-		            	"data": null,
-		                "className": "center",
+		            { 
+		            	"data": "position"
+		        	},
+		        	{
+						"data": null,
+						"className": "center",
 		                "defaultContent": ''
+				    },
+		            { 	
+		            	"data": "created_at",
 		            },
 		            {
 		            	"data": null,
@@ -259,50 +318,59 @@
 		                "defaultContent": ''
 		                	//'<i class="glyphicon glyphicon-zoom-in icon-action" data-action="showDetail" data-id="2" aria-hidden="true"></i>'
 		            }
-		        ],
-		        "columnDefs" : [
-		        	{ 	//icons action options
+	            ],
+	            "columnDefs" : [
+	            	{ 	//icons action options
         				targets : [3],
           					render : function (data, type, row) {
               							var state = 'No revisado';
-              							
-               							if(data.has_recommendation){
- 											state = 'Revisado';
-                       					}
+              							if(data.has_recommendation){
+											state = 'Revisado';
+                      					}
           						return state;
           				}
 				    },
 				    { 	//icons action options
-        				targets : [4],
+        				targets : [5],
           					render : function (data, type, row) {
               							var icons = '<i class="glyphicon glyphicon-zoom-in icon-action"'
-              										+' data-action="detail" data-position_id="'+data.position_id+'"' 
-              										+' aria-hidden="true" title="Detalle"></i>&nbsp;&nbsp';
+              										+' data-action="detail" data-questionary="#panel-'+data.questionary_id+'"' 
+              										+' aria-hidden="true" title="Revisar"></i>&nbsp;&nbsp';
 		          						var videoIcon = '<i class="glyphicon glyphicon-film icon-action"'
 		          										+' data-action="showVideo" aria-hidden="true" title="Ver video"></i>';
-               							if(data.has_recommendation){
- 											icons += videoIcon;
-                       					}
+              							if(data.has_recommendation){
+											icons += videoIcon;
+                      					}
           						return icons;
           				}
 				    }
 				]
 		    });
 
+	    	//Start load questionaries
+	    	var url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rquestionary/initialdata";
+			//Call to API
+			$.get(url)
+				.done(function(response) {
+					questionaries = response;
+			});
+    		//End load quesrionaries
+
     		//Start load recommendations
-			$.get("http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives_by_company_id", {"company_id" : company_id})
+			$.get("http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives", {"company_id" : company_id})
 			.done(function(data) {
 				var temp = '';
 				$.each(data.response, function(index, obj){
-					if(temp !== obj.question_category_id){
-						temp = obj.question_category_id;
+					if(temp !== obj.question_category_title){
+						temp = obj.question_category_title;
 						if(index > 0)
 							$("#record-recommendation").append('</optgroup>');
 						$("#record-recommendation").append('<optgroup label="'+ obj.question_category_title +'">');
 					}
 					$("#record-recommendation").append('<option value="'+obj.id+'">'+obj.title+'</option>');
+					if(index === data.response.length - 1)
+						$("#record-recommendation").append('</optgroup>');
 				});
-				$("#record-recommendation").append('</optgroup>');
 		  	})
 		  	.fail(function(e) {
 		    	console.log(e);
@@ -331,7 +399,10 @@
 		        var action = $(this).attr("data-action");
 		 		var row = $(this).closest('tr');
 				var id = row.find('td:eq(0)').text();
-				var jobPosition = row.find('td:eq(1)').text();
+				var questionaryType = row.find('td:eq(1)').text();
+				var jobPosition = row.find('td:eq(2)').text();
+				var code = row.find('td:eq(3)').text();
+				var createdAt = row.find('td:eq(4)').text();
 
 				switch (action) {
 					case "edit":
@@ -366,15 +437,32 @@
 					break;
 
 					case "detail":
-						$("#record-job-position").val(id);
-						$("#title").text('Resultados por puesto de trabajo: '+jobPosition);
-						$("#container").empty();
-						$("#box-detail").empty();
-						$("#loading-detail").show();
+						$("#record-id").val(id);
+						$("#record-name").val(name);
+						$("#title").text('Revisión de cuestionario ID: '+id);
 
-						//Start load selected recommendation
+						btnAction.text('Agregar recomendación');
+						btnAction.attr("data-action", 'edit');
+						btnAction.attr("class", "btn btn-warning");
+						
+						$("#questionary").empty();
+						$("#loading").show();
+						$.get( "<?php echo base_url('api/rquestionary/list_answers_by_id');?>", {"questionary_completion_id": id})
+							.done(function(data) {
+								$("#loading").hide();
+								result = getQuestionary(questionaryType, questionaries, data.response);
+								$("#questionary").html(result);
+//								$("#modal-body").html(iframes);								
+							})
+							.fail(function() {
+								//alert( "error" );
+							})
+							.always(function() {
+								//alert( "finished" );
+							});
+
 						$("#record-recommendation").val('').trigger('change');
-						$.get( "<?php echo base_url('api/rrecommendation/list_by_job_position_id');?>", {"job_position_id": id})
+						$.get( "<?php echo base_url('api/rrecommendation/list_by_questionary_completion_id');?>", {"qc_id": id})
 						.done(function(data) {
 							var selected = [];
 							$(data.response).each(function(i, element){
@@ -388,93 +476,23 @@
 					  	.always(function() {
 					    //alert( "finished" );
 					  	});
-						//End load selected recommendation
-
-						$.get( "<?php echo base_url('api/rquestionary/list_category_results_by_job_position_id');?>", {"job_position_id": id})
-							.done(function(data) {
-								$("#loading-detail").hide();
-								//var for highchart
-								var categories = [];
-								var serie_high = [];
-								var serie_medium = [];
-								var serie_low = [];	
-								var cont = 1;
-								var content = '<div class="table-responsive">';
-								content += '<table class="table table-striped table-hover table-result">'
-											+'<thead>'
-												+'<tr><th>Nº</th>';
-								
-								$(data.response.head).each(function(i, e){
-									content += '<th>'+e.title+'</th><th>Nivel de Riesgo</th>';
-									categories.push(e.title);
-								});
-
-								content += '<tr>'
-											+'</thead>'
-											+'<tbody>';
-
-									  var obj = data.response.rows;
-									  for (var key in obj){
-										  content += '<tr><td>'+ cont++ +'</td>';
-									    var value = obj[key];
-									    for(var t = 0 ; t < value.length; t++){
-									    	content +='<td>'+value[t]+'</td>';
-									    }
-									    content += '</tr>';
-									  }
-
-									 content +='<tfoot><tr>'
-										 		+'<td colspan="2"><strong>Riesgo Alto<br>Riesgo Medio<br>Riesgo Bajo</strong></td>';
-									 
-									var percent = data.response.percent;
-									var flag = false;
-									for (var key in percent){
-										var val = percent[key];
-										if(flag){
-											content += '<td></td>';
-										}else{
-											flag = true;
-										}
-									    content +='<td><strong>'+val.risk_high+'<br>'+val.risk_medium+'<br>'+val.risk_low+'</strong></td>';
-									    serie_high.push(val.risk_high);
-										serie_medium.push(val.risk_medium);
-										serie_low.push(val.risk_low);
-									 }
-									content += '</tr>';
-									content +='</tr></tfoot></tbody>';
-								+'</table>'
-							+'</div>';
-								render_chart(cont-1, categories, serie_high, serie_medium, serie_low)
-								$("#box-detail").html(content);
-							})
-							.fail(function() {
-								//alert( "error" );
-							})
-							.always(function() {
-								//alert( "finished" );
-							});
-
-						$('#detail-modal').modal('show');
-					break;
-					
-					case "recommendation":
-						$("#rTitle").text('Recomendaciones por puesto de trabajo: '+jobPosition);
-						$('#recommendation-modal').modal('show');
+						
+						$('#form-modal').modal('show');
 					break;
 
 					case "showVideo":
-						$("#vJobPosition").text(jobPosition);
+						$("#vQuestionaryId").text(id);
 						$("#loading-video").show();
 						$("#modal-body").empty();
-						$.get( "<?php echo base_url('api/rrecommendation/list_by_job_position_id');?>", {"job_position_id": id})
+						$.get( "<?php echo base_url('api/rrecommendation/list_by_questionary_completion_id');?>", {"qc_id": id})
 							.done(function(data) {
 								$("#loading-video").hide();
 								var iframes = '';
 								var temp = '';
 								$(data.response).each(function(i, element){
-									if(temp !== element.question_category_id){
-										iframes  +='<div class="alert alert-info"><span style="font-size:18px;">'+element.question_category_title+'</span></div>';//Category
-										temp = element.question_category_id;
+									if(temp !== element.qc_title){
+										iframes  +='<div class="alert alert-info"><span style="font-size:18px;">'+element.qc_title+'</span></div>';//Category
+										temp = element.qc_title;
 									}
 										iframes  +='<h4>'+element.title+'</h4>';//Title
 										iframes += '<iframe class="video-iframe" src="'+ element.link +'" frameborder="0" allowfullscreen></iframe>';
@@ -494,11 +512,6 @@
 				}
 		    } );
 
-			$('#video-modal').on('hidden.bs.modal', function () {
-				$("#modal-body").empty();
-			});
-		    
-
 			//To prepare and display modal (create)
 		    $("#btn-create").click(function(){
 				$('#form-record')[0].reset();
@@ -514,11 +527,10 @@
 		    	e.preventDefault();
 		    	var action = $(this).attr("data-action");
 		    	var params = {  
-							"recommendations_id" :  $("#record-recommendation").val()
+							"recommendations" :  $("#record-recommendation").val()
 						};
 				if(action == "edit"){
-					btnAction.button("loading");
-					params.job_position_id = $("#record-job-position").val();
+					params.id = $("#record-id").val();
 				}
 				processAction(action, params);
 		    });
@@ -543,7 +555,7 @@
 					break;
 
 					case "edit":
-						url = "<?php echo base_url('api/rrecommendation/associate_by_job_position');?>";
+						url = "<?php echo base_url('api/rquestionary/add_recommendations');?>";
 					break;
 					
 					case "activate":
@@ -572,55 +584,8 @@
 				    //alert( "error" );
 				  })
 				  .always(function() {
-					  btnAction.button("reset");
 				    //alert( "finished" );
 				  });
 			}	
-
-			function render_chart(workers, categories, serie_high, serie_medium, serie_low){
-				Highcharts.chart('container', {
-				    chart: {
-				        type: 'column'
-				    },
-				    colors: ['#D9534F', '#F0AD4E', '#5CB85C'],
-				    title: {
-				        text: 'Gráfico de las prevalencias (porcentajes) de trabajadores en cada nivel de riesgo'
-					        +' en una unidad de '+ workers +' trabajadores'
-				    },
-				    xAxis: {
-				        categories: categories//['Exigencias psicológicas', 'Trabajo activo y desarrollo de habilidades', 'Apoyo social en la empresa', 'Compensaciones', 'Doble presencia']
-				    },
-				    yAxis: {
-				        min: 0,
-						max: 100,
-						tickInterval: 10,
-				        title: {
-				            text: 'Porcentajes'
-				        }
-				    },
-				    tooltip: {
-				        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
-				        shared: true
-				    },
-				    plotOptions: {
-				        column: {
-				            stacking: 'percent'
-				        }
-				    },
-				    series: [{
-				        name: 'Alto',
-				        data: serie_high //[5, 3, 4, 7, 2]
-				    }, {
-				        name: 'Medio',
-				        data: serie_medium //[2, 2, 3, 2, 1]
-				    }, {
-				        name: 'Bajo',
-				        data: serie_low//[3, 4, 4, 2, 5]
-				    }],
-				    credits:{
-						enabled: false
-						}
-				});
-			}
 		</script>
 <!-- end own script -->

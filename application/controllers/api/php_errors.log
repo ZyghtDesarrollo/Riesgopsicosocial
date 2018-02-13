@@ -1,0 +1,4 @@
+[12-Feb-2018 06:41:53 America/Los_Angeles] PHP Fatal error:  Call to undefined function last_query() in D:\home\site\wwwroot\application\models\questionary_model.php on line 155
+[12-Feb-2018 11:03:02 America/Los_Angeles] PHP Fatal error:  Class 'Random_user_recommendation_views_model' not found in D:\home\site\wwwroot\system\core\Loader.php on line 304
+[12-Feb-2018 12:20:48 America/Los_Angeles] PHP Fatal error:  Cannot use isset() on the result of a function call (you can use "null !== func()" instead) in D:\home\site\wwwroot\application\controllers\api\rrecommendation.php on line 164
+[12-Feb-2018 12:20:56 America/Los_Angeles] PHP Fatal error:  Cannot use isset() on the result of a function call (you can use "null !== func()" instead) in D:\home\site\wwwroot\application\controllers\api\rrecommendation.php on line 164

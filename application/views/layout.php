@@ -64,6 +64,12 @@
 				opacity: 0.5;
 				color: red;
 			}
+
+            ul.hide-item > li{
+                display:none !important;
+            }
+
+            .ajaxReplayMessage{ display:none;}
 		</style>
 		<!-- end general custom style -->
 	</head>
@@ -116,19 +122,16 @@
 	<script>
 		//User Roles & Menu
 		if (user.name == 'superadmin') {
-			$("#companies").show();
-			$("#jobPositions").hide();
-			$("#randomUsers").hide();
-			$("#psychosocialTeam").hide();
-			$("#recomendations").hide();
-			$("#resultsAnalysis").hide();
+			$("#companies").attr('style','display: block !important');;
 		} else {
-			$("#companies").hide();
-			$("#jobPositions").show();
-			$("#randomUsers").show();
-			$("#psychosocialTeam").show();
-			$("#recomendations").show();
-			$("#resultsAnalysis").show();
+			$("#jobPositions").attr('style','display: block !important');
+			$("#randomUsers").attr('style','display: block !important');
+			$("#psychosocialTeam").attr('style','display: block !important');
+			$("#recomendations").attr('style','display: block !important');
+			$("#resultsAnalysis").attr('style','display: block !important');
+            $("#activityLog").attr('style','display: block !important');
+            $("#notification").attr('style','display: block !important');
+            $("#billboard").attr('style','display: block !important');
 		}
 	</script>
 </body>

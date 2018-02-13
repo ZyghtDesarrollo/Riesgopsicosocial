@@ -22,7 +22,7 @@
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://riesgopsicosocial.azurewebsites.net/index.php/';
+$config['base_url'] = 'http://riesgopsicosocial.azurewebsites.net/index.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -365,6 +365,24 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
+
+/*
+|--------------------------------------------------------------------------
+| Android Notification Push
+|--------------------------------------------------------------------------
+|
+*/
+$config['android_api_key'] = 'AAAA-LugisI:APA91bF43pIXSdm5Heeux-FL1RUFzh7bV52Tdg5SP2hfK19AVIeHODJaPOODbIbJcOHHR25g64cm'
+.'IuTi-QjZiNmNSz7JfEc3aa8otedFu18Pl4n4BO2kSTsF7PR9k9lJDzm6UHB1Y0TV';
+$config['push_host'] = 'https://fcm.googleapis.com/fcm/send';
+
+/*
+|--------------------------------------------------------------------------
+| URL assets
+|--------------------------------------------------------------------------
+|
+*/
+$config['assets_path'] = 'http://riesgopsicosocial.azurewebsites.net/assets';
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

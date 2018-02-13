@@ -162,7 +162,11 @@
 				    { 	//icons options
         				targets : [5],
           					render : function (data, type, row) {
-          					return '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>';
+                                var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
+                                if(data.active == 1){
+                                    iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action" data-action="deactivate" aria-hidden="true" style="color : green"></i>';
+                                }
+          					return '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>'+iconSwitch;
           				}
 				    }
 				]
@@ -279,11 +283,11 @@
 					break;
 					
 					case "activate":
-						url = "#";
+						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rpsicomember/activate";
 					break;
 
 					case "deactivate":
-						url="#";
+						url="http://riesgopsicosocial.azurewebsites.net/index.php/api/rpsicomember/deactivate";
 					break;
 				}
 

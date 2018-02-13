@@ -10,7 +10,8 @@ class Rrecommendation extends API_Controller {
 
 		$this->resource = 'Rrecommendation';
 
-		$this->load->model('recommendation_model');
+        $this->load->model('recommendation_model');
+        $this->load->model('random_user_recommendation_views_model');
 	}
 
 	public function add_post() {
@@ -159,5 +160,62 @@ class Rrecommendation extends API_Controller {
 		$this->response_ok($result);
 	}
 
+    public function register_recommendation_view_post() {
+        $random_user_id = $this->post('random_user_id');
+        if (is_null($random_user_id) || !is_numeric($random_user_id))
+        {
+            $this->response_error(400);
+        }
+        $recommendation_id = $this->post('recommendation_id');
+        if (is_null($recommendation_id) || !is_numeric($recommendation_id))
+        {
+            $this->response_error(400);
+        }
+        $company_id = $this->post('company_id');
+        if (is_null($company_id) || !is_numeric($company_id))
+        {
+            $this->response_error(400);
+        }
+        $result = $this->random_user_recommendation_views_model->create(
+            $random_user_id,
+            $recommendation_id,
+            $company_id
+        );
+
+        if ($result === FALSE) {
+            $this->response_error(404);
+        }
+
+        $this->response_ok($result);
+    }
+
+    public function register_recommendation_view_get() {
+        $random_user_id = $this->get('random_user_id');
+        if (is_null($random_user_id) || !is_numeric($random_user_id))
+        {
+            $this->response_error(400);
+        }
+        $recommendation_id = $this->get('recommendation_id');
+        if (is_null($recommendation_id) || !is_numeric($recommendation_id))
+        {
+            $this->response_error(400);
+        }
+        $company_id = $this->get('company_id');
+        if (is_null($company_id) || !is_numeric($company_id))
+        {
+            $this->response_error(400);
+        }
+        $result = $this->random_user_recommendation_views_model->create(
+            $random_user_id,
+            $recommendation_id,
+            $company_id
+        );
+
+        if ($result === FALSE) {
+            $this->response_error(404);
+        }
+
+        $this->response_ok($result);
+    }
 }
 

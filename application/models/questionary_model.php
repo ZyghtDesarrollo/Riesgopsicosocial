@@ -136,7 +136,7 @@ class Questionary_model extends Zyght_Model {
 		return ($query->num_rows() > 0) ? $query->result() : FALSE;
 	}
 	
-	public function get_category_results_by_job_position_id($job_position_id){
+	public function get_category_results_by_job_position_id($job_position_id, $company_id){
 		$this->load->model('Question_category_model', 'category');
 		
 		$categories = $this->category->get_by_questionary_id(1);
@@ -146,14 +146,17 @@ class Questionary_model extends Zyght_Model {
 		$this->db->from('QuestionaryCompletion AS qc');
 		$this->db->join('Question AS q', 'q.questionary_id = qc.questionary_id');
 		$this->db->join('QuestionCategory AS qcat', 'qcat.id = q.question_category_id');
-		$this->db->join('Answer AS a', 'a.question_id = q.id AND a.questionary_completion_id = qc.id');
+        $this->db->join('Answer AS a', 'a.question_id = q.id AND a.questionary_completion_id = qc.id');
+        $this->db->join('RandomUser AS r', 'r.id = qc.random_user_id AND r.company_id = '.$company_id);
 		$this->db->join('QuestionOptions AS qo', 'qo.id = a.question_option_id', 'left');
-		$this->db->where('qc.job_position_id', (int) $job_position_id);
+		if(-1 != $job_position_id)
+        {
+            $this->db->where('qc.job_position_id', (int) $job_position_id);
+        }
 		$this->db->group_by('qc.id, qcat.id, qcat.title');
 		$this->db->order_by('qc.id','ASC');
-		
+
 		$query = $this->db->get();
-		
 		if($query->num_rows() > 0){
 			$rows=[];
 			$risk_level = [];
@@ -200,13 +203,56 @@ class Questionary_model extends Zyght_Model {
 			}
 			
 			$resp = array('head' => $categories, 'rows' => $rows, 'percent' => $categories_map);
-			#echo '<pre>';print_r($resp); exit;
 			return $resp;
 		}
 		
 		return FALSE;
 	}
-	
+
+    public function get_questionary_completions_summary_by_company_id($company_id = -1)
+    {
+        $sql = "SELECT 
+                CASE WHEN questionary_name IS NULL THEN 'No Respondidos' ELSE questionary_name END as questionary_name, 
+                CASE WHEN job_position_name IS NULL THEN 'N/A' ELSE job_position_name END as job_position_name, 
+                count(user_id) as amount_of_users
+                FROM
+                (
+                SELECT id as user_id, date_of_answer, questionary_id, questionary_name, job_position_id, job_position_name
+                FROM
+                (
+                SELECT id
+                FROM RandomUser
+                WHERE company_id = $company_id
+                ) as FilteredRandomUser
+                LEFT JOIN
+                (
+                SELECT random_user_id, created_at as date_of_answer, Questionary.id as questionary_id, Questionary.name as questionary_name, JobPosition.id as job_position_id, JobPosition.position as job_position_name 
+                FROM QuestionaryCompletion
+                INNER JOIN Questionary ON QuestionaryCompletion.questionary_id = Questionary.id AND Questionary.active = 1
+                INNER JOIN JobPosition ON QuestionaryCompletion.job_position_id = JobPosition.id AND JobPosition.active = 1 AND JobPosition.company_id = $company_id
+                ) as QuestionaryData
+                ON FilteredRandomUser.id = QuestionaryData.random_user_id
+                ) as CompleteData
+                GROUP BY questionary_name, job_position_name
+                ORDER BY questionary_name, job_position_name;";
+
+        $query = $this->db->query($sql);
+
+        return ($query->num_rows() > 0) ? $query->result() : FALSE;
+    }
+
+    public function get_activity_log_by_company_id($company_id = -1)
+    {
+        $this->db->select('QuestionaryCompletion.created_at as date_of_answer, Questionary.name as questionary_name, JobPosition.position as job_position_name ');
+        $this->db->from('QuestionaryCompletion');
+        $this->db->join('Questionary', 'QuestionaryCompletion.questionary_id = Questionary.id AND Questionary.active = 1');
+        $this->db->join('JobPosition', 'QuestionaryCompletion.job_position_id = JobPosition.id AND JobPosition.active = 1 AND JobPosition.company_id = '.$company_id);
+        $this->db->order_by('QuestionaryCompletion.created_at');
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? $query->result() : FALSE;
+    }
+
 	private function _check_risk_level($question_category_id, $ponderarion){
 		$this->load->model('Ratings_model', 'ratings');
 		$ratings = $this->ratings->get_all();

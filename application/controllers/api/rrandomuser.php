@@ -55,7 +55,8 @@ class Rrandomuser extends API_Controller {
 	public function login_post() {
 		$user = $this->randomuser_model->login(
 			$this->post('password'),
-			$this->post('code')
+			$this->post('code'),
+			$this->post('deviceToken')
 		);
 
 		if ($user === FALSE) {

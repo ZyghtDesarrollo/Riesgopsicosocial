@@ -75,7 +75,7 @@ class Rpsicomember extends API_Controller {
 			$this->response_error(400);
 		}
 
-		$result = $this->psicomember_model->get_by_company_id($this->get('company_id'));
+		$result = $this->psicomember_model->get_by_company_id($this->get('company_id'), $this->get('active'));
 
 		if ($result === FALSE) {
 			$this->response_error(404);
@@ -97,6 +97,26 @@ class Rpsicomember extends API_Controller {
 	
 		$this->response_ok($result);
 	}
+
+    public function activate_post() {
+        $result = $this->psicomember_model->activate($this->post('id'), 1);
+
+        if ($result === FALSE) {
+            $this->response_error(404);
+        }
+
+        $this->response_ok($result);
+    }
+
+    public function deactivate_post() {
+        $result = $this->psicomember_model->activate($this->post('id'), 0);
+
+        if ($result === FALSE) {
+            $this->response_error(404);
+        }
+
+        $this->response_ok($result);
+    }
 
 }
 
