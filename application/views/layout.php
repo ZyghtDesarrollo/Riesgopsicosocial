@@ -131,7 +131,7 @@
 			$("#resultsAnalysis").attr('style','display: block !important');
             $("#activityLog").attr('style','display: block !important');
             $("#notification").attr('style','display: block !important');
-            $("#billboard").attr('style','display: block !important');
+            //$("#billboard").attr('style','display: block !important');
 		}
 	</script>
 </body>

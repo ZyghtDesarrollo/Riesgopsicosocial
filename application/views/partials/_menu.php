@@ -11,18 +11,27 @@
 			<li id="jobPositions"><a href="<?php echo base_url('job_positions'); ?>">Puestos de Trabajo</a></li>
 			<li id="randomUsers"><a href="<?php echo base_url('random_users'); ?>">Usuarios Aleatorios</a></li>
 			<li id="psychosocialTeam"><a href="<?php echo base_url('psychosocial_team'); ?>">Comit&eacute; de Aplicaci&oacute;n</a></li>
-			<li id=""><a href="<?php echo base_url('results_analysis/get_results'); ?>">An&aacute;lisis de Resultados</a></li>
-			
+
 			<li class="dropdown" style="display:none;" id="resultsAnalysis">
-	        	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">An&aacute;lisis de Resultados <span class="caret"></span></a>
-	          	<ul class="dropdown-menu">
+	        	<a href="#" id="resultsAnalysisToggle" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">An&aacute;lisis de Resultados <span class="caret"></span></a>
+	          	<ul class="dropdown-menu" aria-labelledby="resultsAnalysisToggle">
                     <li><a href="<?php echo base_url('results_analysis/get_global_result'); ?>">Resultado Global</a></li>
                     <li><a href="<?php echo base_url('results_analysis/get_results'); ?>">Resultados por Puestos de Trabajo</a></li>
 		            <li><a href="<?php echo base_url('results_analysis/questionary'); ?>">Ver Cuestionarios</a></li>
 		            <li><a href="results_analysis">Revisar Cuestionarios</a></li>
           		</ul>
         	</li>
-            <li id="activityLog"><a href="<?php echo base_url('activity_log'); ?>">Registro de Actividades</a></li>
+
+            <li class="dropdown" style="display:none;" id="activityLog">
+                <a href="#" id="activityLogToggle" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Registro de Actividades<span class="caret"></span></a>
+                <ul class="dropdown-menu" aria-labelledby="activityLogToggle">
+                    <li><a href="<?php echo base_url('activity_log'); ?>">Historial de Actividades</a></li>
+                    <li><a href="<?php echo base_url('billboard'); ?>">Bit&aacute;cora de Proceso</a></li>
+                    <li><a href="<?php echo base_url('activity_log/activity_log_summary'); ?>">Reporte de Cuestionarios</a></li>
+                    <li><a href="<?php echo base_url('activity_log/recommendation_log_summary'); ?>">Reporte de Recomendaciones</a></li>
+                </ul>
+            </li>
+
             <li id="recomendations"><a href="<?php echo base_url('recomendations'); ?>">Recomendaciones</a></li>
             <li id="notification"><a href="<?php echo base_url('notification'); ?>">Notificaciones</a></li>
             <li id="billboard"><a href="<?php echo base_url('billboard'); ?>">Bit&aacute;cora de Proceso</a></li>

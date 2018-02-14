@@ -243,12 +243,25 @@ class Questionary_model extends Zyght_Model {
 
     public function get_activity_log_by_company_id($company_id = -1)
     {
-        $this->db->select('QuestionaryCompletion.created_at as date_of_answer, Questionary.name as questionary_name, JobPosition.position as job_position_name ');
-        $this->db->from('QuestionaryCompletion');
-        $this->db->join('Questionary', 'QuestionaryCompletion.questionary_id = Questionary.id AND Questionary.active = 1');
-        $this->db->join('JobPosition', 'QuestionaryCompletion.job_position_id = JobPosition.id AND JobPosition.active = 1 AND JobPosition.company_id = '.$company_id);
-        $this->db->order_by('QuestionaryCompletion.created_at');
-        $query = $this->db->get();
+        $sql = "SELECT log_date, activity_name, activity_info FROM
+                (
+                (
+                SELECT QuestionaryCompletion.created_at as log_date, Questionary.name as activity_name, JobPosition.position as activity_info
+                FROM QuestionaryCompletion
+                INNER JOIN Questionary ON QuestionaryCompletion.questionary_id = Questionary.id AND Questionary.active = 1
+                INNER JOIN JobPosition ON QuestionaryCompletion.job_position_id = JobPosition.id AND JobPosition.active = 1 AND JobPosition.company_id = $company_id
+                )
+                UNION
+                (
+                SELECT RandomUserRecommendationViews.visited_at as log_date, 'Visualizaci&oacute;n de Recomendaci&oacute;n' as activity_name, Recommendation.title as activity_info
+                FROM RandomUserRecommendationViews
+                INNER JOIN RandomUser ON RandomUserRecommendationViews.random_user_id = RandomUser.id AND RandomUser.company_id = $company_id
+                INNER JOIN Recommendation ON RandomUserRecommendationViews.recommendation_id = Recommendation.id AND Recommendation.company_id = $company_id
+                )
+                ) as activity_log
+                ORDER BY log_date DESC;";
+
+        $query = $this->db->query($sql);
 
         return ($query->num_rows() > 0) ? $query->result() : FALSE;
     }

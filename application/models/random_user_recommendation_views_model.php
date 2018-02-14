@@ -43,4 +43,16 @@ class Random_user_recommendation_views_model extends Zyght_Model {
 
 		return $random_user_recommendation_id;
 	}
+
+    public function get_recommendation_views_summary_by_company_id($company_id)
+    {
+        $this->db->select('Recommendation.title as recommendation_name, count(DISTINCT RandomUserRecommendationViews.random_user_id) as unique_random_users, count(RandomUserRecommendationViews.id) as amount_of_views');
+        $this->db->from($this->table);
+        $this->db->join('RandomUser',$this->table.'.random_user_id = RandomUser.id AND RandomUser.company_id = '.$company_id);
+        $this->db->join('Recommendation',$this->table.'.recommendation_id = Recommendation.id AND Recommendation.company_id = '.$company_id);
+        $this->db->group_by('Recommendation.title');
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? $query->result() : FALSE;
+    }
 }
