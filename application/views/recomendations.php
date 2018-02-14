@@ -82,8 +82,17 @@
 					<div class="form-group">
 						<label for="record-url" class="form-control-label">URL (Video)</label>
 						<blockquote>
-  							<h5>Agregue sólo URL de videos embebidos.<br>
-  							 Si desea agregar un video de <strong>Youtube</strong>, presione "compartir", luego seleccione la pestaña "insertar", copie sólo el enlace que está en "src"</h5>
+                            <h5>Este sistema soporta s&oacute;lo videos embebidos.</h5>
+                            <h6><i>Un enlace a un video embebido est&aacute; contenido entre etiquetas &lt;iframe&gt;, incluy&eacute;ndolas.</i></h6>
+                            <h5>Para agregar un video de YouTube</h5>
+                            <h6>
+                            <ol>
+                                <li>Haga click en "Compartir"</li>
+                                <li>Luego, seleccione "Incorporar"</li>
+                                <li>Finalmente, copie el enlace bajo "Embed Video"</li>
+                            </ol>
+                            </h6>
+                            <img style="width: 405px; height: 250px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/embed_tutorial.png" alt="Tutorial Enlaces YouTube" />
 						</blockquote>
 						<input type="text" class="form-control" id="record-url"
 							name="record-url">
