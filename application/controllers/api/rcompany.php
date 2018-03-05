@@ -10,7 +10,8 @@ class Rcompany extends API_Controller {
 
 		$this->resource = 'Rcompany';
 
-		$this->load->model('company_model');
+        $this->load->model('company_model');
+        $this->load->model('questionary_model');
 	}
 
 	public function add_post() {
@@ -82,6 +83,36 @@ class Rcompany extends API_Controller {
 		if ($result === FALSE) {
 			$this->response_error(404);
 		}
+
+        foreach ($result as $result_row)
+        {
+            $company_risk = $this->questionary_model->get_category_results_by_job_position_id(-1, $result_row->id);
+            $calculated_risk = 0;
+            if(!empty($company_risk) && array_key_exists("percent",$company_risk))
+            {
+                foreach($company_risk["percent"] as $category_risk)
+                {
+                    if(array_key_exists("risk_high",$category_risk) && 50 <= $category_risk["risk_high"])
+                    {
+                        $calculated_risk++;
+                    }
+                    if(array_key_exists("risk_low",$category_risk) && 50 <= $category_risk["risk_low"])
+                    {
+                        $calculated_risk--;
+                    }
+                }
+            }
+            $result_row->company_risk = $calculated_risk;
+            $result_row->company_risk_name = MEDIUM_RISK_NAME;
+            if(MEDIUM_RISK_THRESHOLD > $calculated_risk )
+            {
+                $result_row->company_risk_name = LOW_RISK_NAME;
+            }
+            else if(HIGH_RISK_THRESHOLD <= $calculated_risk )
+            {
+                $result_row->company_risk_name = HIGH_RISK_NAME;
+            }
+        }
 
 		$this->response_ok($result);
 	}

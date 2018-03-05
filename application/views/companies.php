@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
@@ -20,7 +21,9 @@
 					<th>Código</th>
 					<th>RUT</th>
 					<th>Correo electrónico</th>
-					<th>Estado</th>
+                    <th>Estado</th>
+                    <th>Riesgo</th>
+                    <th>Nivel de Riesgo</th>
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -114,6 +117,14 @@
 			var table;
 			$(document).ready(function() {
 				table = $('#example').DataTable({
+                    buttons: [{
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        text:      '<i class="fa fa-file-excel-o" aria-hidden="true"></i>',
+                        titleAttr: 'Excel'
+                    }],
 		    		"select": true,
 			    	"language": {
 					    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
@@ -123,6 +134,8 @@
 	          			"type": "GET"
 	        		},
 	        		"initComplete": function( settings, json ) {
+                        table.buttons().container()
+                            .appendTo( $('#example_wrapper .col-sm-6:eq(0)'));
 	        			$("#example_filter").append("&nbsp;&nbsp;<button id='refresh' "
 	                			+"class='btn btn-button' "
 	                			+"data-loading-text='Actualizando...'><span class='glyphicon glyphicon-refresh'></span></button>");
@@ -153,9 +166,15 @@
 				        {
 							"data": "email"
 						},
-			            { 	
-			            	"data": "active",
-			            },
+                        {
+                            "data": "active",
+                        },
+                        {
+                            "data": "company_risk",
+                        },
+                        {
+                            "data": "company_risk_name",
+                        },
 			            {
 			            	"data": null,
 			                "className": "center",
@@ -166,14 +185,42 @@
 		            ],
 		            
 		            "columnDefs" : [
-	        			{ 	//param active
-	        				targets : [5],
-	          					render : function (data, type, row) {
-	             				return data == '1' ? 'Activo' : 'Inactivo';
-	          				}
-					    },
+                        { 	//param active
+                            targets : [5],
+                            render : function (data, type, row) {
+                                return data == '1' ? 'Activo' : 'Inactivo';
+                            }
+                        },
+                        { 	//param active
+                            targets : [6],
+                            render : function (data, type, row) {
+                                if(<?php echo MEDIUM_RISK_THRESHOLD; ?> > data )
+                                {
+                                    return '<b><span style="color : green">'+data+'</span></b>';
+                                }
+                                else if(<?php echo HIGH_RISK_THRESHOLD; ?> <= data )
+                                {
+                                    return '<span style="color : red">'+data+'</span>';
+                                }
+                                return '<span style="color : black">'+data+'</span>';
+                            }
+                        },
+                        { 	//param active
+                            targets : [7],
+                            render : function (data, type, row) {
+                                if('<?php echo LOW_RISK_NAME; ?>' == data )
+                                {
+                                    return '<b><span style="color : green">'+data+'</span></b>';
+                                }
+                                else if('<?php echo HIGH_RISK_NAME; ?>' == data )
+                                {
+                                    return '<span style="color : red">'+data+'</span>';
+                                }
+                                return '<span style="color : black">'+data+'</span>';
+                            }
+                        },
 					    { 	//icons options
-	        				targets : [6],
+	        				targets : [8],
 	          					render : function (data, type, row) {
 	          						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
 	          						if(data.active == 1){

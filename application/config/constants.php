@@ -44,6 +44,20 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 | ...
 |
 */
+define('LOW_RISK_NAME', 'Riesgo Bajo');
+define('MEDIUM_RISK_NAME', 'Riesgo Medio');
+define('HIGH_RISK_NAME', 'Riesgo Alto');
+define('MEDIUM_RISK_THRESHOLD', 1); //The minimum value to be in the Medium Risk range is MEDIUM_RISK_THRESHOLD
+define('HIGH_RISK_THRESHOLD', 4); //The minimum value to be in the High Risk range is HIGH_RISK_THRESHOLD
+
+/*
+|--------------------------------------------------------------------------
+| Users
+|--------------------------------------------------------------------------
+|
+| ...
+|
+*/
 
 define('SUPER_ADMIN_PASS', 'demo1234');
 define('SUPER_ADMIN_CODE', '666666');
