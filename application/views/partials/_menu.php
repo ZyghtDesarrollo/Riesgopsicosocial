@@ -1,6 +1,6 @@
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="pull-right">
-        <div class="col-sm-12"><span><strong>C&oacute;digo de compa&ntilde;&iacute;a: </strong></span>
+        <div class="col-sm-12"><span><strong>C&oacute;digo de Centro de Trabajo:</strong></span>
             <script>if(user.code){ document.write(user.code)}else{document.write('SA')};</script>&nbsp;&nbsp;
 			<span class="logout"><a href="javascript:logout();" style="text-decoration: none; cursor: pointer;">Cerrar Sesi&oacute;n</a></span>
         </div>
