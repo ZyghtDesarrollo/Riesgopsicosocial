@@ -4,7 +4,7 @@
 	<div class="col-sm-12">
 		<ol class="breadcrumb">
 			<li><a href="#">Home</a></li>
-			<li class="active">Compañías</li>
+			<li class="active">Centros de Trabajo</li>
 		</ol>
 	</div>
 </div>

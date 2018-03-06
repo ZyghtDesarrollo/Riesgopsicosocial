@@ -39,8 +39,8 @@
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>Puesto de trabajo</th>
-					<th>Código de compañía</th>
+					<th>Puesto de Trabajo</th>
+					<th>Código de Centro de Trabajo</th>
 					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>

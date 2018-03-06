@@ -16,8 +16,8 @@
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>Compañía</th>
-					<th>Código de compañía</th>
+					<th>Centro de Trabajo</th>
+					<th>Código de Centro de Trabajo</th>
 					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>
@@ -51,7 +51,7 @@
 							name="record-name">
 					</div>
 					<div class="form-group">
-						<label for="record-company" class="form-control-label">Compañía</label>
+						<label for="record-company" class="form-control-label">Centro de Trabajo</label>
 						<select class="form-control" id="record-company"
 							name="record-company">
 							<option value="-1">Seleccione</option>

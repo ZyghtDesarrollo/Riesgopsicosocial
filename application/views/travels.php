@@ -35,7 +35,7 @@
 			<nav class="navbar navbar-default navbar-fixed-top">
 				<div class="container">
 					<ul class="nav navbar-nav">
-						<li id="companies"><a href="<?php echo base_url('companies/'); ?>">Compañías</a></li> 
+						<li id="companies"><a href="<?php echo base_url('companies/'); ?>">Centros de Trabajo</a></li>
 						<li id="users"><a href="<?php echo base_url('users/'); ?>">Usuarios</a></li>
 						<li id="travels" class="active"><a href="<?php echo base_url('travels/'); ?>">Trayectos</a></li> 
 					</ul>

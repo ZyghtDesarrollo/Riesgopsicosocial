@@ -69,7 +69,7 @@
 <div class="row">
     <div class="col-md-12">
     <div class="panel panel-default">
-        <div class="panel-heading">Resultado total de la compañía</div>
+        <div class="panel-heading">Resultado total del Centro de Trabajo</div>
         <div class="panel-body">
             <div id="loading-detail" class="text-center" style="display:none;">
                 <img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
