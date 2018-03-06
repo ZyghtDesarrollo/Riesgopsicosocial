@@ -20,7 +20,7 @@
 	<div class="col-sm-12">
 		<ol class="breadcrumb">
 			<li><a href="#">Home</a></li>
-			<li class="active">Respuestas</li>
+			<li class="active">Revisar Cuestionarios</li>
 		</ol>
 	</div>
 </div>

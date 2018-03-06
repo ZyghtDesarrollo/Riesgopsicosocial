@@ -287,7 +287,7 @@
         				targets : [4],
           					render : function (data, type, row) {
               							var icons = '<i class="glyphicon glyphicon-zoom-in icon-action"'
-              										+' data-action="detail" data-position_id="'+data.position_id+'"' 
+              										+' data-action="detail" data-position_id="'+data.position_id+'" data-company-id="'+ company_id +'"'
               										+' aria-hidden="true" title="Detalle"></i>&nbsp;&nbsp';
 		          						var videoIcon = '<i class="glyphicon glyphicon-film icon-action"'
 		          										+' data-action="showVideo" aria-hidden="true" title="Ver video"></i>';
@@ -401,7 +401,7 @@
 					  	});
 						//End load selected recommendation
 
-						$.get( "<?php echo base_url('api/rquestionary/list_category_results_by_job_position_id');?>", {"job_position_id": id})
+						$.get( "<?php echo base_url('api/rquestionary/list_category_results_by_job_position_id');?>", {"job_position_id": id, company_id : user.id})
 							.done(function(data) {
 								$("#loading-detail").hide();
 								//var for highchart
