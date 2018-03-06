@@ -4,7 +4,7 @@
 	<div class="col-sm-12">
 		<ol class="breadcrumb">
 			<li><a href="#">Home</a></li>
-			<li class="active">Reporte de Actividad de Recomendaciones</li>
+			<li class="active">Reporte de Visualizaci&oacute;n de Videos</li>
 		</ol>
 	</div>
 </div>
@@ -16,7 +16,7 @@
                cellspacing="0" width="100%">
             <thead>
             <tr>
-                <th>Recomendaci&oacute;n</th>
+                <th>Video</th>
                 <th>Usuarios Aleatorios</th>
                 <th>Total de Visualizaciones</th>
             </tr>

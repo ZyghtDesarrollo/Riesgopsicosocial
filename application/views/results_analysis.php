@@ -112,7 +112,7 @@
 			<div class="panel-body">
 				<form id="form-record">
 						<div class="form-group">
-							<label for="record-recommendation" class="form-control-label">Recomendación (Video sugerido)</label>
+							<label for="record-recommendation" class="form-control-label">Video sugerido</label>
 							<select id="record-recommendation" 
 								name="record-recommendation" multiple="multiple" class="form-control-label" style="width: 100%;">
 								<option value="-1">Seleccione</option>
@@ -154,7 +154,7 @@
 				</div>
 				<form id="form-record">
 					<div class="form-group">
-						<label for="record-recommendation" class="form-control-label">Recomendación (Video sugerido)</label>
+						<label for="record-recommendation" class="form-control-label">Video sugerido</label>
 						<select id="record-recommendation" 
 							name="record-recommendation" multiple="multiple" class="form-control-label" style="width: 100%;">
 							<option value="-1">Seleccione</option>
@@ -469,7 +469,7 @@
 					break;
 					
 					case "recommendation":
-						$("#rTitle").text('Recomendaciones por puesto de trabajo: '+jobPosition);
+						$("#rTitle").text('Videos sugeridos por puesto de trabajo: '+jobPosition);
 						$('#recommendation-modal').modal('show');
 					break;
 

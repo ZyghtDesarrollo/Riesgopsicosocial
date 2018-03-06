@@ -253,7 +253,7 @@ class Questionary_model extends Zyght_Model {
                 )
                 UNION
                 (
-                SELECT RandomUserRecommendationViews.visited_at as log_date, 'Visualizaci&oacute;n de Recomendaci&oacute;n' as activity_name, Recommendation.title as activity_info
+                SELECT RandomUserRecommendationViews.visited_at as log_date, 'Visualizaci&oacute;n de Videos' as activity_name, Recommendation.title as activity_info
                 FROM RandomUserRecommendationViews
                 INNER JOIN RandomUser ON RandomUserRecommendationViews.random_user_id = RandomUser.id AND RandomUser.company_id = $company_id
                 INNER JOIN Recommendation ON RandomUserRecommendationViews.recommendation_id = Recommendation.id AND Recommendation.company_id = $company_id

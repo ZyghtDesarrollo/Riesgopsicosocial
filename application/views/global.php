@@ -172,7 +172,7 @@
 				<div id="questionary" style="padding:0px;"></div>
 				<form id="form-record">
 					<div class="form-group">
-						<label for="record-recommendation" class="form-control-label">Recomendación (Video sugerido)</label>
+						<label for="record-recommendation" class="form-control-label">Video sugerido</label>
 						<select id="record-recommendation" 
 							name="record-recommendation" multiple="multiple" class="form-control-label" style="width: 100%;">
 							<option value="-1">Seleccione</option>

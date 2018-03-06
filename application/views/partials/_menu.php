@@ -28,11 +28,11 @@
                     <li><a href="<?php echo base_url('activity_log'); ?>">Historial de Actividades</a></li>
                     <li><a href="<?php echo base_url('billboard'); ?>">Bit&aacute;cora de Proceso</a></li>
                     <li><a href="<?php echo base_url('activity_log/activity_log_summary'); ?>">Reporte de Cuestionarios</a></li>
-                    <li><a href="<?php echo base_url('activity_log/recommendation_log_summary'); ?>">Reporte de Recomendaciones</a></li>
+                    <li><a href="<?php echo base_url('activity_log/recommendation_log_summary'); ?>">Reporte de Visualizaci&oacute;n de Videos</a></li>
                 </ul>
             </li>
 
-            <li id="recomendations"><a href="<?php echo base_url('recomendations'); ?>">Recomendaciones</a></li>
+            <li id="recomendations"><a href="<?php echo base_url('recomendations'); ?>">Videos</a></li>
             <li id="notification"><a href="<?php echo base_url('notification'); ?>">Notificaciones</a></li>
             <li id="billboard"><a href="<?php echo base_url('billboard'); ?>">Bit&aacute;cora de Proceso</a></li>
 		</ul>

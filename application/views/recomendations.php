@@ -21,7 +21,7 @@
 	<div class="col-sm-12">
 		<ol class="breadcrumb">
 			<li><a href="#">Home</a></li>
-			<li class="active">Recomendaciones</li>
+			<li class="active">Videos</li>
 		</ol>
 	</div>
 </div>
