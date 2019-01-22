@@ -161,11 +161,15 @@ class Questionary_model extends Zyght_Model {
 			$rows=[];
 			$risk_level = [];
 			$categories_map = [];
+			$category_index = 1;
 			
 			if($categories !== FALSE){
-				foreach ($categories as $cat) {
+				foreach ($categories as $cat_id => $cat) {
 					$categories_map[$cat->question_category_id] = array('category' => $cat->title, 
 							'risk_high' => 0, 'risk_medium' => 0, 'risk_low' => 0);
+					$categories[$cat_id]->categoryData = $category_index;
+					$categories[$cat_id]->riskData = $category_index + 1;
+					$category_index+=2;
 				}
 			}
 			

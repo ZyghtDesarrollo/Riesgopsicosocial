@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <style>
@@ -74,8 +75,15 @@
             <div id="loading-detail" class="text-center" style="display:none;">
                 <img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
             </div>
-            <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-            <div id="box-detail" style="padding:0px;"></div>
+            <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div><div class="row">
+			<div class="col-sm-12">
+				<table id="box-detail-table" class="table table-striped table-bordered"
+					cellspacing="0" width="100%">
+					<tr>
+						<th>Nº</th>
+					</tr>
+				</table>
+			</div>
         </div>
         <div class="panel-footer"></div>
     </div>
@@ -84,6 +92,16 @@
 
 <!-- start own script-->
 <script>
+	var exportable_results;
+	var exportable_results_columns = [];
+	var exportable_results_column_defs = [];
+	var exportable_results_data_object = [];
+	function renderRiskData(data, type, row) {
+		if(data == 'B') return -1;
+		if(data == 'A') return 1;
+		return 0;
+	}
+	
 	$(document).ready(function() {
     		//Start load recommendations
 			$.get("http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives_by_company_id", {"company_id" : company_id})
@@ -115,7 +133,7 @@
 
     function loadChart(){
         $("#container").empty();
-        $("#box-detail").empty();
+        $("#box-detail-table").empty();
         $("#loading-detail").show();
 
 
@@ -127,54 +145,84 @@
                 var serie_high = [];
                 var serie_medium = [];
                 var serie_low = [];
-                var cont = 1;
-                var content = '<div class="table-responsive">';
-                content += '<table class="table table-striped table-hover table-result">'
-                    +'<thead>'
-                    +'<tr><th>Nº</th>';
-
+				var header_column = {title: "Nº", data:0};
+				exportable_results_columns.push(header_column);
                 $(data.response.head).each(function(i, e){
-                    content += '<th>'+e.title+'</th><th>Nivel de Riesgo</th>';
                     categories.push(e.title);
+					var category_column = {title: e.title, data:e.categoryData}
+					exportable_results_columns.push(category_column);
+					var risk_column = {title: 'Nivel de Riesgo', data:e.riskData}
+					exportable_results_columns.push(risk_column);
+					var risk_column_def = {targets: [e.riskData], render: renderRiskData}
+					exportable_results_column_defs.push(risk_column_def);
                 });
-
-                content += '<tr>'
-                    +'</thead>'
-                    +'<tbody>';
-
+				
+                var cont = 1;
                 var obj = data.response.rows;
                 for (var key in obj){
-                    content += '<tr><td>'+ cont++ +'</td>';
+					var data_row = [];
+					data_row[0] = (cont<10) ? '0'+cont : cont;
                     var value = obj[key];
                     for(var t = 0 ; t < value.length; t++){
-                        content +='<td>'+value[t]+'</td>';
+                        data_row[t+1] = value[t];
                     }
-                    content += '</tr>';
+					cont++;
+					exportable_results_data_object.push(data_row);
                 }
-
-                content +='<tfoot><tr>'
-                    +'<td colspan="2"><strong>Riesgo Alto<br>Riesgo Medio<br>Riesgo Bajo</strong></td>';
-
+				
                 var percent = data.response.percent;
-                var flag = false;
+				var total_risk_high = [];
+				total_risk_high[0] = "Riesgo Alto";
+				var total_risk_medium = [];
+				total_risk_medium[0] = "Riesgo Medio";
+				var total_risk_low = [];
+				total_risk_low[0] = "Riesgo Bajo";
+				var current_key = 1;
                 for (var key in percent){
                     var val = percent[key];
-                    if(flag){
-                        content += '<td></td>';
-                    }else{
-                        flag = true;
-                    }
-                    content +='<td><strong>'+val.risk_high+'<br>'+val.risk_medium+'<br>'+val.risk_low+'</strong></td>';
+					total_risk_high[current_key] = +val.risk_high.toFixed(2);
+					total_risk_medium[current_key] = +val.risk_medium.toFixed(2);
+					total_risk_low[current_key] = +val.risk_low.toFixed(2);
+					total_risk_high[current_key+1] = '';
+					total_risk_medium[current_key+1] = '';
+					total_risk_low[current_key+1] = '';
+					current_key+=2;
+					
                     serie_high.push(val.risk_high);
                     serie_medium.push(val.risk_medium);
                     serie_low.push(val.risk_low);
                 }
-                content += '</tr>';
-                content +='</tr></tfoot></tbody>';
-                +'</table>'
-                +'</div>';
+				exportable_results_data_object.push(total_risk_high);
+				exportable_results_data_object.push(total_risk_medium);
+				exportable_results_data_object.push(total_risk_low);
+				
+				exportable_results = $('#box-detail-table').DataTable({
+					buttons: [{
+						extend: 'excel',
+						exportOptions: {
+						columns: ':visible'
+						},
+						text:      '<i class="fa fa-file-excel-o" aria-hidden="true"></i>',
+						titleAttr: 'Excel'
+					}],
+					"dom": '<"row"<"div-filtros"><"col-lg-4"l><"col-lg-4"p><"col-lg-4"B>>tir',
+					"paging": false,
+					"select": false,
+					"searching": false,
+					'responsive' : true,
+					"language": {
+						"url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+					},
+					"initComplete": function( settings, json ) {
+						exportable_results.buttons().container()
+					},
+					"showRefresh": false,
+					"columns": exportable_results_columns,
+					"data": exportable_results_data_object,
+					"columnDefs" : exportable_results_column_defs
+					});
+				  
                 render_chart(cont-1, categories, serie_high, serie_medium, serie_low)
-                $("#box-detail").html(content);
             })
             .fail(function() {
                 //alert( "error" );
