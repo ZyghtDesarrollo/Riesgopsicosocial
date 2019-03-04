@@ -244,7 +244,491 @@ class Questionary_model extends Zyght_Model {
 
         return ($query->num_rows() > 0) ? $query->result() : FALSE;
     }
-
+	
+    public function get_questionary_report($company_id = -1, $questionary_id = -1)
+    {
+		$report = array();
+		$report["description"] = array();
+		$report["description"]["company_name"] = "";
+		$report["description"]["company_rut"] = "";
+		$report["description"]["evaluation_instrument"] = "ISTAS-21";
+		$report["description"]["evaluation_methodology"] = "App Psicosocial";
+		$report["description"]["evaluation_start_date"] = "";
+		$report["description"]["evaluation_end_date"] = "";
+		$report["description"]["evaluation_total_workers"] = 0;
+		$report["description"]["evaluation_total_answers"] = 0;
+		$report["description"]["evaluation_total_answers_by_sex"] = array();
+		$report["description"]["evaluation_total_answers_by_age"] = array();
+		$report["description"]["evaluation_total_answers_by_job_position"] = array();
+		$report["global"] = array();
+		$report["global"]["total"] = array();
+		$report["global"]["total"]["risk_score"] = "";
+		$report["global"]["total"]["risk_label"] = "";
+		$report["global"]["sex"] = array();
+		//$report["global"]["sex"][sex_value] = array();
+		//$report["global"]["sex"][sex_value]["risk_score"] = "";
+		//$report["global"]["sex"][sex_value]["risk_label"] = "";
+		$report["global"]["age"] = array();
+		//$report["global"]["age"][age_value] = array();
+		//$report["global"]["age"][age_value]["risk_score"] = "";
+		//$report["global"]["age"][age_value]["risk_label"] = "";
+		$report["global"]["update_rule"] = "";
+		$report["job_position"] = array();
+		//$report["job_position"][job_position_value] = array();
+		//$report["job_position"][job_position_value]["total"] = array();
+		//$report["job_position"][job_position_value]["total"]["risk_score"] = array();
+		//$report["job_position"][job_position_value]["total"]["risk_label"] = array();
+		//$report["job_position"][job_position_value]["sex"] = array();
+		//$report["job_position"][job_position_value]["sex"][sex_value] = array();
+		//$report["job_position"][job_position_value]["sex"][sex_value]["risk_score"] = "";
+		//$report["job_position"][job_position_value]["sex"][sex_value]["risk_label"] = "";
+		//$report["job_position"][job_position_value]["age"] = array();
+		//$report["job_position"][job_position_value]["age"][age_value] = array();
+		//$report["job_position"][job_position_value]["age"][age_value]["risk_score"] = "";
+		//$report["job_position"][job_position_value]["age"][age_value]["risk_label"] = "";
+		$report["dimension"] = array();
+		//$report["dimension"][dimension_value]["total"] = array();
+		//$report["dimension"][dimension_value]["total"]["risk_score"] = "";
+		//$report["dimension"][dimension_value]["total"]["risk_label"] = "";
+		//$report["dimension"][dimension_value]["sex"] = array();
+		//$report["dimension"][dimension_value]["sex"][sex_value] = array();
+		//$report["dimension"][dimension_value]["sex"][sex_value]["risk_score"] = "";
+		//$report["dimension"][dimension_value]["sex"][sex_value]["risk_label"] = "";
+		//$report["dimension"][dimension_value]["age"] = array();
+		//$report["dimension"][dimension_value]["age"][age_value] = array();
+		//$report["dimension"][dimension_value]["age"][age_value]["risk_score"] = "";
+		//$report["dimension"][dimension_value]["age"][age_value]["risk_label"] = "";
+		
+		// RESULTADO GLOBAL SIN FILTRO
+        $random_user_sql = "SELECT count(id) as amountOfUsers, min(date) as startDate, max(date) as endDate 
+							FROM RandomUser 
+							WHERE company_id = $company_id";
+		
+		$query_random_user = $this->db->query($random_user_sql);
+		if($query_random_user->num_rows() > 0)
+		{
+			$result = $query_random_user->result();
+			foreach ($result as $r){
+				$report["description"]["evaluation_start_date"] = $r->startDate;
+				$report["description"]["evaluation_end_date"] = $r->endDate;
+				$report["description"]["evaluation_total_workers"] = $r->amountOfUsers;
+			}
+		}
+		
+		// RESULTADO GLOBAL SIN FILTRO
+        $global_no_filter_sql = "SELECT CompanyName, CompanyRut, QuestionCategory, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
+				FROM 
+				(
+					SELECT QuestionaryCompletionId, QuestionCategory, Ponderation,
+					CASE 
+					WHEN Ponderation BETWEEN low_min and low_max THEN -1
+					WHEN Ponderation BETWEEN medium_min and medium_max THEN 0
+					WHEN Ponderation BETWEEN high_min and high_max THEN 1
+					ELSE 0
+					END as Risk
+					FROM
+					(
+						SELECT QuestionaryCompletionId, QuestionCategoryId, QuestionCategory, sum(QuestionOptionPonderation) as Ponderation
+						FROM vQuestionaryResults
+						WHERE QuestionaryId = $questionary_id
+						GROUP BY QuestionaryCompletionId, QuestionCategoryId, QuestionCategory
+					) AS AggregatedQuestionaryResults
+					JOIN Ratings ON AggregatedQuestionaryResults.QuestionCategoryId = Ratings.question_category_id
+				) AS RESULTS
+				JOIN 
+				(
+					SELECT QuestionaryCompletionId, CompanyName, CompanyRut, JobPosition, AgeFilter, SexFilter,
+					1.0 as rowWeight,
+					COUNT(QuestionaryCompletionId) OVER (PARTITION BY CompanyName) AS amountOfWorkers
+					FROM vQuestionaryFilters
+					WHERE QuestionaryId = $questionary_id AND CompanyId = $company_id
+				) as FILTERS ON RESULTS.QuestionaryCompletionId = FILTERS.QuestionaryCompletionId
+				GROUP BY CompanyName, CompanyRut, QuestionCategory, Risk
+				ORDER BY CompanyName, CompanyRut, QuestionCategory, Risk;";
+		
+		$query_global_no_filter = $this->db->query($global_no_filter_sql);
+		if($query_global_no_filter->num_rows() > 0)
+		{
+			$company_name = "";
+			$company_rut = "";
+			$total_answers = 0;
+			$risk_score = 0;
+			$dimension_score = array();
+			$result = $query_global_no_filter->result();
+			foreach ($result as $r){
+				$company_name = $r->CompanyName;
+				$company_rut = $r->CompanyRut;
+				$total_answers = max($total_answers,$r->amountOfWorkers);
+				if(!array_key_exists($r->QuestionCategory, $dimension_score))
+				{
+					$dimension_score[$r->QuestionCategory] = 0;
+				}
+				if(0.5 < $r->percentageOfWorkersInDimension)
+				{
+					$dimension_score[$r->QuestionCategory] = $r->Risk;
+					$risk_score = $risk_score + $r->Risk;
+				}
+			}
+			$report["description"]["company_name"] = $company_name;
+			$report["description"]["company_rut"] = $company_rut;
+			$report["description"]["evaluation_total_answers"] = $total_answers;
+			$report["global"]["total"]["risk_score"] = $risk_score;
+			$report["global"]["total"]["risk_label"] = $this->getRiskLabelFromScore($risk_score);
+			$update_rule = $this->getRiskTimeGapFromScore($risk_score);
+			$report["global"]["update_rule"] = "Por su riesgo global, le corresponde una nueva evaluación en $update_rule años.";
+			foreach($dimension_score as $dimension_key => $dimension_value)
+			{
+				$report["dimension"][$dimension_key]["total"]["risk_score"] = $dimension_value;
+				$report["dimension"][$dimension_key]["total"]["risk_label"] = $this->getRiskPointLabelFromScore($dimension_value);
+			}
+		}
+		
+		// RESULTADO GLOBAL CON FILTRO: SEXO
+        $global_sex_filter_sql = "SELECT CompanyName, QuestionCategory, SexFilter, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
+				FROM 
+				(
+					SELECT QuestionaryCompletionId, QuestionCategory, Ponderation,
+					CASE 
+					WHEN Ponderation BETWEEN low_min and low_max THEN -1
+					WHEN Ponderation BETWEEN medium_min and medium_max THEN 0
+					WHEN Ponderation BETWEEN high_min and high_max THEN 1
+					ELSE 0
+					END as Risk
+					FROM
+					(
+						SELECT QuestionaryCompletionId, QuestionCategoryId, QuestionCategory, sum(QuestionOptionPonderation) as Ponderation
+						FROM vQuestionaryResults
+						WHERE QuestionaryId = $questionary_id
+						GROUP BY QuestionaryCompletionId, QuestionCategoryId, QuestionCategory
+					) AS AggregatedQuestionaryResults
+					JOIN Ratings ON AggregatedQuestionaryResults.QuestionCategoryId = Ratings.question_category_id
+				) AS RESULTS
+				JOIN 
+				(
+					SELECT QuestionaryCompletionId, CompanyName, JobPosition, AgeFilter, SexFilter,
+					1.0 as rowWeight,
+					COUNT(QuestionaryCompletionId) OVER (PARTITION BY CompanyName, SexFilter) AS amountOfWorkers
+					FROM vQuestionaryFilters
+					WHERE QuestionaryId = $questionary_id AND CompanyId = $company_id
+				) as FILTERS ON RESULTS.QuestionaryCompletionId = FILTERS.QuestionaryCompletionId
+				GROUP BY CompanyName, QuestionCategory, SexFilter, Risk
+				ORDER BY CompanyName, QuestionCategory, SexFilter, Risk";
+		$query_global_sex_filter = $this->db->query($global_sex_filter_sql);
+		
+		if($query_global_sex_filter->num_rows() > 0)
+		{		
+			$sex_filter_answers = array();
+			$sex_filter_risk_score = array();
+			$sex_filter_dimension_score = array();
+			$result = $query_global_sex_filter->result();
+			foreach ($result as $r){
+				$sex_filter_answers[$r->SexFilter] = array_key_exists($r->SexFilter, $sex_filter_answers) ? max($sex_filter_answers[$r->SexFilter], $r->amountOfWorkers) : $r->amountOfWorkers;
+				if(!array_key_exists($r->QuestionCategory, $sex_filter_dimension_score))
+				{
+					$sex_filter_dimension_score[$r->QuestionCategory] = array();
+				}
+				if(!array_key_exists($r->SexFilter, $sex_filter_dimension_score[$r->QuestionCategory]))
+				{
+					$sex_filter_dimension_score[$r->QuestionCategory][$r->SexFilter] = 0;
+				}
+				if(!array_key_exists($r->SexFilter, $sex_filter_risk_score))
+				{
+					$sex_filter_risk_score[$r->SexFilter] = 0;
+				}
+				if(0.5 < $r->percentageOfWorkersInDimension)
+				{
+					$sex_filter_dimension_score[$r->QuestionCategory][$r->SexFilter] = $r->Risk;
+					$sex_filter_risk_score[$r->SexFilter] = $sex_filter_risk_score[$r->SexFilter] + $r->Risk;
+				}
+			}
+			$report["description"]["evaluation_total_answers_by_sex"] = $sex_filter_answers;
+			foreach($sex_filter_risk_score as $sex_filter_key => $sex_filter_value)
+			{
+				$report["global"]["sex"][$sex_filter_key]["risk_score"] = $sex_filter_value;
+				$report["global"]["sex"][$sex_filter_key]["risk_label"] = $this->getRiskLabelFromScore($sex_filter_value);
+			}
+			foreach($sex_filter_dimension_score as $sex_filter_dimension_key => $sex_filter_dimension_array)
+			{
+				foreach($sex_filter_dimension_array as $sex_filter_key => $sex_filter_value)
+				{
+					$report["dimension"][$sex_filter_dimension_key]["sex"][$sex_filter_key]["risk_score"]= $sex_filter_value;
+					$report["dimension"][$sex_filter_dimension_key]["sex"][$sex_filter_key]["risk_label"] = $this->getRiskPointLabelFromScore($sex_filter_value);
+				}
+			}
+		}
+		
+		// RESULTADO GLOBAL CON FILTRO: EDAD
+        $global_age_filter_sql = "SELECT CompanyName, QuestionCategory, AgeFilter, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
+								FROM 
+								(
+									SELECT QuestionaryCompletionId, QuestionCategory, Ponderation,
+									CASE 
+									WHEN Ponderation BETWEEN low_min and low_max THEN -1
+									WHEN Ponderation BETWEEN medium_min and medium_max THEN 0
+									WHEN Ponderation BETWEEN high_min and high_max THEN 1
+									ELSE 0
+									END as Risk
+									FROM
+									(
+										SELECT QuestionaryCompletionId, QuestionCategoryId, QuestionCategory, sum(QuestionOptionPonderation) as Ponderation
+										FROM vQuestionaryResults
+										WHERE QuestionaryId = $questionary_id
+										GROUP BY QuestionaryCompletionId, QuestionCategoryId, QuestionCategory
+									) AS AggregatedQuestionaryResults
+									JOIN Ratings ON AggregatedQuestionaryResults.QuestionCategoryId = Ratings.question_category_id
+								) AS RESULTS
+								JOIN 
+								(
+									SELECT QuestionaryCompletionId, CompanyName, JobPosition, AgeFilter, SexFilter,
+									1.0 as rowWeight,
+									COUNT(QuestionaryCompletionId) OVER (PARTITION BY CompanyName, AgeFilter) AS amountOfWorkers
+									FROM vQuestionaryFilters
+									WHERE QuestionaryId = $questionary_id AND CompanyId = $company_id
+								) as FILTERS ON RESULTS.QuestionaryCompletionId = FILTERS.QuestionaryCompletionId
+								GROUP BY CompanyName, QuestionCategory, AgeFilter, Risk
+								ORDER BY CompanyName, QuestionCategory, AgeFilter, Risk";
+		$query_global_age_filter = $this->db->query($global_age_filter_sql);
+		
+		if($query_global_age_filter->num_rows() > 0)
+		{		
+			$age_filter_answers = array();
+			$age_filter_risk_score = array();
+			$age_filter_dimension_score = array();
+			$result = $query_global_age_filter->result();
+			foreach ($result as $r){
+				$age_filter_answers[$r->AgeFilter] = array_key_exists($r->AgeFilter, $age_filter_answers) ? max($age_filter_answers[$r->AgeFilter], $r->amountOfWorkers) : $r->amountOfWorkers;
+				if(!array_key_exists($r->QuestionCategory, $age_filter_dimension_score))
+				{
+					$age_filter_dimension_score[$r->QuestionCategory] = array();
+				}
+				if(!array_key_exists($r->AgeFilter, $age_filter_dimension_score[$r->QuestionCategory]))
+				{
+					$age_filter_dimension_score[$r->QuestionCategory][$r->AgeFilter] = 0;
+				}
+				if(!array_key_exists($r->AgeFilter, $age_filter_risk_score))
+				{
+					$age_filter_risk_score[$r->AgeFilter] = 0;
+				}
+				if(0.5 < $r->percentageOfWorkersInDimension)
+				{
+					$age_filter_dimension_score[$r->QuestionCategory][$r->AgeFilter] = $r->Risk;
+					$age_filter_risk_score[$r->AgeFilter] = $age_filter_risk_score[$r->AgeFilter] + $r->Risk;
+				}
+			}
+			$report["description"]["evaluation_total_answers_by_age"] = $age_filter_answers;
+			foreach($age_filter_risk_score as $age_filter_key => $age_filter_value)
+			{
+				$report["global"]["age"][$age_filter_key]["risk_score"] = $age_filter_value;
+				$report["global"]["age"][$age_filter_key]["risk_label"] = $this->getRiskLabelFromScore($age_filter_value);
+			}
+			foreach($age_filter_dimension_score as $age_filter_dimension_key => $age_filter_dimension_array)
+			{
+				foreach($age_filter_dimension_array as $age_filter_key => $age_filter_value)
+				{
+					$report["dimension"][$age_filter_dimension_key]["age"][$age_filter_key]["risk_score"]= $age_filter_value;
+					$report["dimension"][$age_filter_dimension_key]["age"][$age_filter_key]["risk_label"] = $this->getRiskPointLabelFromScore($age_filter_value);
+				}
+			}
+		}
+		
+		// RESULTADO POR CARGO SIN FILTRO
+        $job_position_no_filter_sql = "SELECT JobPosition, QuestionCategory, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
+								FROM 
+								(
+									SELECT QuestionaryCompletionId, QuestionCategory, Ponderation,
+									CASE 
+									WHEN Ponderation BETWEEN low_min and low_max THEN -1
+									WHEN Ponderation BETWEEN medium_min and medium_max THEN 0
+									WHEN Ponderation BETWEEN high_min and high_max THEN 1
+									ELSE 0
+									END as Risk
+									FROM
+									(
+										SELECT QuestionaryCompletionId, QuestionCategoryId, QuestionCategory, sum(QuestionOptionPonderation) as Ponderation
+										FROM vQuestionaryResults
+										WHERE QuestionaryId = $questionary_id
+										GROUP BY QuestionaryCompletionId, QuestionCategoryId, QuestionCategory
+									) AS AggregatedQuestionaryResults
+									JOIN Ratings ON AggregatedQuestionaryResults.QuestionCategoryId = Ratings.question_category_id
+								) AS RESULTS
+								JOIN 
+								(
+									SELECT QuestionaryCompletionId, CompanyName, JobPosition, AgeFilter, SexFilter,
+									1.0 as rowWeight,
+									COUNT(QuestionaryCompletionId) OVER (PARTITION BY JobPosition) AS amountOfWorkers
+									FROM vQuestionaryFilters
+									WHERE QuestionaryId = $questionary_id AND CompanyId = $company_id
+								) as FILTERS ON RESULTS.QuestionaryCompletionId = FILTERS.QuestionaryCompletionId
+								GROUP BY JobPosition, QuestionCategory, Risk
+								ORDER BY JobPosition, QuestionCategory, Risk";
+		$query_job_position_no_filter = $this->db->query($job_position_no_filter_sql);
+		
+		if($query_job_position_no_filter->num_rows() > 0)
+		{		
+			$job_position_no_filter_answers = array();
+			$job_position_no_filter_risk_score = array();
+			$result = $query_job_position_no_filter->result();
+			foreach ($result as $r){
+				$job_position_no_filter_answers[$r->JobPosition] = array_key_exists($r->JobPosition, $job_position_no_filter_answers) ? max($job_position_no_filter_answers[$r->JobPosition], $r->amountOfWorkers) : $r->amountOfWorkers;
+				if(!array_key_exists($r->JobPosition, $job_position_no_filter_risk_score))
+				{
+					$job_position_no_filter_risk_score[$r->JobPosition] = 0;
+				}
+				if(0.5 < $r->percentageOfWorkersInDimension)
+				{
+					$job_position_no_filter_risk_score[$r->JobPosition] = $job_position_no_filter_risk_score[$r->JobPosition] + $r->Risk;
+				}
+			}
+			$report["description"]["evaluation_total_answers_by_job_position"] = $job_position_no_filter_answers;
+			foreach($job_position_no_filter_risk_score as $job_position_no_filter_key => $job_position_no_filter_value)
+			{
+				$report["job_position"][$job_position_no_filter_key]["total"]["risk_score"] = $job_position_no_filter_value;
+				$report["job_position"][$job_position_no_filter_key]["total"]["risk_label"] = $this->getRiskLabelFromScore($job_position_no_filter_value);
+			}
+		}
+		
+		// RESULTADO POR CARGO CON FILTRO: SEXO
+        $job_position_sex_filter_sql = "SELECT JobPosition, QuestionCategory, SexFilter, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
+										FROM 
+										(
+											SELECT QuestionaryCompletionId, QuestionCategory, Ponderation,
+											CASE 
+											WHEN Ponderation BETWEEN low_min and low_max THEN -1
+											WHEN Ponderation BETWEEN medium_min and medium_max THEN 0
+											WHEN Ponderation BETWEEN high_min and high_max THEN 1
+											ELSE 0
+											END as Risk
+											FROM
+											(
+												SELECT QuestionaryCompletionId, QuestionCategoryId, QuestionCategory, sum(QuestionOptionPonderation) as Ponderation
+												FROM vQuestionaryResults
+												WHERE QuestionaryId = $questionary_id
+												GROUP BY QuestionaryCompletionId, QuestionCategoryId, QuestionCategory
+											) AS AggregatedQuestionaryResults
+											JOIN Ratings ON AggregatedQuestionaryResults.QuestionCategoryId = Ratings.question_category_id
+										) AS RESULTS
+										JOIN 
+										(
+											SELECT QuestionaryCompletionId, CompanyName, JobPosition, AgeFilter, SexFilter,
+											1.0 as rowWeight,
+											COUNT(QuestionaryCompletionId) OVER (PARTITION BY JobPosition, SexFilter) AS amountOfWorkers
+											FROM vQuestionaryFilters
+										WHERE QuestionaryId = $questionary_id AND CompanyId = $company_id
+										) as FILTERS ON RESULTS.QuestionaryCompletionId = FILTERS.QuestionaryCompletionId
+										GROUP BY JobPosition, QuestionCategory, SexFilter, Risk
+										ORDER BY JobPosition, QuestionCategory, SexFilter, Risk;";
+		$query_job_position_sex_filter = $this->db->query($job_position_sex_filter_sql);
+		
+		if($query_job_position_sex_filter->num_rows() > 0)
+		{		
+			$job_position_sex_filter_risk_score = array();
+			$result = $query_job_position_sex_filter->result();
+			foreach ($result as $r){
+				if(!array_key_exists($r->JobPosition, $job_position_sex_filter_risk_score))
+				{
+					$job_position_sex_filter_risk_score[$r->JobPosition] = array();
+				}
+				if(!array_key_exists($r->SexFilter, $job_position_sex_filter_risk_score[$r->JobPosition]))
+				{
+					$job_position_sex_filter_risk_score[$r->JobPosition][$r->SexFilter] = 0;
+				}
+				if(0.5 < $r->percentageOfWorkersInDimension)
+				{
+					$job_position_sex_filter_risk_score[$r->JobPosition][$r->SexFilter] = $job_position_sex_filter_risk_score[$r->JobPosition][$r->SexFilter] + $r->Risk;
+				}
+			}
+			foreach($job_position_sex_filter_risk_score as $job_position_key => $job_position_array)
+			{
+				foreach($job_position_array as $sex_filter_key => $job_position_sex_filter_value)
+				{
+					$report["job_position"][$job_position_key]["sex"][$sex_filter_key]["risk_score"] = $job_position_sex_filter_value;
+					$report["job_position"][$job_position_key]["sex"][$sex_filter_key]["risk_label"] = $this->getRiskLabelFromScore($job_position_sex_filter_value);
+				}
+			}
+		}
+		
+		// RESULTADO POR CARGO CON FILTRO: EDAD
+        $job_position_age_filter_sql = "SELECT JobPosition, QuestionCategory, AgeFilter, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
+										FROM 
+										(
+											SELECT QuestionaryCompletionId, QuestionCategory, Ponderation,
+											CASE 
+											WHEN Ponderation BETWEEN low_min and low_max THEN -1
+											WHEN Ponderation BETWEEN medium_min and medium_max THEN 0
+											WHEN Ponderation BETWEEN high_min and high_max THEN 1
+											ELSE 0
+											END as Risk
+											FROM
+											(
+												SELECT QuestionaryCompletionId, QuestionCategoryId, QuestionCategory, sum(QuestionOptionPonderation) as Ponderation
+												FROM vQuestionaryResults
+												WHERE QuestionaryId = $questionary_id
+												GROUP BY QuestionaryCompletionId, QuestionCategoryId, QuestionCategory
+											) AS AggregatedQuestionaryResults
+											JOIN Ratings ON AggregatedQuestionaryResults.QuestionCategoryId = Ratings.question_category_id
+										) AS RESULTS
+										JOIN 
+										(
+											SELECT QuestionaryCompletionId, CompanyName, JobPosition, AgeFilter, SexFilter,
+											1.0 as rowWeight,
+											COUNT(QuestionaryCompletionId) OVER (PARTITION BY JobPosition, AgeFilter) AS amountOfWorkers
+											FROM vQuestionaryFilters
+											WHERE QuestionaryId = $questionary_id AND CompanyId = $company_id
+										) as FILTERS ON RESULTS.QuestionaryCompletionId = FILTERS.QuestionaryCompletionId
+										GROUP BY JobPosition, QuestionCategory, AgeFilter, Risk
+										ORDER BY JobPosition, QuestionCategory, AgeFilter, Risk;";
+		$query_job_position_age_filter = $this->db->query($job_position_age_filter_sql);
+		
+		if($query_job_position_age_filter->num_rows() > 0)
+		{		
+			$job_position_age_filter_risk_score = array();
+			$result = $query_job_position_age_filter->result();
+			foreach ($result as $r){
+				if(!array_key_exists($r->JobPosition, $job_position_age_filter_risk_score))
+				{
+					$job_position_age_filter_risk_score[$r->JobPosition] = array();
+				}
+				if(!array_key_exists($r->AgeFilter, $job_position_age_filter_risk_score[$r->JobPosition]))
+				{
+					$job_position_age_filter_risk_score[$r->JobPosition][$r->AgeFilter] = 0;
+				}
+				if(0.5 < $r->percentageOfWorkersInDimension)
+				{
+					$job_position_age_filter_risk_score[$r->JobPosition][$r->AgeFilter] = $job_position_age_filter_risk_score[$r->JobPosition][$r->AgeFilter] + $r->Risk;
+				}
+			}
+			foreach($job_position_age_filter_risk_score as $job_position_key => $job_position_array)
+			{
+				foreach($job_position_array as $sex_filter_key => $job_position_age_filter_value)
+				{
+					$report["job_position"][$job_position_key]["age"][$sex_filter_key]["risk_score"] = $job_position_age_filter_value;
+					$report["job_position"][$job_position_key]["age"][$sex_filter_key]["risk_label"] = $this->getRiskLabelFromScore($job_position_age_filter_value);
+				}
+			}
+		}
+        return $report;
+    }
+	
+	private function getRiskLabelFromScore($risk_score = 0)
+	{
+		if($risk_score >= HIGH_RISK_THRESHOLD) return HIGH_RISK_NAME;
+		if($risk_score < MEDIUM_RISK_THRESHOLD) return LOW_RISK_NAME;
+		return MEDIUM_RISK_NAME;
+	}
+	
+	private function getRiskTimeGapFromScore($risk_score = 0)
+	{
+		if($risk_score >= HIGH_RISK_THRESHOLD) return HIGH_RISK_TIME_GAP;
+		if($risk_score < MEDIUM_RISK_THRESHOLD) return LOW_RISK_TIME_GAP;
+		return MEDIUM_RISK_TIME_GAP;
+	}
+	
+	private function getRiskPointLabelFromScore($risk_point_score = 0)
+	{
+		if($risk_point_score == HIGH_RISK_POINT) return HIGH_RISK_POINT_NAME;
+		if($risk_point_score == LOW_RISK_POINT) return LOW_RISK_POINT_NAME;
+		return MEDIUM_RISK_POINT_NAME;
+	}
     public function get_activity_log_by_company_id($company_id = -1)
     {
         $sql = "SELECT log_date, activity_name, activity_info FROM

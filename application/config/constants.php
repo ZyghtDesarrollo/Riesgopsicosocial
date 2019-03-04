@@ -47,8 +47,17 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 define('LOW_RISK_NAME', 'Riesgo Bajo');
 define('MEDIUM_RISK_NAME', 'Riesgo Medio');
 define('HIGH_RISK_NAME', 'Riesgo Alto');
+define('LOW_RISK_TIME_GAP', 4);
+define('MEDIUM_RISK_TIME_GAP', 2);
+define('HIGH_RISK_TIME_GAP', 2);
 define('MEDIUM_RISK_THRESHOLD', 1); //The minimum value to be in the Medium Risk range is MEDIUM_RISK_THRESHOLD
 define('HIGH_RISK_THRESHOLD', 4); //The minimum value to be in the High Risk range is HIGH_RISK_THRESHOLD
+define('LOW_RISK_POINT_NAME', 'Punto de Seguridad');
+define('MEDIUM_RISK_POINT_NAME', 'Punto Neutro');
+define('HIGH_RISK_POINT_NAME', 'Punto de Riesgo');
+define('LOW_RISK_POINT', -1);
+define('MEDIUM_RISK_POINT', 0);
+define('HIGH_RISK_POINT', 1);
 
 /*
 |--------------------------------------------------------------------------

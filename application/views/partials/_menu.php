@@ -17,6 +17,7 @@
 	          	<ul class="dropdown-menu" aria-labelledby="resultsAnalysisToggle">
                     <li><a href="<?php echo base_url('results_analysis/get_global_result'); ?>">Resultado Global</a></li>
                     <li><a href="<?php echo base_url('results_analysis/get_results'); ?>">Resultados por Puestos de Trabajo</a></li>
+                    <li><a href="<?php echo base_url('results_analysis/get_report'); ?>">Reporte de Evaluación Psicosocial</a></li>
 		            <li><a href="<?php echo base_url('results_analysis/questionary'); ?>">Ver Cuestionarios</a></li>
 		            <li><a href="<?php echo base_url('results_analysis/answered_questionary'); ?>">Revisar Cuestionarios</a></li>
           		</ul>

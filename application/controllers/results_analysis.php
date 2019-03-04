@@ -29,6 +29,21 @@ class Results_analysis extends CI_Controller {
         $view['content'] = $this->load->view('global_results_analysis',NULL, TRUE);
         $this->load->view('layout', $view);
     }
+	
+    public function get_report(){
+		$company_id = 18;
+		$questionary_id = 1;
+		
+		if (!$questionary_id) {
+			$this->response_error(400);
+		}
+		
+		$this->load->model('questionary_model');
+		$report_data = $this->questionary_model->get_questionary_report($company_id, $questionary_id);
+		
+        $view['content'] = $this->load->view('exportable_report',$report_data, TRUE);
+        $this->load->view('layout', $view);
+    }
 }
 
 /* End of file welcome.php */
