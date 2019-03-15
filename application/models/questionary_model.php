@@ -315,6 +315,44 @@ class Questionary_model extends Zyght_Model {
 			}
 		}
 		
+		// FILTRO DE SEXO
+		$sex_filter_array = array();
+        $sex_sql = "SELECT QuestionOptions.title as QuestionOptionTitle
+					FROM Question
+					JOIN QuestionCategory on Question.question_category_id = QuestionCategory.id
+					LEFT JOIN QuestionOptions on Question.id = QuestionOptions.question_id
+					WHERE Question.active = 1
+					AND Question.question_category_id = 6
+					AND Question.id = 21";
+		
+		$query_sex = $this->db->query($sex_sql);
+		if($query_sex->num_rows() > 0)
+		{
+			$result = $query_sex->result();
+			foreach ($result as $r){
+				$sex_filter_array[] = $r->QuestionOptionTitle;
+			}
+		}
+		
+		// FILTRO DE EDAD
+		$age_filter_array = array();
+        $age_sql = "SELECT QuestionOptions.title as QuestionOptionTitle
+					FROM Question
+					JOIN QuestionCategory on Question.question_category_id = QuestionCategory.id
+					LEFT JOIN QuestionOptions on Question.id = QuestionOptions.question_id
+					WHERE Question.active = 1
+					AND Question.question_category_id = 6
+					AND Question.id = 22";
+		
+		$query_age = $this->db->query($age_sql);
+		if($query_age->num_rows() > 0)
+		{
+			$result = $query_age->result();
+			foreach ($result as $r){
+				$age_filter_array[] = $r->QuestionOptionTitle;
+			}
+		}
+		
 		// RESULTADO GLOBAL SIN FILTRO
         $global_no_filter_sql = "SELECT CompanyName, CompanyRut, QuestionCategory, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
 				FROM 
@@ -415,9 +453,13 @@ class Questionary_model extends Zyght_Model {
 				ORDER BY CompanyName, QuestionCategory, SexFilter, Risk";
 		$query_global_sex_filter = $this->db->query($global_sex_filter_sql);
 		
+		$sex_filter_answers = array();
+		foreach($sex_filter_array as $sex_filter_key)
+		{
+			$sex_filter_answers[$sex_filter_key] = 'N/A';
+		}
 		if($query_global_sex_filter->num_rows() > 0)
 		{		
-			$sex_filter_answers = array();
 			$sex_filter_risk_score = array();
 			$sex_filter_dimension_score = array();
 			$result = $query_global_sex_filter->result();
@@ -442,20 +484,24 @@ class Questionary_model extends Zyght_Model {
 				}
 			}
 			$report["description"]["evaluation_total_answers_by_sex"] = $sex_filter_answers;
-			foreach($sex_filter_risk_score as $sex_filter_key => $sex_filter_value)
+			foreach($sex_filter_array as $sex_filter_key)
 			{
-				$report["global"]["sex"][$sex_filter_key]["risk_score"] = $sex_filter_value;
-				$report["global"]["sex"][$sex_filter_key]["risk_label"] = $this->getRiskLabelFromScore($sex_filter_value);
+				$current_score = array_key_exists($sex_filter_key, $sex_filter_risk_score) ? $sex_filter_risk_score[$sex_filter_key] : 'N/A';
+				$current_label = array_key_exists($sex_filter_key, $sex_filter_risk_score) ? $this->getRiskLabelFromScore($current_score) : 'N/A';
+				$report["global"]["sex"][$sex_filter_key]["risk_score"] = $current_score;
+				$report["global"]["sex"][$sex_filter_key]["risk_label"] = $current_label;
 			}
 			foreach($sex_filter_dimension_score as $sex_filter_dimension_key => $sex_filter_dimension_array)
 			{
-				foreach($sex_filter_dimension_array as $sex_filter_key => $sex_filter_value)
+				foreach($sex_filter_array as $sex_filter_key)
 				{
-					$report["dimension"][$sex_filter_dimension_key]["sex"][$sex_filter_key]["risk_score"]= $sex_filter_value;
-					$report["dimension"][$sex_filter_dimension_key]["sex"][$sex_filter_key]["risk_label"] = $this->getRiskPointLabelFromScore($sex_filter_value);
+					$current_score = array_key_exists($sex_filter_key, $sex_filter_dimension_array) ? $sex_filter_dimension_array[$sex_filter_key] : 'N/A';
+					$current_label = array_key_exists($sex_filter_key, $sex_filter_dimension_array) ? $this->getRiskPointLabelFromScore($current_score) : 'N/A';
+					$report["dimension"][$sex_filter_dimension_key]["sex"][$sex_filter_key]["risk_score"] = $current_score;
+					$report["dimension"][$sex_filter_dimension_key]["sex"][$sex_filter_key]["risk_label"] = $current_label;
 				}
 			}
-		}
+		} 
 		
 		// RESULTADO GLOBAL CON FILTRO: EDAD
         $global_age_filter_sql = "SELECT CompanyName, QuestionCategory, AgeFilter, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
@@ -489,9 +535,13 @@ class Questionary_model extends Zyght_Model {
 								ORDER BY CompanyName, QuestionCategory, AgeFilter, Risk";
 		$query_global_age_filter = $this->db->query($global_age_filter_sql);
 		
+		$age_filter_answers = array();
+		foreach($age_filter_array as $age_filter_key)
+		{
+			$age_filter_answers[$age_filter_key] = 'N/A';
+		}
 		if($query_global_age_filter->num_rows() > 0)
 		{		
-			$age_filter_answers = array();
 			$age_filter_risk_score = array();
 			$age_filter_dimension_score = array();
 			$result = $query_global_age_filter->result();
@@ -516,17 +566,21 @@ class Questionary_model extends Zyght_Model {
 				}
 			}
 			$report["description"]["evaluation_total_answers_by_age"] = $age_filter_answers;
-			foreach($age_filter_risk_score as $age_filter_key => $age_filter_value)
+			foreach($age_filter_array as $age_filter_key)
 			{
-				$report["global"]["age"][$age_filter_key]["risk_score"] = $age_filter_value;
-				$report["global"]["age"][$age_filter_key]["risk_label"] = $this->getRiskLabelFromScore($age_filter_value);
+				$current_score = array_key_exists($age_filter_key, $age_filter_risk_score) ? $age_filter_risk_score[$age_filter_key] : 'N/A';
+				$current_label = array_key_exists($age_filter_key, $age_filter_risk_score) ? $this->getRiskLabelFromScore($current_score) : 'N/A';
+				$report["global"]["age"][$age_filter_key]["risk_score"] = $current_score;
+				$report["global"]["age"][$age_filter_key]["risk_label"] = $current_label;
 			}
 			foreach($age_filter_dimension_score as $age_filter_dimension_key => $age_filter_dimension_array)
 			{
-				foreach($age_filter_dimension_array as $age_filter_key => $age_filter_value)
+				foreach($age_filter_array as $age_filter_key)
 				{
-					$report["dimension"][$age_filter_dimension_key]["age"][$age_filter_key]["risk_score"]= $age_filter_value;
-					$report["dimension"][$age_filter_dimension_key]["age"][$age_filter_key]["risk_label"] = $this->getRiskPointLabelFromScore($age_filter_value);
+					$current_score = array_key_exists($age_filter_key, $age_filter_dimension_array) ? $age_filter_dimension_array[$age_filter_key] : 'N/A';
+					$current_label = array_key_exists($age_filter_key, $age_filter_dimension_array) ? $this->getRiskPointLabelFromScore($current_score) : 'N/A';
+					$report["dimension"][$age_filter_dimension_key]["age"][$age_filter_key]["risk_score"] = $current_score;
+					$report["dimension"][$age_filter_dimension_key]["age"][$age_filter_key]["risk_label"] = $current_label;
 				}
 			}
 		}
@@ -639,10 +693,12 @@ class Questionary_model extends Zyght_Model {
 			}
 			foreach($job_position_sex_filter_risk_score as $job_position_key => $job_position_array)
 			{
-				foreach($job_position_array as $sex_filter_key => $job_position_sex_filter_value)
+				foreach($sex_filter_array as $sex_filter_key)
 				{
-					$report["job_position"][$job_position_key]["sex"][$sex_filter_key]["risk_score"] = $job_position_sex_filter_value;
-					$report["job_position"][$job_position_key]["sex"][$sex_filter_key]["risk_label"] = $this->getRiskLabelFromScore($job_position_sex_filter_value);
+					$current_score = array_key_exists($sex_filter_key, $job_position_array) ? $job_position_array[$sex_filter_key] : 'N/A';
+					$current_label = array_key_exists($sex_filter_key, $job_position_array) ? $this->getRiskLabelFromScore($current_score) : 'N/A';
+					$report["job_position"][$job_position_key]["sex"][$sex_filter_key]["risk_score"] = $current_score;
+					$report["job_position"][$job_position_key]["sex"][$sex_filter_key]["risk_label"] = $current_label;
 				}
 			}
 		}
@@ -697,12 +753,15 @@ class Questionary_model extends Zyght_Model {
 					$job_position_age_filter_risk_score[$r->JobPosition][$r->AgeFilter] = $job_position_age_filter_risk_score[$r->JobPosition][$r->AgeFilter] + $r->Risk;
 				}
 			}
+			
 			foreach($job_position_age_filter_risk_score as $job_position_key => $job_position_array)
 			{
-				foreach($job_position_array as $sex_filter_key => $job_position_age_filter_value)
+				foreach($age_filter_array as $age_filter_key)
 				{
-					$report["job_position"][$job_position_key]["age"][$sex_filter_key]["risk_score"] = $job_position_age_filter_value;
-					$report["job_position"][$job_position_key]["age"][$sex_filter_key]["risk_label"] = $this->getRiskLabelFromScore($job_position_age_filter_value);
+					$current_score = array_key_exists($age_filter_key, $job_position_array) ? $job_position_array[$age_filter_key] : 'N/A';
+					$current_label = array_key_exists($age_filter_key, $job_position_array) ? $this->getRiskLabelFromScore($current_score) : 'N/A';
+					$report["job_position"][$job_position_key]["age"][$age_filter_key]["risk_score"] = $current_score;
+					$report["job_position"][$job_position_key]["age"][$age_filter_key]["risk_label"] = $current_label;
 				}
 			}
 		}

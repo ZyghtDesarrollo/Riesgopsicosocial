@@ -63,7 +63,7 @@
 				<?php foreach($description["evaluation_total_answers_by_sex"] as $key => $value) :?>
 				<tr>
                     <td class="col-xs-8"><?php echo $key;?></td>
-                    <td class="col-xs-4"><?php echo $value;?></td>
+                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$description["evaluation_total_answers"], 2);?>%)</td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -76,7 +76,7 @@
 				<?php foreach($description["evaluation_total_answers_by_age"] as $key => $value) :?>
 				<tr>
                     <td class="col-xs-8"><?php echo $key;?></td>
-                    <td class="col-xs-4"><?php echo $value;?></td>
+                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$description["evaluation_total_answers"], 2);?>%)</td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -89,7 +89,7 @@
 				<?php foreach($description["evaluation_total_answers_by_job_position"] as $key => $value) :?>
 				<tr>
                     <td class="col-xs-8"><?php echo $key;?></td>
-                    <td class="col-xs-4"><?php echo $value;?></td>
+                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$description["evaluation_total_answers"], 2);?>%)</td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -101,11 +101,11 @@
 		<table class="table table-bordered" cellspacing="0" width="100%">
 			<tbody>
 				<tr>
-					<th class="col-xs-4">Nivel de Riesgo Total:</th>
+					<th class="col-xs-4">Puntaje Total de Riesgo</th>
                     <td class="col-xs-8"><?php echo $global["total"]["risk_score"];?></td>
 				</tr>
 				<tr>
-					<th class="col-xs-4">Puntaje Total de Riesgo</th>
+					<th class="col-xs-4">Calificación Total de Riesgo</th>
                     <td class="col-xs-8"><?php echo $global["total"]["risk_label"];?></td>
 				</tr>
 				<tr>
@@ -149,11 +149,11 @@
 		<table class="table table-bordered" cellspacing="0" width="100%">
 			<tbody>
 				<tr>
-					<th class="col-xs-4">Nivel de Riesgo Total:</th>
+					<th class="col-xs-4">Puntaje de Riesgo</th>
                     <td class="col-xs-8"><?php echo $job_position_array["total"]["risk_score"];?></td>
 				</tr>
 				<tr>
-					<th class="col-xs-4">Puntaje Total de Riesgo</th>
+					<th class="col-xs-4">Clasificación de Riesgo</th>
                     <td class="col-xs-8"><?php echo $job_position_array["total"]["risk_label"];?></td>
 				</tr>
 			</tbody>
@@ -195,11 +195,11 @@
 		<table class="table table-bordered" cellspacing="0" width="100%">
 			<tbody>
 				<tr>
-					<th class="col-xs-4">Nivel de Riesgo Total:</th>
+					<th class="col-xs-4">Puntaje de Riesgo</th>
                     <td class="col-xs-8"><?php echo $dimension_array["total"]["risk_score"];?></td>
 				</tr>
 				<tr>
-					<th class="col-xs-4">Puntaje Total de Riesgo</th>
+					<th class="col-xs-4">Clasificación de Riesgo</th>
                     <td class="col-xs-8"><?php echo $dimension_array["total"]["risk_label"];?></td>
 				</tr>
 			</tbody>
