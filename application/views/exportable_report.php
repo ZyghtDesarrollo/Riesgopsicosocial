@@ -59,10 +59,12 @@
 				<tr>
 					<th class="col-xs-8">Total de Trabajadores en el Centro de Trabajo</th>
                     <td class="col-xs-4"><?php echo $description["evaluation_total_workers"];?></td>
+					<?php $total_workers = empty($description["evaluation_total_workers"]) ? 1 : $description["evaluation_total_workers"]; ?>
 				</tr>
 				<tr>
 					<th class="col-xs-8">Total de Trabajadores que contestaron la Encuesta</th>
-                    <td class="col-xs-4"><?php echo $description["evaluation_total_answers"];?> (<?php echo round(100*$description["evaluation_total_answers"]/$description["evaluation_total_workers"], 2);?>%)</td>
+                    <td class="col-xs-4"><?php echo $description["evaluation_total_answers"];?> (<?php echo round(100*$description["evaluation_total_answers"]/$total_workers , 2);?>%)</td>
+					<?php $total_answers = empty($description["evaluation_total_answers"]) ? 1 : $description["evaluation_total_answers"]; ?>
 				</tr>
 			</tbody>
 		</table>
@@ -73,7 +75,7 @@
 				<?php foreach($description["evaluation_total_answers_by_sex"] as $key => $value) :?>
 				<tr>
                     <td class="col-xs-8"><?php echo $key;?></td>
-                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$description["evaluation_total_answers"], 2);?>%)</td>
+                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$total_answers, 2);?>%)</td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -86,7 +88,7 @@
 				<?php foreach($description["evaluation_total_answers_by_age"] as $key => $value) :?>
 				<tr>
                     <td class="col-xs-8"><?php echo $key;?></td>
-                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$description["evaluation_total_answers"], 2);?>%)</td>
+                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$total_answers, 2);?>%)</td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -99,7 +101,7 @@
 				<?php foreach($description["evaluation_total_answers_by_job_position"] as $key => $value) :?>
 				<tr>
                     <td class="col-xs-8"><?php echo $key;?></td>
-                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$description["evaluation_total_answers"], 2);?>%)</td>
+                    <td class="col-xs-4"><?php echo $value;?> (<?php echo round(100*$value/$total_answers, 2);?>%)</td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>

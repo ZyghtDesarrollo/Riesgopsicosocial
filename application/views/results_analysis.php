@@ -107,7 +107,14 @@
 					<img style="width: 200px; height: 200px;" src="<?php echo explode('index.php', base_url())[0]?>assets/imgs/busy.gif" alt="Cargando" />
 				</div>
 				<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-				<div id="box-detail" style="padding:0px;"></div>
+				<div id="box-detail" style="padding:0px;">				
+					<table id="box-detail-table" class="table table-striped table-bordered"
+						cellspacing="0" width="100%">
+						<tr>
+							<th>Nº</th>
+						</tr>
+					</table>
+				</div>
 			</div>
 			<div class="panel-body">
 				<form id="form-record">
@@ -202,6 +209,15 @@
 <!-- start own script-->
 <script>
 	var table;
+	var exportable_results;
+	var exportable_results_columns = [];
+	var exportable_results_column_defs = [];
+	var exportable_results_data_object = [];
+	function renderRiskData(data, type, row) {
+		if(data == 'B') return -1;
+		if(data == 'A') return 1;
+		return 0;
+	}
 	$(document).ready(function() {
 		$('#record-recommendation').select2({
 			language: "es",
@@ -380,9 +396,10 @@
 						$("#record-job-position").val(id);
 						$("#title").text('Resultados por puesto de trabajo: '+jobPosition);
 						$("#container").empty();
-						$("#box-detail").empty();
+						//$("#box-detail").empty();
+						$("#box-detail-table").empty();
 						$("#loading-detail").show();
-
+						
 						//Start load selected recommendation
 						$("#record-recommendation").val('').trigger('change');
 						$.get( "<?php echo base_url('api/rrecommendation/list_by_job_position_id');?>", {"job_position_id": id})
@@ -408,55 +425,84 @@
 								var categories = [];
 								var serie_high = [];
 								var serie_medium = [];
-								var serie_low = [];	
-								var cont = 1;
-								var content = '<div class="table-responsive">';
-								content += '<table class="table table-striped table-hover table-result">'
-											+'<thead>'
-												+'<tr><th>Nº</th>';
-								
+								var serie_low = [];
+								var header_column = {title: "Nº", data:0};
+								exportable_results_columns.push(header_column);
 								$(data.response.head).each(function(i, e){
-									content += '<th>'+e.title+'</th><th>Nivel de Riesgo</th>';
 									categories.push(e.title);
+									var category_column = {title: e.title, data:e.categoryData}
+									exportable_results_columns.push(category_column);
+									var risk_column = {title: 'Nivel de Riesgo', data:e.riskData}
+									exportable_results_columns.push(risk_column);
+									var risk_column_def = {targets: [e.riskData], render: renderRiskData}
+									exportable_results_column_defs.push(risk_column_def);
 								});
-
-								content += '<tr>'
-											+'</thead>'
-											+'<tbody>';
-
-									  var obj = data.response.rows;
-									  for (var key in obj){
-										  content += '<tr><td>'+ cont++ +'</td>';
-									    var value = obj[key];
-									    for(var t = 0 ; t < value.length; t++){
-									    	content +='<td>'+value[t]+'</td>';
-									    }
-									    content += '</tr>';
-									  }
-
-									 content +='<tfoot><tr>'
-										 		+'<td colspan="2"><strong>Riesgo Alto<br>Riesgo Medio<br>Riesgo Bajo</strong></td>';
-									 
-									var percent = data.response.percent;
-									var flag = false;
-									for (var key in percent){
-										var val = percent[key];
-										if(flag){
-											content += '<td></td>';
-										}else{
-											flag = true;
-										}
-									    content +='<td><strong>'+val.risk_high+'<br>'+val.risk_medium+'<br>'+val.risk_low+'</strong></td>';
-									    serie_high.push(val.risk_high);
-										serie_medium.push(val.risk_medium);
-										serie_low.push(val.risk_low);
-									 }
-									content += '</tr>';
-									content +='</tr></tfoot></tbody>';
-								+'</table>'
-							+'</div>';
-								render_chart(cont-1, categories, serie_high, serie_medium, serie_low)
-								$("#box-detail").html(content);
+								
+								var cont = 1;
+								var obj = data.response.rows;
+								for (var key in obj){
+									var data_row = [];
+									data_row[0] = (cont<10) ? '0'+cont : cont;
+									var value = obj[key];
+									for(var t = 0 ; t < value.length; t++){
+										data_row[t+1] = value[t];
+									}
+									cont++;
+									exportable_results_data_object.push(data_row);
+								}
+								
+								var percent = data.response.percent;
+								var total_risk_high = [];
+								total_risk_high[0] = "Riesgo Alto";
+								var total_risk_medium = [];
+								total_risk_medium[0] = "Riesgo Medio";
+								var total_risk_low = [];
+								total_risk_low[0] = "Riesgo Bajo";
+								var current_key = 1;
+								for (var key in percent){
+									var val = percent[key];
+									total_risk_high[current_key] = +val.risk_high.toFixed(2);
+									total_risk_medium[current_key] = +val.risk_medium.toFixed(2);
+									total_risk_low[current_key] = +val.risk_low.toFixed(2);
+									total_risk_high[current_key+1] = '';
+									total_risk_medium[current_key+1] = '';
+									total_risk_low[current_key+1] = '';
+									current_key+=2;
+									serie_high.push(parseFloat(val.risk_high.toFixed(2)));
+									serie_medium.push(parseFloat(val.risk_medium.toFixed(2)));
+									serie_low.push(parseFloat(val.risk_low.toFixed(2)));
+								}
+								exportable_results_data_object.push(total_risk_high);
+								exportable_results_data_object.push(total_risk_medium);
+								exportable_results_data_object.push(total_risk_low);
+								
+								exportable_results = $('#box-detail-table').DataTable({
+									buttons: [{
+										extend: 'excel',
+										exportOptions: {
+										columns: ':visible'
+										},
+										text:      '<i class="fa fa-file-excel-o" aria-hidden="true"></i>',
+										titleAttr: 'Excel'
+									}],
+									"dom": '<"row"<"div-filtros"><"col-lg-4"l><"col-lg-4"p><"col-lg-4"B>>tir',
+									"paging": false,
+									"select": false,
+									"searching": false,
+									'responsive' : true,
+									"language": {
+										"url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+									},
+									"initComplete": function( settings, json ) {
+										exportable_results.buttons().container()
+									},
+									"showRefresh": false,
+									"columns": exportable_results_columns,
+									"data": exportable_results_data_object,
+									"columnDefs" : exportable_results_column_defs
+									});
+								  
+								render_chart(cont-1, categories, serie_high, serie_medium, serie_low);
 							})
 							.fail(function() {
 								//alert( "error" );
@@ -616,7 +662,12 @@
 				    plotOptions: {
 				        column: {
 				            stacking: 'percent'
-				        }
+				        },						
+						series: {
+							dataLabels: {
+								enabled: true
+							}
+						}
 				    },
 				    series: [{
 				        name: 'Alto',

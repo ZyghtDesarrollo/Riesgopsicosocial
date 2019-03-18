@@ -222,11 +222,13 @@
 					    { 	//icons options
 	        				targets : [8],
 	          					render : function (data, type, row) {
-	          						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
+									var actionBar = '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" title="Editar" aria-hidden="true"></i>';
+									actionBar = actionBar + '&nbsp;&nbsp;<a title="Exportar a PDF" style="color:inherit; text-decoration:inherit;" href="<?php echo base_url('results_analysis/get_pdf_report/'); ?>/'+data.id+'"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true"></i></a>';
+	          						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" title="Activar" data-action="activate" aria-hidden="true"></i>';
 	          						if(data.active == 1){
-	          							iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action" data-action="deactivate" aria-hidden="true" style="color : green"></i>';
+	          							iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action" title="Desactivar" data-action="deactivate" aria-hidden="true" style="color : green"></i>';
 	          						}
-	          					return '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" aria-hidden="true"></i>'+iconSwitch;
+	          					return actionBar+iconSwitch;
 	          				}
 					    }
 					]

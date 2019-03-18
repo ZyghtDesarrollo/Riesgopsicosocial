@@ -18,17 +18,21 @@
                     <li><a href="<?php echo base_url('results_analysis/get_global_result'); ?>">Resultado Global</a></li>
                     <li><a href="<?php echo base_url('results_analysis/get_results'); ?>">Resultados por Puestos de Trabajo</a></li>
                     <li><a href="<?php echo base_url('results_analysis/get_report'); ?>">Reporte de Evaluación Psicosocial</a></li>
-		            <li><a href="<?php echo base_url('results_analysis/questionary'); ?>">Ver Cuestionarios</a></li>
+		            <li><a href="<?php echo base_url('results_analysis/questionary'); ?>">Ver Preguntas Aplicadas</a></li>
+					<!--
 		            <li><a href="<?php echo base_url('results_analysis/answered_questionary'); ?>">Revisar Cuestionarios</a></li>
+					-->
           		</ul>
         	</li>
 
             <li class="dropdown" style="display:none;" id="activityLog">
-                <a href="#" id="activityLogToggle" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Registro de Actividades<span class="caret"></span></a>
+                <a href="#" id="activityLogToggle" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Bit&aacute;cora de Actividades<span class="caret"></span></a>
                 <ul class="dropdown-menu" aria-labelledby="activityLogToggle">
                     <li><a href="<?php echo base_url('activity_log'); ?>">Historial de Actividades</a></li>
+					<!--
                     <li><a href="<?php echo base_url('billboard'); ?>">Bit&aacute;cora de Proceso</a></li>
-                    <li><a href="<?php echo base_url('activity_log/activity_log_summary'); ?>">Reporte de Cuestionarios</a></li>
+                    -->
+					<li><a href="<?php echo base_url('activity_log/activity_log_summary'); ?>">Reporte de Cuestionarios</a></li>
                     <li><a href="<?php echo base_url('activity_log/recommendation_log_summary'); ?>">Reporte de Visualizaci&oacute;n de Videos</a></li>
                 </ul>
             </li>

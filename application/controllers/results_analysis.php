@@ -35,11 +35,8 @@ class Results_analysis extends CI_Controller {
         $this->load->view('layout', $view);
     }
 	
-    public function get_report(){
-		$company_id = 18;
-		$questionary_id = 1;
-		
-		if (!$questionary_id) {
+    public function get_report($company_id = NULL, $questionary_id = 1){
+		if (empty($questionary_id) || empty($company_id)) {
 			$this->response_error(400);
 		}
 		
@@ -51,11 +48,8 @@ class Results_analysis extends CI_Controller {
         $this->load->view('layout', $view);
     }
 	
-    public function get_pdf_report(){
-		$company_id = 18;
-		$questionary_id = 1;
-		
-		if (!$questionary_id) {
+    public function get_pdf_report($company_id = NULL, $questionary_id = 1){
+		if (empty($questionary_id) || empty($company_id)) {
 			$this->response_error(400);
 		}
 		

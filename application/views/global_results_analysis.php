@@ -187,10 +187,9 @@
 					total_risk_medium[current_key+1] = '';
 					total_risk_low[current_key+1] = '';
 					current_key+=2;
-					
-                    serie_high.push(val.risk_high);
-                    serie_medium.push(val.risk_medium);
-                    serie_low.push(val.risk_low);
+                    serie_high.push(parseFloat(val.risk_high.toFixed(2)));
+                    serie_medium.push(parseFloat(val.risk_medium.toFixed(2)));
+                    serie_low.push(parseFloat(val.risk_low.toFixed(2)));
                 }
 				exportable_results_data_object.push(total_risk_high);
 				exportable_results_data_object.push(total_risk_medium);
@@ -222,7 +221,7 @@
 					"columnDefs" : exportable_results_column_defs
 					});
 				  
-                render_chart(cont-1, categories, serie_high, serie_medium, serie_low)
+                render_chart(cont-1, categories, serie_high, serie_medium, serie_low);
             })
             .fail(function() {
                 //alert( "error" );
@@ -261,7 +260,12 @@
 				    plotOptions: {
 				        column: {
 				            stacking: 'percent'
-				        }
+				        },						
+						series: {
+							dataLabels: {
+								enabled: true
+							}
+						}
 				    },
 				    series: [{
 				        name: 'Alto',
