@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<?php if(empty($printToPdf)): ?>
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
@@ -8,7 +9,16 @@
 		</ol>
 	</div>
 </div>
+<div class="row">
+	<div class="col-sm-10">
+		&nbsp;
+	</div>
+	<div class="col-sm-2">
+		<a href="<?php echo base_url('results_analysis/get_pdf_report'); ?>"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exportar a PDF</a>
+	</div>
+</div>
 <!-- end breadcrumb -->
+<?php endif; ?>
 
 <div class="row">
 	<div class="col-sm-12">
