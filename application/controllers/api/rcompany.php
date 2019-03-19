@@ -86,32 +86,12 @@ class Rcompany extends API_Controller {
 
         foreach ($result as $result_row)
         {
-            $company_risk = $this->questionary_model->get_category_results_by_job_position_id(-1, $result_row->id);
-            $calculated_risk = 0;
-            if(!empty($company_risk) && array_key_exists("percent",$company_risk))
-            {
-                foreach($company_risk["percent"] as $category_risk)
-                {
-                    if(array_key_exists("risk_high",$category_risk) && 50 <= $category_risk["risk_high"])
-                    {
-                        $calculated_risk++;
-                    }
-                    if(array_key_exists("risk_low",$category_risk) && 50 <= $category_risk["risk_low"])
-                    {
-                        $calculated_risk--;
-                    }
-                }
-            }
-            $result_row->company_risk = $calculated_risk;
-            $result_row->company_risk_name = MEDIUM_RISK_NAME;
-            if(MEDIUM_RISK_THRESHOLD > $calculated_risk )
-            {
-                $result_row->company_risk_name = LOW_RISK_NAME;
-            }
-            else if(HIGH_RISK_THRESHOLD <= $calculated_risk )
-            {
-                $result_row->company_risk_name = HIGH_RISK_NAME;
-            }
+			unset($result_row->password);
+            $company_risk = $this->questionary_model->get_risk_per_company($result_row->id, 1);
+            $result_row->company_risk = $company_risk["risk_score"];
+            $result_row->company_risk_name = $company_risk["risk_label"];
+            $result_row->total_answers = $company_risk["evaluation_total_answers"];
+            $result_row->total_workers = $company_risk["evaluation_total_workers"];
         }
 
 		$this->response_ok($result);

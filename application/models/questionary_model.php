@@ -245,6 +245,85 @@ class Questionary_model extends Zyght_Model {
         return ($query->num_rows() > 0) ? $query->result() : FALSE;
     }
 	
+    public function get_risk_per_company($company_id = -1, $questionary_id = -1)
+    {
+		$report = array();
+		$report["evaluation_total_workers"] = 0;
+		$report["evaluation_total_answers"] = 0;
+		$report["risk_score"] = 'N/A';
+		$report["risk_label"] = 'N/A';
+		// RESULTADO GLOBAL SIN FILTRO
+        $global_no_filter_sql = "SELECT CompanyName, CompanyRut, QuestionCategory, Risk, sum(rowWeight) / max(amountOfWorkers) as percentageOfWorkersInDimension, max(amountOfWorkers) as amountOfWorkers
+				FROM 
+				(
+					SELECT QuestionaryCompletionId, QuestionCategory, Ponderation,
+					CASE 
+					WHEN Ponderation BETWEEN low_min and low_max THEN -1
+					WHEN Ponderation BETWEEN medium_min and medium_max THEN 0
+					WHEN Ponderation BETWEEN high_min and high_max THEN 1
+					ELSE 0
+					END as Risk
+					FROM
+					(
+						SELECT QuestionaryCompletionId, QuestionCategoryId, QuestionCategory, sum(QuestionOptionPonderation) as Ponderation
+						FROM vQuestionaryResults
+						WHERE QuestionaryId = $questionary_id
+						GROUP BY QuestionaryCompletionId, QuestionCategoryId, QuestionCategory
+					) AS AggregatedQuestionaryResults
+					JOIN Ratings ON AggregatedQuestionaryResults.QuestionCategoryId = Ratings.question_category_id
+				) AS RESULTS
+				JOIN 
+				(
+					SELECT QuestionaryCompletionId, CompanyName, CompanyRut, JobPosition, AgeFilter, SexFilter,
+					1.0 as rowWeight,
+					COUNT(QuestionaryCompletionId) OVER (PARTITION BY CompanyName) AS amountOfWorkers
+					FROM vQuestionaryFilters
+					WHERE QuestionaryId = $questionary_id AND CompanyId = $company_id
+				) as FILTERS ON RESULTS.QuestionaryCompletionId = FILTERS.QuestionaryCompletionId
+				GROUP BY CompanyName, CompanyRut, QuestionCategory, Risk
+				ORDER BY CompanyName, CompanyRut, QuestionCategory, Risk;";
+		
+		$query_global_no_filter = $this->db->query($global_no_filter_sql);
+		if($query_global_no_filter->num_rows() > 0)
+		{
+			$total_answers = 0;
+			$risk_score = 0;
+			$dimension_score = array();
+			$result = $query_global_no_filter->result();
+			foreach ($result as $r){
+				$total_answers = max($total_answers,$r->amountOfWorkers);
+				if(!array_key_exists($r->QuestionCategory, $dimension_score))
+				{
+					$dimension_score[$r->QuestionCategory] = 0;
+				}
+				if(0.5 < $r->percentageOfWorkersInDimension)
+				{
+					$dimension_score[$r->QuestionCategory] = $r->Risk;
+					$risk_score = $risk_score + $r->Risk;
+				}
+			}
+			$report["evaluation_total_answers"] = $total_answers;
+			$report["risk_score"] = $risk_score;
+			$report["risk_label"] = $this->getRiskLabelFromScore($risk_score);
+		}
+		// RESULTADO GLOBAL SIN FILTRO
+        $random_user_sql = "SELECT count(id) as amountOfUsers, min(date) as startDate, max(date) as endDate 
+							FROM RandomUser 
+							WHERE company_id = $company_id";
+		
+		$query_random_user = $this->db->query($random_user_sql);
+		if($query_random_user->num_rows() > 0)
+		{
+			$result = $query_random_user->result();
+			foreach ($result as $r){
+				$report["evaluation_total_workers"] = $r->amountOfUsers;
+				//$report["description"]["evaluation_start_date"] = $r->startDate;
+				//$report["description"]["evaluation_end_date"] = $r->endDate;
+			}
+		}
+		return $report;
+	}
+	
     public function get_questionary_report($company_id = -1, $questionary_id = -1)
     {
 		$report = array();

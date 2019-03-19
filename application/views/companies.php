@@ -22,6 +22,8 @@
 					<th>RUT</th>
 					<th>Correo electrónico</th>
                     <th>Estado</th>
+                    <th>Usuarios Aleatorios</th>
+                    <th>Respuestas</th>
                     <th>Riesgo</th>
                     <th>Nivel de Riesgo</th>
 					<th>Acciones</th>
@@ -170,6 +172,12 @@
                             "data": "active",
                         },
                         {
+                            "data": "total_workers",
+                        },
+                        {
+                            "data": "total_answers",
+                        },
+                        {
                             "data": "company_risk",
                         },
                         {
@@ -192,7 +200,7 @@
                             }
                         },
                         { 	//param active
-                            targets : [6],
+                            targets : [8],
                             render : function (data, type, row) {
                                 if(<?php echo MEDIUM_RISK_THRESHOLD; ?> > data )
                                 {
@@ -206,7 +214,7 @@
                             }
                         },
                         { 	//param active
-                            targets : [7],
+                            targets : [9],
                             render : function (data, type, row) {
                                 if('<?php echo LOW_RISK_NAME; ?>' == data )
                                 {
@@ -220,7 +228,7 @@
                             }
                         },
 					    { 	//icons options
-	        				targets : [8],
+	        				targets : [10],
 	          					render : function (data, type, row) {
 									var actionBar = '<i class="glyphicon glyphicon-edit icon-action" data-action="edit" title="Editar" aria-hidden="true"></i>';
 									actionBar = actionBar + '&nbsp;&nbsp;<a title="Exportar a PDF" style="color:inherit; text-decoration:inherit;" href="<?php echo base_url('results_analysis/get_pdf_report/'); ?>/'+data.id+'"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true"></i></a>';
