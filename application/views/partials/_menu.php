@@ -17,12 +17,17 @@
 	          	<ul class="dropdown-menu" aria-labelledby="resultsAnalysisToggle">
                     <li><a href="<?php echo base_url('results_analysis/get_global_result'); ?>">Resultado Global</a></li>
                     <li><a href="<?php echo base_url('results_analysis/get_results'); ?>">Resultados por Puestos de Trabajo</a></li>
-                    <li><a href="<?php echo base_url('results_analysis/get_report'); ?>">Reporte de Evaluación Psicosocial</a></li>
+                    <li><a id='full_report_link' href="#">Reporte de Evaluación Psicosocial</a></li>
 		            <li><a href="<?php echo base_url('results_analysis/questionary'); ?>">Ver Preguntas Aplicadas</a></li>
 					<!--
 		            <li><a href="<?php echo base_url('results_analysis/answered_questionary'); ?>">Revisar Cuestionarios</a></li>
 					-->
           		</ul>
+				<script>
+					var link = '<?php echo base_url('results_analysis/get_report'); ?>';
+					link = link + '/' + user.id
+					$('#full_report_link').attr("href", link); 
+				</script>
         	</li>
 
             <li class="dropdown" style="display:none;" id="activityLog">
