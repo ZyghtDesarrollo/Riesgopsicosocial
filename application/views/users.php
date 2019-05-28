@@ -123,7 +123,7 @@
 
 	$(document).ready(function() {
 		//Load companies
-		$.get("http://trayectoseguro.azurewebsites.net/index.php/api/rcompany/list")
+		$.get("<?php echo base_url('api/rcompany/list');?>")
 			.done(function(data) {
 				$.each(data.response, function(index, item){
 					companies.push({"id" : item.id, "name" : item.name});
@@ -138,7 +138,7 @@
 		    	//alert( "finished" );
 			});
 
-		endpoint = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/list";
+		endpoint = "<?php echo base_url('api/ruser/list');?>";
 		if (user.company_id) {
 			endpoint += "?company_id=" + user.company_id;
 		}
@@ -146,7 +146,7 @@
 		table = $('#example').DataTable({
     		"select": true,
 		    "language": {
-				"url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+				"url": "<?php echo RESOURCE_DATATABLE_LANGUAGE; ?>"
 			},
 
 			"ajax": {
@@ -313,21 +313,20 @@
 			function processAction(action, params){
 				var url = "";
 				switch (action){
-
 					case "create":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/add";
+						url = "<?php echo base_url('api/ruser/add');?>";
 					break;
 
 					case "edit":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/edit";
+						url = "<?php echo base_url('api/ruser/edit');?>";
 					break;
 					
 					case "activate":
-						url = "http://trayectoseguro.azurewebsites.net/index.php/api/ruser/activate";
+						url = "<?php echo base_url('api/ruser/activate');?>";
 					break;
 
 					case "deactivate":
-						url="http://trayectoseguro.azurewebsites.net/index.php/api/ruser/deactivate";
+						url = "<?php echo base_url('api/ruser/deactivate');?>";
 					break;
 				}
 

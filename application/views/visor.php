@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>Bitácora de proceso</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <script src="https://cdn.rawgit.com/skipser/youtube-autoresize/master/youtube-autoresizer.js"></script>
+	<link rel="stylesheet" href="<?php echo RESOURCE_JQUERY_MOBILE_CSS;?>">
+	
+	<script src="<?php echo RESOURCE_JQUERY_LIBRARY;?>"></script>
+	<script src="<?php echo RESOURCE_JQUERY_MOBILE_LIBRARY;?>"></script>
+	<script src="<?php echo RESOURCE_YOUTUBE_RESIZER_LIBRARY;?>"></script>
 </head>
 
 <body>

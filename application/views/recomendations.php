@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_FONTS_CSS;?>">
 <script>
 	var user = sessionStorage.getItem('user');
 	user = JSON.parse(user);
@@ -186,10 +186,10 @@
                 }],
 	    		"select": true,
 		    	"language": {
-				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+					"url": "<?php echo RESOURCE_DATATABLE_LANGUAGE; ?>"
 				},
 			   "ajax": {
-          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/list_actives_by_company_id",
+          			"url": "<?php echo base_url('api/rrecommendation/list_actives_by_company_id');?>",
           			"type": "GET",
           			"data" : {
               			"company_id" : company_id
@@ -401,19 +401,19 @@
 				switch (action){
 
 					case "create":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/add";
+						url = "<?php echo base_url('api/rrecommendation/add');?>";
 					break;
 
 					case "edit":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/edit";
+						url = "<?php echo base_url('api/rrecommendation/edit');?>";
 					break;
 					
 					case "activate":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/activate";
+						url = "<?php echo base_url('api/rrecommendation/activate');?>";
 					break;
 
 					case "deactivate":
-						url="http://riesgopsicosocial.azurewebsites.net/index.php/api/rrecommendation/deactivate";
+						url = "<?php echo base_url('api/rrecommendation/deactivate');?>";
 					break;
 				}
 
@@ -437,7 +437,7 @@
 			}
 
 			//Start load recommendations
-			$.get("http://riesgopsicosocial.azurewebsites.net/index.php/api/rquestioncategory/list_actives")
+			$.get("<?php echo base_url('api/rquestioncategory/list_actives');?>")
 			.done(function(data) {
 				$.each(data.response, function(index, obj){
 					$("#record-question-category").append('<option value="'+obj.id+'">'+obj.title+'</option>');

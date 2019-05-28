@@ -5,16 +5,17 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	    <!--css-->
-		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
+		<!--css-->
+		<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_BOOTSTRAP_CSS; ?>">
+		
 		<!--css datatable-->
-		<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
-		<!-- buttons plugins -->
-		<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.bootstrap.min.css">
-
+		<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_DATATABLE_BOOTSTRAP_CSS; ?>">
+		
+		<!--css buttons-->
+		<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_BOOTSTRAP_BUTTONS_CSS; ?>">
+			
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="<?php echo RESOURCE_JQUERY_LIBRARY; ?>"></script>
 
 		<style type="text/css">
 			#app {
@@ -100,7 +101,7 @@
 					$("#travels").show();
 				}
 
-				endpoint = "http://trayectoseguro.azurewebsites.net/index.php/api/rtravel/list";
+				endpoint = "<?php echo base_url('api/rtravel/list');?>";
 				if (user.company_id) {
 					endpoint += "?company_id=" + user.company_id;
 				}
@@ -108,7 +109,7 @@
 				table = $('#example').DataTable({
 		    		"select": true,
 			    	"language": {
-					    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+						"url": "<?php echo RESOURCE_DATATABLE_LANGUAGE; ?>"
 					},
 				   "ajax": {
 	          			"url": endpoint,
@@ -151,7 +152,7 @@
 		        e.preventDefault();
 		 		var row = $(this).closest('tr');
 				var id = row.find('td:eq(0)').text();
-    			window.location.href = 'http://trayectoseguro.azurewebsites.net/index.php/api/rtravel/download_logs?travel_id='+id;
+    			window.location.href = '<?php echo base_url('api/rtravel/download_logs?travel_id=');?>'+id;
 
 		    } );
 		
@@ -163,19 +164,14 @@
 		<!-- end own script -->
 
 
-
-
-
-
-	    <!-- Include all compiled plugins (below), or include individual files as needed -->
-	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	    <!-- start scripts data tables-->
-		<script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
-		<script src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
-		
-
-		<script src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
-	    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.bootstrap.min.js"></script>
-		<!-- end scripts data tables-->
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="<?php echo RESOURCE_BOOTSTRAP_LIBRARY;?>"></script>
+	<!-- start scripts data tables-->
+	<script src="<?php echo RESOURCE_DATATABLE_JQUERY_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BOOTSTRAP_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BUTTONS_DATATABLE_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BUTTONS_BOOTSTRAP_LIBRARY; ?>"></script>
+	<!-- end scripts data tables-->
+	
 	</body>
 </html>

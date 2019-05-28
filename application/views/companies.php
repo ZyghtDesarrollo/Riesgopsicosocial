@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_FONTS_CSS;?>">
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
@@ -129,11 +129,11 @@
                     }],
 		    		"select": true,
 			    	"language": {
-					    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+						"url": "<?php echo RESOURCE_DATATABLE_LANGUAGE; ?>"
 					},
-				   "ajax": {
-	          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/list",
-	          			"type": "GET"
+					"ajax": {
+					   "url": "<?php echo base_url('api/rcompany/list');?>",
+					   "type": "GET"
 	        		},
 	        		"initComplete": function( settings, json ) {
                         table.buttons().container()
@@ -345,19 +345,19 @@
 				switch (action){
 
 					case "create":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/add";
+						url = "<?php echo base_url('api/rcompany/add');?>";
 					break;
 
 					case "edit":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/edit";
+						url = "<?php echo base_url('api/rcompany/edit');?>";
 					break;
 					
 					case "activate":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/activate";
+						url = "<?php echo base_url('api/rcompany/activate');?>";
 					break;
 
 					case "deactivate":
-						url="http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/deactivate";
+						url = "<?php echo base_url('api/rcompany/deactivate');?>";
 					break;
 				}
 

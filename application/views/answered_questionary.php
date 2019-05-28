@@ -118,7 +118,7 @@
 	
 	var table;
 	$(document).ready(function() {
-		var url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rquestionary/initialdata";
+		var url = "<?php echo base_url('api/rquestionary/initialdata');?>";
 		//Call to API
 		$.get(url)
 			.done(function(response) {
@@ -173,10 +173,10 @@
 		table = $('#example').DataTable({
 	    		"select": true,
 		    	"language": {
-				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+					"url": "<?php echo RESOURCE_DATATABLE_LANGUAGE; ?>"
 				},
 			   "ajax": {
-          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/list_by_company_id?company_id=3",
+					"url": "<?php echo base_url('api/rjobposition/list_by_company_id');?>",
           			"type": "GET",
           			"data" : {
               			"company_id" : company_id
@@ -332,21 +332,20 @@
 			function processAction(action, params){
 				var url = "";
 				switch (action){
-
 					case "create":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/add";
+						url = "<?php echo base_url('api/rjobposition/add');?>";
 					break;
 
 					case "edit":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/edit";
+						url = "<?php echo base_url('api/rjobposition/edit');?>";
 					break;
 					
 					case "activate":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/activate";
+						url = "<?php echo base_url('api/rjobposition/activate');?>";
 					break;
 
 					case "deactivate":
-						url="http://riesgopsicosocial.azurewebsites.net/index.php/api/rjobposition/deactivate";
+						url = "<?php echo base_url('api/rjobposition/deactivate');?>";
 					break;
 				}
 

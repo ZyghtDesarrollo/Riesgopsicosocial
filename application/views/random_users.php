@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_FONTS_CSS;?>">
 <!-- start breadcrumb -->
 <div class="row">
 	<div class="col-sm-12">
@@ -131,10 +131,10 @@
                  	 }],
 	    		"select": true,
 		    	"language": {
-				    "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json",
-				    buttons: {
-				    	copyTitle: 'Copiando en el portapapeles',
-				    	copySuccess: {
+					"url": "<?php echo RESOURCE_DATATABLE_LANGUAGE; ?>",
+				    "buttons": {
+				    	"copyTitle": 'Copiando en el portapapeles',
+				    	"copySuccess": {
 		                    _: '%d Líneas copiadas',
 		                    1: '1 Línea copiada'
 		                }
@@ -142,7 +142,7 @@
 		            }
 				},
 			   "ajax": {
-          			"url": "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrandomuser/list_by_company_id",
+          			"url": "<?php echo base_url('api/rrandomuser/list_by_company_id');?>",
           			"type": "GET",
           			"data" : {
               			"company_id" : company_id
@@ -277,7 +277,7 @@
 				switch (action){
 
 					case "create":
-						url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rrandomuser/generate";
+						url = "<?php echo base_url('api/rrandomuser/generate');?>";
 					break;
 
 					case "edit":

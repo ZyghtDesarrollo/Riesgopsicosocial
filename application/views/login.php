@@ -4,11 +4,11 @@
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <!--css-->
-		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!--css-->
+		<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_BOOTSTRAP_CSS; ?>">
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="<?php echo RESOURCE_JQUERY_LIBRARY; ?>"></script>
 
 		<style type="text/css">
 			#app {
@@ -66,7 +66,7 @@
 				e.preventDefault();
 
 				var params = $("#form-login").serialize();
-				var url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rcompany/login";
+				var url = "<?php echo base_url('api/rcompany/login');?>";
 				//Call to API
 				$.post(url, params)
 					.done(function(data) {
@@ -89,6 +89,6 @@
 		<!-- end own script -->
 
 	    <!-- Include all compiled plugins (below), or include individual files as needed -->
-	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="<?php echo RESOURCE_BOOTSTRAP_LIBRARY;?>"></script>
 	</body>
 </html>

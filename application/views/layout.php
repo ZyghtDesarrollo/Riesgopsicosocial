@@ -18,23 +18,19 @@
 		</script>
 		
 		<!--css-->
-		<link rel="stylesheet" type="text/css"
-			href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_BOOTSTRAP_CSS; ?>">
 		
 		<!--css datatable-->
-		<link rel="stylesheet" type="text/css"
-			href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_DATATABLE_BOOTSTRAP_CSS; ?>">
 		
 		<!--css buttons-->
-		<link rel="stylesheet" type="text/css"
-			href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_BOOTSTRAP_BUTTONS_CSS; ?>">
 			
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script
-			src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="<?php echo RESOURCE_JQUERY_LIBRARY; ?>"></script>
 		
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+		<link href="<?php echo RESOURCE_SELECT2_CSS; ?>" rel="stylesheet" />
+		<script src="<?php echo RESOURCE_SELECT2_LIBRARY; ?>"></script>
 		
 		<!-- start general custom style -->
 		<style>
@@ -100,22 +96,19 @@
 	<!-- end general custom script -->
 
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<!-- 	<script -->
-<!-- 		src="//code.jquery.com/jquery-1.12.4.js"></script> -->
+	<script src="<?php echo RESOURCE_BOOTSTRAP_LIBRARY;?>" integrity="<?php echo RESOURCE_BOOTSTRAP_LIBRARY_INTEGRITY;?>" crossorigin="anonymous"></script>
 	<!-- start scripts data tables-->
-	<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-	<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
-	<script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
-	<script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.bootstrap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-	<script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
-	<script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
-	<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
-	<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
-	<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js"></script>
-	<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_JQUERY_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BOOTSTRAP_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BUTTONS_DATATABLE_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BUTTONS_BOOTSTRAP_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BUTTONS_HTML5_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BUTTONS_PRINT_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BUTTONS_COLVIS_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_DATATABLE_BUTTONS_PRINT_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_JSZIP_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_PDFMAKE_LIBRARY; ?>"></script>
+	<script src="<?php echo RESOURCE_PDFMAKE_FONTS_LIBRARY; ?>"></script>
 
 	<!-- end scripts data tables-->
 

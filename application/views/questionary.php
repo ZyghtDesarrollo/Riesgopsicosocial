@@ -40,7 +40,7 @@
 	
 
 	$(document).ready(function() {
-		var url = "http://riesgopsicosocial.azurewebsites.net/index.php/api/rquestionary/initialdata";
+		var url = "<?php echo base_url('api/rquestionary/initialdata');?>";
 		//Call to API
 		$.get(url)
 			.done(function(response) {

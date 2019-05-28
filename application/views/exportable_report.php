@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo RESOURCE_FONTS_CSS;?>">
 <?php if(empty($printToPdf)): ?>
 <!-- start breadcrumb -->
 <div class="row">
