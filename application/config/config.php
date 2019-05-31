@@ -23,6 +23,13 @@
 |
 */
 $config['base_url'] = 'http://riesgopsicosocial.azurewebsites.net/index.php';
+/*
+|--------------------------------------------------------------------------
+| URL assets
+|--------------------------------------------------------------------------
+|
+*/
+$config['assets_path'] = 'http://riesgopsicosocial.azurewebsites.net/assets';
 
 /*
 |--------------------------------------------------------------------------
@@ -376,13 +383,6 @@ $config['android_api_key'] = 'AAAA-LugisI:APA91bF43pIXSdm5Heeux-FL1RUFzh7bV52Tdg
 .'IuTi-QjZiNmNSz7JfEc3aa8otedFu18Pl4n4BO2kSTsF7PR9k9lJDzm6UHB1Y0TV';
 $config['push_host'] = 'https://fcm.googleapis.com/fcm/send';
 
-/*
-|--------------------------------------------------------------------------
-| URL assets
-|--------------------------------------------------------------------------
-|
-*/
-$config['assets_path'] = 'http://riesgopsicosocial.azurewebsites.net/assets';
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

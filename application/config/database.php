@@ -48,9 +48,9 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'catolica.database.windows.net';
-$db['default']['username'] = 'catolica';
-$db['default']['password'] = '9_a?N]NJ]$4GUdGy';
+$db['default']['hostname'] = 'server.database.windows.net';
+$db['default']['username'] = 'dbuser';
+$db['default']['password'] = 'password';
 $db['default']['database'] = 'riesgopsicosocial';
 $db['default']['dbdriver'] = 'sqlsrv';
 $db['default']['dbprefix'] = '';
