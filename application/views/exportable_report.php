@@ -14,7 +14,7 @@
 		&nbsp;
 	</div>
 	<div class="col-sm-2">
-		<a href="<?php echo base_url('results_analysis/get_pdf_report'); ?>"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exportar a PDF</a>
+		<a href="<?php echo base_url('results_analysis/get_pdf_report/'.$company_id); ?>"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exportar a PDF</a>
 	</div>
 </div>
 <!-- end breadcrumb -->

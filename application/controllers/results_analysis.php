@@ -38,11 +38,12 @@ class Results_analysis extends CI_Controller {
     public function get_report($company_id = NULL){
 		$questionary_id = 1;
 		if (empty($questionary_id) || empty($company_id)) {
-			$this->response_error(400);
+			redirect('/results_analysis/get_global_result', 'refresh');
 		}
 		
 		$report_data = $this->questionary_model->get_questionary_report($company_id, $questionary_id);
 		$report_data['printToPdf'] = false;
+		$report_data['company_id'] = $company_id;
 		
         $view['content'] = $this->load->view('exportable_report',$report_data, TRUE);
 		
@@ -52,11 +53,12 @@ class Results_analysis extends CI_Controller {
     public function get_pdf_report($company_id = NULL){
 		$questionary_id = 1;
 		if (empty($questionary_id) || empty($company_id)) {
-			$this->response_error(400);
+			redirect('/results_analysis/get_global_result', 'refresh');
 		}
 		
 		$report_data = $this->questionary_model->get_questionary_report($company_id, $questionary_id);
 		$report_data['printToPdf'] = true;
+		$report_data['company_id'] = $company_id;
 		
         $view['content'] = $this->load->view('exportable_report',$report_data, TRUE);
 		

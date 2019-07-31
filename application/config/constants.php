@@ -83,7 +83,6 @@ define('RESOURCE_DATATABLE_BUTTONS_BOOTSTRAP_LIBRARY', 'https://cdn.datatables.n
 define('RESOURCE_DATATABLE_BUTTONS_HTML5_LIBRARY', '//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js');
 define('RESOURCE_DATATABLE_BUTTONS_PRINT_LIBRARY', '//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js');
 define('RESOURCE_DATATABLE_BUTTONS_COLVIS_LIBRARY', '//cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js');
-define('RESOURCE_DATATABLE_BUTTONS_PRINT_LIBRARY', '//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js');
 define('RESOURCE_PDFMAKE_LIBRARY', '//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js');
 define('RESOURCE_PDFMAKE_FONTS_LIBRARY', '//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js');
 define('RESOURCE_JSZIP_LIBRARY', '//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js');
